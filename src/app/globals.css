@@ -1,0 +1,144 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Import Helvetica Now Display font */
+@font-face {
+  font-family: 'Helvetica Now Display';
+  src: url('/fonts/HelveticaNowDisplay-Medium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Helvetica Now Display';
+  src: url('/fonts/HelveticaNowDisplay-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Theme color variables from style guide */
+:root {
+  /* Main colors */
+  --color-black: #25332b;
+  --color-grey: #86898e;
+  --color-purple: #6f608f;
+  --color-primary-blue: #0000ff;
+  
+  /* Secondary Colors */
+  --color-light-therapy: #ebeef4;
+  --color-light-diagnostic: #d8cece;
+  --color-light-grey: #e3e3e3;
+  
+  /* Periodic Table Colors */
+  --color-per-background: #302a38;
+  --color-per-text: #9aa1ba;
+  --color-per-line: #645a71;
+  
+  /* Data Specific Colors */
+  --color-a-colour: #2ffbcf;
+  --color-g-color: #dfff2f;
+  --color-a-text: #5164df;
+  --color-g-text: #5a3ee3;
+  
+  /* Additional colors */
+  --color-white: #FFFFFF;
+  
+  /* Grey scale */
+  --color-grey-100: #F7F7F7;
+  --color-grey-200: #E6E6E6;
+  --color-grey-300: #CCCCCC;
+  --color-grey-400: #B3B3B3;
+  --color-grey-500: #999999;
+  --color-grey-600: #808080;
+  --color-grey-700: #666666;
+  --color-grey-800: #4D4D4D;
+  --color-grey-900: #333333;
+  
+  /* Semantic colors */
+  --color-success: #00C853;
+  --color-warning: #FFD600;
+  --color-error: #FF3D00;
+  --color-info: #2196F3;
+  
+  /* Typography scale - font sizes */
+  --font-size-h1: 96px;
+  --font-size-h2: 48px;
+  --font-size-h3: 30px;
+  --font-size-h4: 26px;
+  --font-size-h5: 21px;
+  --font-size-body: 18px;
+  --font-size-body-small: 14px;
+  
+  /* Typography scale - line heights */
+  --line-height-h1: 96px;
+  --line-height-h2: 56px;
+  --line-height-h3: 33px;
+  --line-height-h4: 28.6px;
+  --line-height-h5: 23.1px;
+  --line-height-body: 19.8px;
+  --line-height-body-small: 15.4px;
+  
+  /* Font weights */
+  --font-weight-medium: 500;
+  --font-weight-bold: 700;
+  
+  /* Spacing scale */
+  --spacing-0: 0;
+  --spacing-1: 4px;
+  --spacing-2: 8px;
+  --spacing-3: 12px;
+  --spacing-4: 16px;
+  --spacing-6: 24px;
+  --spacing-8: 32px;
+  --spacing-12: 48px;
+  --spacing-16: 64px;
+  --spacing-20: 80px;
+  --spacing-24: 96px;
+  --spacing-32: 128px;
+  
+  /* Layout variables */
+  --max-content-width: 1500px;
+}
+
+/* Base element styling */
+@layer base {
+  /* Default element styling */
+  h1 {
+    @apply text-h1 font-helvetica-now;
+  }
+  h2 {
+    @apply text-h2 font-helvetica-now;
+  }
+  h3 {
+    @apply text-h3 font-helvetica-now;
+  }
+  h4 {
+    @apply text-h4 font-helvetica-now;
+  }
+  h5 {
+    @apply text-h5 font-helvetica-now;
+  }
+  body {
+    @apply font-helvetica-now;
+  }
+}
+
+/* Animation Keyframes */
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fade-up {
+  from { 
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to { 
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
