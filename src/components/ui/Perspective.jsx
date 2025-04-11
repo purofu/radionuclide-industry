@@ -28,8 +28,9 @@ const Perspective = () => {
           </div>
           <div className="lg:w-1/2">
             <p className="text-xl md:text-2xl lg:text-[26px] font-bold font-helvetica-now leading-relaxed">
-              <span className="text-per-text">With numerous products advancing through clinical phases, competition across the industry will intensify. Companies must prepare to deliver these revolutionary </span>
-              <span className="text-white">therapies to growing patient populations by orchestrating multiple systems and platforms in pursuit of building simplified, reliable services that can scale to meet demand.</span>
+            <span className="text-white">In this incredibly complex landscape, companies must make sustainable isotope and target decisions that ensure progression from bench to bedside. </span>
+            <span className="text-per-text">They must create pathways that connect all elements—from isotope sourcing to patient administration—to deliver therapies at scale. </span>
+              <span className="text-white">As multiple products advance through clinical phases and competition intensifies, companies must orchestrate multiple systems in pursuit of building simplified, reliable services capable of meeting growing patient demand.</span>
             </p>
           </div>
         </div>
@@ -46,7 +47,7 @@ const Perspective = () => {
           </div>
           
           {/* Column 2 - 2/12 columns */}
-          <div className="lg:col-span-2">
+          <div className="lg:col-span-3">
             <div className="max-w-[325px]">
               <p className="text-lg md:text-xl lg:text-[21px] font-medium font-helvetica-now leading-[1.4]">
                 <sup className="text-white">1 </sup>
@@ -72,7 +73,7 @@ const Perspective = () => {
           </div>
           
           {/* Column 3 - 4/12 columns */}
-          <div className="lg:col-span-4 flex flex-col gap-6 justify-center">
+          <div className="lg:col-span-3 flex flex-col gap-6 justify-center">
             <p className="text-xl md:text-2xl lg:text-[26px] font-bold font-helvetica-now leading-relaxed">
               Sign up to be notified of future updates.
             </p>

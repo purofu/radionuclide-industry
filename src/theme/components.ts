@@ -168,16 +168,16 @@ export const badge = {
  */
 export const typography = {
   displayValue: (className = "") => 
-    cn("text-black text-7xl lg:text-8xl font-medium font-helvetica-now leading-tight", className),
+    cn("text-black text-h1 lg:text-h1 font-medium font-helvetica-now leading-tight", className),
   
   displayLabel: (colorClass: string = "text-black", className = "") => 
     cn(`${colorClass} text-xs md:text-sm font-medium font-helvetica-now leading-none`, className),
   
   cardTitle: (className = "") => 
-    cn("text-black text-4xl md:text-5xl font-medium font-helvetica-now leading-tight", className),
+    cn("text-black text-h5 md:text-h4 font-medium font-helvetica-now leading-tight", className),
   
   cardSubtitle: (className = "") => 
-    cn("text-black text-lg font-bold font-helvetica-now leading-tight", className),
+    cn("text-black text-body font-bold font-helvetica-now leading-tight", className),
   
   cardBody: (className = "") => 
     cn("text-black text-sm font-medium font-helvetica-now leading-snug", className),

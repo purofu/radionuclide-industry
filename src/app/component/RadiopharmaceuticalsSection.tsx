@@ -670,12 +670,12 @@ const RadiopharmaceuticalsSection = () => {
   };
 
   return (
-    <section className={styles.section.wrapper()}>
-      {/* Apply base grid structure for overall page layout */}
-      <div className={styles.section.container()}>
-        {/* Title section */}
+    <section className="w-full py-12 md:py-16 lg:py-20 relative">
+      {/* Main grid container - Using defined 12-col grid with proper padding */}
+      <div className="grid grid-cols-4 sm:grid-cols-8 md:grid-cols-12 lg:grid-cols-12 px-8 md:px-16 lg:px-24">
+        {/* Title section - span full width of the grid */}
         <motion.div
-          className="mb-12"
+          className="col-span-4 sm:col-span-8 md:col-span-12 lg:col-span-12 mb-12"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
@@ -686,172 +686,174 @@ const RadiopharmaceuticalsSection = () => {
           </h4>
         </motion.div>
 
-        {/* Two Column Layout */}
-        <div className={styles.section.grid("gap-8")}>
-          {/* Left Column - Diagnostics (non-oncology) */}
-          <div className={styles.grid.span(4, { sm: 4, md: 6 }, "relative")}>              
-            {/* Scrollable content */}
-            <div className="h-[600px] overflow-y-auto pr-4 scrollbar-none">
-              <div className="flex flex-col gap-8 pb-8">
-                {diagnosticCategories.map((category) => (
-                  <div
-                    key={`${category.field}-${category.type}`}
-                    className="flex flex-col"
-                  >
-                    {/* Category Header */}
-                    <div className="sticky top-0 bg-white z-10 py-4 mb-6" style={{ boxShadow: '0 10px 15px -10px rgba(255, 255, 255, 0.9)' }}>
-                      <span className="text-body font-helvetica-now">
-                        <span className="text-grey">{category.field} - </span>
-                        <span className="text-black font-medium">{category.type}</span>
-                      </span>
-                    </div>
-
-                    {/* Card list with variants and once:true to prevent re-animation */}
-                    <motion.div 
-                      className="flex flex-col gap-4"
-                      initial="hidden"
-                      whileInView="visible"
-                      viewport={{ once: true, margin: "-100px" }}
-                      variants={containerVariants}
+        {/* Two Column Layout - Using 12-column grid system */}
+        <div className="col-span-4 sm:col-span-8 md:col-span-12 lg:col-span-12">
+          <div className="grid grid-cols-4 sm:grid-cols-8 md:grid-cols-12 gap-8">
+            {/* Left Column - Diagnostics (non-oncology) - 6 columns on desktop */}
+            <div className="col-span-4 sm:col-span-8 md:col-span-6 lg:col-span-6 relative">              
+              {/* Scrollable content */}
+              <div className="h-[600px] overflow-y-auto pr-4 scrollbar-none">
+                <div className="flex flex-col gap-8 pb-8">
+                  {diagnosticCategories.map((category) => (
+                    <div
+                      key={`${category.field}-${category.type}`}
+                      className="flex flex-col"
                     >
-                      {category.items.map((item, itemIdx) => (
-                        <motion.div
-                          key={itemIdx}
-                          className={styles.card.data("hover:border-purple hover:scale-[1.02] transition-all duration-300")}
-                          variants={itemVariants}
-                        >
-                          {/* Top part: Name/Brand + Company */}
-                          <div className="flex items-start justify-between mb-2 gap-2">
-                            <div className="flex-1 min-w-0 mr-2 truncate">
-                              <span className="text-purple font-helvetica-now">{item.isotope}</span>
-                              <span className="text-black font-helvetica-now"> {item.name} </span>
-                              {item.url && item.brandName ? (
-                                <a href={item.url} target="_blank" rel="noopener noreferrer" className="text-primary-blue font-helvetica-now hover:underline">
-                                  ({item.brandName})
-                                </a>
-                              ) : item.brandName ? (
-                                <span className="text-primary-blue font-helvetica-now">
-                                  ({item.brandName})
-                                </span>
-                              ) : null}
+                      {/* Category Header */}
+                      <div className="sticky top-0 bg-white z-10 py-4 mb-6" style={{ boxShadow: '0 10px 15px -10px rgba(255, 255, 255, 0.9)' }}>
+                        <span className="text-body font-helvetica-now">
+                          <span className="text-grey">{category.field} - </span>
+                          <span className="text-black font-medium">{category.type}</span>
+                        </span>
+                      </div>
+
+                      {/* Card list with variants and once:true to prevent re-animation */}
+                      <motion.div 
+                        className="flex flex-col gap-4"
+                        initial="hidden"
+                        whileInView="visible"
+                        viewport={{ once: true, margin: "-100px" }}
+                        variants={containerVariants}
+                      >
+                        {category.items.map((item, itemIdx) => (
+                          <motion.div
+                            key={itemIdx}
+                            className={styles.card.data("hover:border-purple hover:scale-[1.02] transition-all duration-300")}
+                            variants={itemVariants}
+                          >
+                            {/* Top part: Name/Brand + Company */}
+                            <div className="flex items-start justify-between mb-2 gap-2">
+                              <div className="flex-1 min-w-0 mr-2 truncate">
+                                <span className="text-purple font-helvetica-now">{item.isotope}</span>
+                                <span className="text-black font-helvetica-now"> {item.name} </span>
+                                {item.url && item.brandName ? (
+                                  <a href={item.url} target="_blank" rel="noopener noreferrer" className="text-primary-blue font-helvetica-now hover:underline">
+                                    ({item.brandName})
+                                  </a>
+                                ) : item.brandName ? (
+                                  <span className="text-primary-blue font-helvetica-now">
+                                    ({item.brandName})
+                                  </span>
+                                ) : null}
+                              </div>
+                              <span className="text-grey font-helvetica-now flex-shrink-0 text-right">{item.company}</span>
                             </div>
-                            <span className="text-grey font-helvetica-now flex-shrink-0 text-right">{item.company}</span>
-                          </div>
-                          {/* Bottom part: Indication */}
-                          <div className={styles.typography.cardBody("text-grey mt-1 truncate")}>
-                            {item.indication}
-                          </div>
-                        </motion.div>
-                      ))}
-                    </motion.div>
-                  </div>
-                ))}
+                            {/* Bottom part: Indication */}
+                            <div className={styles.typography.cardBody("text-grey mt-1 truncate")}>
+                              {item.indication}
+                            </div>
+                          </motion.div>
+                        ))}
+                      </motion.div>
+                    </div>
+                  ))}
+                </div>
               </div>
+              
+              {/* Gradient fade at bottom */}
+              <div className="absolute bottom-0 left-0 right-4 h-24 bg-gradient-to-t from-white to-transparent pointer-events-none"></div>
+              
+              {/* Scroll indicator */}
+              <motion.div 
+                className="absolute bottom-3 left-1/2 transform -translate-x-1/2 z-10 flex flex-col items-center"
+                animate={{ 
+                  opacity: [0.4, 0.8, 0.4],
+                  y: [0, 4, 0]
+                }}
+                transition={{
+                  duration: 2,
+                  repeat: Infinity,
+                  repeatType: "loop"
+                }}
+              >
+                <svg width="20" height="10" viewBox="0 0 20 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M1 1L10 8L19 1" stroke="#86898e" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </motion.div>
             </div>
             
-            {/* Gradient fade at bottom */}
-            <div className="absolute bottom-0 left-0 right-4 h-24 bg-gradient-to-t from-white to-transparent pointer-events-none"></div>
-            
-            {/* Scroll indicator */}
-            <motion.div 
-              className="absolute bottom-3 left-1/2 transform -translate-x-1/2 z-10 flex flex-col items-center"
-              animate={{ 
-                opacity: [0.4, 0.8, 0.4],
-                y: [0, 4, 0]
-              }}
-              transition={{
-                duration: 2,
-                repeat: Infinity,
-                repeatType: "loop"
-              }}
-            >
-              <svg width="20" height="10" viewBox="0 0 20 10" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M1 1L10 8L19 1" stroke="#86898e" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-            </motion.div>
-          </div>
-          
-          {/* Right Column - Oncology (both diagnostic and therapy) */}
-          <div className={styles.grid.span(4, { sm: 4, md: 6 }, "relative")}>              
-            {/* Scrollable content */}
-            <div className="h-[600px] overflow-y-auto pr-4 scrollbar-none">
-              <div className="flex flex-col gap-8 pb-8">
-                {oncologyCategories.map((category) => (
-                  <div
-                    key={`${category.field}-${category.type}`}
-                    className="flex flex-col"
-                  >
-                    {/* Category Header */}
-                    <div className="sticky top-0 bg-white z-10 py-4 mb-6" style={{ boxShadow: '0 10px 15px -10px rgba(255, 255, 255, 0.9)' }}>
-                      <span className="text-body font-helvetica-now">
-                        <span className="text-grey">{category.field} - </span>
-                        <span className="text-black font-medium">{category.type}</span>
-                      </span>
-                    </div>
-
-                    {/* Card list with variants and once:true to prevent re-animation */}
-                    <motion.div 
-                      className="flex flex-col gap-4"
-                      initial="hidden"
-                      whileInView="visible"
-                      viewport={{ once: true, margin: "-100px" }}
-                      variants={containerVariants}
+            {/* Right Column - Oncology (both diagnostic and therapy) - 6 columns on desktop */}
+            <div className="col-span-4 sm:col-span-8 md:col-span-6 lg:col-span-6 relative">              
+              {/* Scrollable content */}
+              <div className="h-[600px] overflow-y-auto pr-4 scrollbar-none">
+                <div className="flex flex-col gap-8 pb-8">
+                  {oncologyCategories.map((category) => (
+                    <div
+                      key={`${category.field}-${category.type}`}
+                      className="flex flex-col"
                     >
-                      {category.items.map((item, itemIdx) => (
-                        <motion.div
-                          key={itemIdx}
-                          className={styles.card.data("hover:border-purple hover:scale-[1.02] transition-all duration-300")}
-                          variants={itemVariants}
-                        >
-                          {/* Top part: Name/Brand + Company */}
-                          <div className="flex items-start justify-between mb-2 gap-2">
-                            <div className="flex-1 min-w-0 mr-2 truncate">
-                              <span className="text-purple font-helvetica-now">{item.isotope}</span>
-                              <span className="text-black font-helvetica-now"> {item.name} </span>
-                              {item.url && item.brandName ? (
-                                <a href={item.url} target="_blank" rel="noopener noreferrer" className="text-primary-blue font-helvetica-now hover:underline">
-                                  ({item.brandName})
-                                </a>
-                              ) : item.brandName ? (
-                                <span className="text-primary-blue font-helvetica-now">
-                                  ({item.brandName})
-                                </span>
-                              ) : null}
+                      {/* Category Header */}
+                      <div className="sticky top-0 bg-white z-10 py-4 mb-6" style={{ boxShadow: '0 10px 15px -10px rgba(255, 255, 255, 0.9)' }}>
+                        <span className="text-body font-helvetica-now">
+                          <span className="text-grey">{category.field} - </span>
+                          <span className="text-black font-medium">{category.type}</span>
+                        </span>
+                      </div>
+
+                      {/* Card list with variants and once:true to prevent re-animation */}
+                      <motion.div 
+                        className="flex flex-col gap-4"
+                        initial="hidden"
+                        whileInView="visible"
+                        viewport={{ once: true, margin: "-100px" }}
+                        variants={containerVariants}
+                      >
+                        {category.items.map((item, itemIdx) => (
+                          <motion.div
+                            key={itemIdx}
+                            className={styles.card.data("hover:border-purple hover:scale-[1.02] transition-all duration-300")}
+                            variants={itemVariants}
+                          >
+                            {/* Top part: Name/Brand + Company */}
+                            <div className="flex items-start justify-between mb-2 gap-2">
+                              <div className="flex-1 min-w-0 mr-2 truncate">
+                                <span className="text-purple font-helvetica-now">{item.isotope}</span>
+                                <span className="text-black font-helvetica-now"> {item.name} </span>
+                                {item.url && item.brandName ? (
+                                  <a href={item.url} target="_blank" rel="noopener noreferrer" className="text-primary-blue font-helvetica-now hover:underline">
+                                    ({item.brandName})
+                                  </a>
+                                ) : item.brandName ? (
+                                  <span className="text-primary-blue font-helvetica-now">
+                                    ({item.brandName})
+                                  </span>
+                                ) : null}
+                              </div>
+                              <span className="text-grey font-helvetica-now flex-shrink-0 text-right">{item.company}</span>
                             </div>
-                            <span className="text-grey font-helvetica-now flex-shrink-0 text-right">{item.company}</span>
-                          </div>
-                          {/* Bottom part: Indication */}
-                          <div className={styles.typography.cardBody("text-grey mt-1 truncate")}>
-                            {item.indication}
-                          </div>
-                        </motion.div>
-                      ))}
-                    </motion.div>
-                  </div>
-                ))}
+                            {/* Bottom part: Indication */}
+                            <div className={styles.typography.cardBody("text-grey mt-1 truncate")}>
+                              {item.indication}
+                            </div>
+                          </motion.div>
+                        ))}
+                      </motion.div>
+                    </div>
+                  ))}
+                </div>
               </div>
+              
+              {/* Gradient fade at bottom */}
+              <div className="absolute bottom-0 left-0 right-4 h-24 bg-gradient-to-t from-white to-transparent pointer-events-none"></div>
+              
+              {/* Scroll indicator */}
+              <motion.div 
+                className="absolute bottom-3 left-1/2 transform -translate-x-1/2 z-10 flex flex-col items-center"
+                animate={{ 
+                  opacity: [0.4, 0.8, 0.4],
+                  y: [0, 4, 0]
+                }}
+                transition={{
+                  duration: 2,
+                  repeat: Infinity,
+                  repeatType: "loop"
+                }}
+              >
+                <svg width="20" height="10" viewBox="0 0 20 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M1 1L10 8L19 1" stroke="#86898e" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </motion.div>
             </div>
-            
-            {/* Gradient fade at bottom */}
-            <div className="absolute bottom-0 left-0 right-4 h-24 bg-gradient-to-t from-white to-transparent pointer-events-none"></div>
-            
-            {/* Scroll indicator */}
-            <motion.div 
-              className="absolute bottom-3 left-1/2 transform -translate-x-1/2 z-10 flex flex-col items-center"
-              animate={{ 
-                opacity: [0.4, 0.8, 0.4],
-                y: [0, 4, 0]
-              }}
-              transition={{
-                duration: 2,
-                repeat: Infinity,
-                repeatType: "loop"
-              }}
-            >
-              <svg width="20" height="10" viewBox="0 0 20 10" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M1 1L10 8L19 1" stroke="#86898e" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-            </motion.div>
           </div>
         </div>
       </div>

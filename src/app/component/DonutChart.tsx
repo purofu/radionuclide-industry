@@ -6,7 +6,7 @@ import React, { useState, useRef, useEffect, useCallback } from "react";
 import * as d3 from "d3";
 import type { PieArcDatum } from "d3-shape";
 import { motion } from "framer-motion";
-import styles from "@/theme/components"; // Import component styles
+
 
 // Interfaces
 interface DataItem {
@@ -91,28 +91,26 @@ const DonutChart = () => {
       if (containerRef.current) {
         const container = containerRef.current;
         
-        // Make chart more responsive to container size
-        const parentWidth = container.offsetWidth;
-        const parentHeight = container.offsetHeight || parentWidth;
+        // Simple, reliable approach to dimensions
+        const containerWidth = container.offsetWidth;
+        // Use 98% of container height to leave minimal space for title and legend
+        const containerHeight = container.offsetHeight * 0.98;
         
-        const effectiveWidth = Math.max(parentWidth, 300);
-        // Add more height to accommodate title and legends
-        const effectiveHeight = Math.max(
-          Math.min(parentWidth, parentHeight),
-          400
-        );
+        // Ensure minimum dimensions, with further increased minimum height
+        const effectiveWidth = Math.max(containerWidth, 300);
+        const effectiveHeight = Math.max(containerHeight, 800); // Further increased height
         
         setDimensions({ width: effectiveWidth, height: effectiveHeight });
       }
     };
     
-    // Initial update and event listener
-    updateDimensions();
+    // Initial update with a longer delay to ensure DOM layout is complete
+    setTimeout(updateDimensions, 300);
     window.addEventListener("resize", updateDimensions);
     
     // Only set animated flag if it hasn't been set before
     if (!hasAnimated) {
-      setTimeout(() => setHasAnimated(true), 100);
+      setTimeout(() => setHasAnimated(true), 300);
     }
     
     return () => window.removeEventListener("resize", updateDimensions);
@@ -125,7 +123,7 @@ const DonutChart = () => {
       return value * scale;
   }, [dimensions.width]);
 
-  // D3 Drawing Effect with improved numbers and labels
+  // D3 Drawing Effect with right alignment
   useEffect(() => {
     if (dimensions.width <= 0 || dimensions.height <= 0 || !svgRef.current) return;
 
@@ -134,23 +132,23 @@ const DonutChart = () => {
 
     const width = dimensions.width;
     const height = dimensions.height;
-    const margin = getScaledValue(40); // Further increased margin for better spacing
-    const effectiveRadius = Math.min(width, height - getScaledValue(100)) / 2 - margin; // Reduced to make room for title and legend
+    const margin = getScaledValue(40);
+    
+    // Use a larger portion of the available height for the chart
+    const effectiveRadius = Math.min(width * 0.8, height * 0.85) / 2;
 
     if (effectiveRadius <= 0) return;
 
+    // Increase the outer radius to better utilize the space
     const outerRadius = effectiveRadius;
     const innerRadius = outerRadius * (100 / 250);
     const middleRadius = outerRadius * (170 / 250);
     const gapSize = Math.max(2, getScaledValue(5));
 
-    if (innerRadius < 0 || middleRadius <= innerRadius + gapSize || outerRadius <= middleRadius + gapSize) {
-       console.warn("Chart radii configuration is invalid due to scaling.");
-       return;
-    }
-
-    const centerX = width / 2;
-    const centerY = height / 2;
+    // Position the chart on the right side instead of center or left
+    // Calculate right side positioning by subtracting from container width
+    const chartCenterX = width - (outerRadius + margin * 2); // Position from right with margin
+    const chartCenterY = height / 2; // Still center vertically
 
     // Arc Generators
     const arcInner = d3
@@ -204,7 +202,7 @@ const DonutChart = () => {
 
     const g = svg
       .append("g")
-      .attr("transform", `translate(${centerX}, ${centerY})`); // Centered without title offset
+      .attr("transform", `translate(${chartCenterX}, ${chartCenterY})`);
 
     // Draw Inner arcs with animation - only animate if hasAnimated is false
     g.selectAll(".arc-inner")
@@ -280,12 +278,12 @@ const DonutChart = () => {
 
     // Labels - Outer Arc Subcategories with Polylines
     // Further improve spacing to prevent bleeding into text
-    const polylineOuterRadius = outerRadius + getScaledValue(45); // Further increased
-    const polylineHorizontalLength = getScaledValue(35); // Further increased
-    const labelPadding = getScaledValue(12); // Increased padding for labels
+    const polylineOuterRadius = outerRadius + getScaledValue(45); 
+    const polylineHorizontalLength = getScaledValue(35);
+    const labelPadding = getScaledValue(12); // Padding for individual labels
     
-    // Calculate visible chart area to constrain label placement
-    const maxLabelDistance = width / 2 - getScaledValue(20);
+    // Calculate visible chart area to constrain label placement - adjust for right alignment
+    const maxLabelDistance = chartCenterX - getScaledValue(20);
 
     // Improved label drawing function with better positioning
     const drawLabels = () => {
@@ -436,13 +434,29 @@ const DonutChart = () => {
         .style("opacity", 1);
     }
 
+    // Update SVG viewBox to account for right alignment
+    // Add extra space to the left for labels
+    const extraLeftSpace = getScaledValue(150); // Extra space for labels on the left side
+    svg.attr("viewBox", `0 0 ${width} ${height}`);
+
   }, [data, totals, colorMap, getSubcategoryColor, dimensions, getScaledValue, hasAnimated]);
 
   return (
-    <div className="w-full h-full flex flex-col">
-      {/* Title as HTML element - RIGHT ALIGNED with gray body text */}
-      <div className="w-full text-right mb-4">
-        <span className="text-body font-helvetica-now text-grey">
+    <div ref={containerRef} className="w-full h-full flex flex-col">
+      {/* Main chart SVG - increased height by reducing reserved space to 40px */}
+      <div className="w-full" style={{ height: "calc(100% - 80px)" }}>
+        <svg
+          ref={svgRef}
+          width="100%"
+          height="100%"
+          preserveAspectRatio="xMaxYMid meet" // Changed to align right instead of left
+          className="overflow-visible"
+        ></svg>
+      </div>
+      
+      {/* Title moved to bottom - RIGHT ALIGNED with black text */}
+      <div className="w-full text-right mt-1 mb-1">
+        <span className="text-body font-helvetica-now text-black">
           Approved therapeutic and diagnostic agents divided by type of diseases
         </span>
         <span 
@@ -453,31 +467,8 @@ const DonutChart = () => {
         </span>
       </div>
       
-      {/* Chart container */}
-      <motion.div
-        ref={containerRef}
-        className="w-full flex-grow relative flex justify-center items-center"
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ 
-          type: "spring", 
-          stiffness: 100, 
-          damping: 15, 
-          duration: 0.8, 
-          delay: 0.2 
-        }}
-      >
-        <svg
-          ref={svgRef}
-          width={dimensions.width}
-          height={dimensions.height}
-          viewBox={`0 0 ${dimensions.width} ${dimensions.height}`}
-          className="block mx-auto overflow-visible"
-        />
-      </motion.div>
-      
-      {/* Legend as HTML elements with small-body text style - RIGHT ALIGNED */}
-      <div className="w-full flex justify-end space-x-12 mt-4 pr-8">
+      {/* Legend - RIGHT ALIGNED with minimal margin */}
+      <div className="w-full flex justify-end space-x-12 mt-0.5 pr-8">
         <div className="flex items-center">
           <div 
             style={{ 

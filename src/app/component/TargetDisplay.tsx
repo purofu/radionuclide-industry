@@ -9,6 +9,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip"; // Assuming this path is correct
+import styles from "@/theme/components"; // Import component styles
 
 // --- Custom Table Components ---
 const Table = ({ children, className = "" }: { children: React.ReactNode, className?: string }) => (
@@ -333,10 +334,12 @@ const TargetDisplay = () => {
       <section className="w-full bg-white py-12 md:py-16">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           {/* Title */}
-          <h2 className="text-3xl md:text-4xl font-bold mb-8 text-center text-black font-helvetica-now">
-            Promising Molecular Targets
-          </h2>
-
+          <div className="mb-8 w-6/12">
+            <h4 className={styles.typography.introTitle("mb-2")}>
+            Tumor targets by volume of studies and clinical stage
+            </h4>
+            <span className={styles.typography.body("text-grey")}>Tumor-targets are emerging as promising clinical approaches that offer noninvasive, real-time diagnosis of tumour lesions and highly effective, safe treatments with strong antitumour efficacy. </span>
+          </div>
           {/* Controls: Tabs & View Toggle */}
           <div className="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             {/* Tabs - Updated styling to match RadioisotopePeriodicDisplay */}
@@ -346,7 +349,7 @@ const TargetDisplay = () => {
                   <button
                     key={tab}
                     onClick={() => setActiveTab(tab)}
-                    className={`px-4 py-2 rounded-md text-body-small font-helvetica-now transition-colors duration-150 ease-in-out ${activeTab === tab ? 'bg-black text-white' : 'bg-gray-200 text-black hover:bg-gray-400 hover:text-white'}`}
+                    className={`px-4 py-2 rounded-md ${styles.typography.bodySmall()} transition-colors duration-150 ease-in-out ${activeTab === tab ? 'bg-black text-white' : 'bg-gray-200 text-black hover:bg-gray-400 hover:text-white'}`}
                   >
                     {tab === 'clinical' ? 'Clinical Trials' : getTabDisplayText()}
                   </button>
@@ -372,12 +375,14 @@ const TargetDisplay = () => {
 
           {/* Loading State */}
           {isLoading && (
-            <div className="text-center p-10 text-gray-500"><p>Loading target data...</p></div>
+            <div className={styles.status.loading()}>
+              <p>Loading target data...</p>
+            </div>
           )}
 
           {/* Error Message */}
           {error && !isLoading && (
-            <div className="mb-6 p-4 bg-red-100 text-red-700 border border-red-300 rounded-md text-center">
+            <div className={styles.status.error()}>
               <p>{error}</p>
             </div>
           )}
@@ -393,27 +398,33 @@ const TargetDisplay = () => {
                  return (
                      <div
                        key={target.name}
-                       className="h-full bg-white rounded outline outline-1 outline-offset-[-1px] outline-gray-200 flex flex-col justify-between group transition-shadow duration-150 ease-in-out overflow-hidden"
+                       className={styles.card.base("h-full justify-between group overflow-hidden")}
                      >
                        {/* Top Section */}
                        <div className="px-6 pt-12 pb-4 text-right">
-                           <span className="text-black text-7xl lg:text-8xl font-medium font-helvetica-now leading-tight align-baseline">{displayValue}</span>
-                           <span className="block text-black text-xs md:text-sm font-medium font-helvetica-now leading-none mt-1">{displayLabel}</span>
+                           <span className={styles.typography.displayValue("align-baseline")}>{displayValue}</span>
+                           <span className={styles.typography.displayLabel("block mt-1")}>{displayLabel}</span>
                        </div>
-                       {/* Middle Section Spacer */}
-                        <div className="flex-grow px-6 min-h-[50px]"></div>
+                       {/* Middle Section with Placeholder Image */}
+                       <div className="flex-grow px-6 flex justify-center items-center">
+                         <img 
+                           src="/protein.png" 
+                           alt={`${target.name} structure visualization`} 
+                           className="w-full h-auto object-cover my-4"
+                         />
+                       </div>
                        {/* Bottom Section */}
                        <div className="px-6 pb-6 flex flex-col justify-start items-start gap-3">
-                         <h3 className="self-stretch text-black text-4xl md:text-5xl font-medium font-helvetica-now leading-tight">
+                         <h3 className={styles.typography.cardTitle("self-stretch")}>
                            {target.name}
                          </h3>
                          <div className="self-stretch flex flex-col justify-start items-start gap-1">
                            {target.fullName && (
-                             <span className="text-black text-lg font-bold font-helvetica-now leading-tight">
+                             <span className={styles.typography.cardSubtitle()}>
                                {target.fullName}
                              </span>
                            )}
-                           <p className="text-black text-sm font-medium font-helvetica-now leading-snug line-clamp-4">
+                           <p className={styles.typography.cardBody("line-clamp-4")}>
                              {target.description || "No description available."}
                            </p>
                          </div>
@@ -422,8 +433,8 @@ const TargetDisplay = () => {
                            {/* Disease Badge */}
                            <Tooltip>
                              <TooltipTrigger asChild>
-                               <div className="px-3 py-1 bg-light-diagnostic rounded-full flex justify-center items-center gap-1.5 cursor-help">
-                                 <span className="text-black text-xs sm:text-sm font-medium font-helvetica-now leading-none">
+                               <div className={styles.badge.base(styles.badge.disease())}>
+                                 <span className={styles.typography.bodySmall("font-body")}>
                                    {target.diseaseCount} Disease Types
                                  </span>
                                </div>
@@ -453,8 +464,8 @@ const TargetDisplay = () => {
                            {/* Company Badge */}
                            <Tooltip>
                                <TooltipTrigger asChild>
-                                 <div className="px-3 py-1 bg-light-grey rounded-full flex justify-center items-center gap-1.5 cursor-help">
-                                   <span className="text-black text-xs sm:text-sm font-medium font-helvetica-now leading-none">
+                                 <div className={styles.badge.base(styles.badge.company())}>
+                                   <span className={styles.typography.bodySmall("font-medium")}>
                                      {target.companiesCount} Companies
                                    </span>
                                  </div>
@@ -516,10 +527,10 @@ const TargetDisplay = () => {
                               </TooltipTrigger>
                               <TooltipContent className="bg-white text-black p-0 rounded-md max-w-xs z-50 border border-light-grey shadow-none overflow-hidden" side="top" align="center">
                                 <div className="px-3 py-2">
-                                  <h4 className="font-semibold">{target.name}</h4>
-                                  {target.fullName && <p className="text-sm mt-1">{target.fullName}</p>}
+                                  <h4 className={styles.typography.cardSubtitle()}>{target.name}</h4>
+                                  {target.fullName && <p className={styles.typography.bodySmall("mt-1")}>{target.fullName}</p>}
                                   {target.description && !target.description.startsWith('Placeholder description') && (
-                                    <p className="text-xs mt-2 max-h-20 overflow-y-auto">{target.description}</p>
+                                    <p className={styles.typography.bodySmall("mt-2 max-h-20 overflow-y-auto text-xs")}>{target.description}</p>
                                   )}
                                 </div>
                               </TooltipContent>
@@ -594,7 +605,7 @@ const TargetDisplay = () => {
 
           {/* No Data Message */}
           {!isLoading && targetsToDisplay.length === 0 && (
-             <div className="text-center p-10 text-gray-500">
+             <div className={styles.status.empty()}>
                <p>
                  {error
                    ? "Sample data is currently unavailable due to a loading error."
@@ -608,8 +619,10 @@ const TargetDisplay = () => {
           <div className="mt-12 md:mt-16 border-t border-gray-200 pt-8">
             <div className="max-w-3xl mx-auto text-center">
                {/* Use dynamic text based on active tab */}
-              <h4 className="text-lg font-semibold mb-2 text-black font-helvetica-now">{getTabDisplayText()} by Target</h4>
-              <p className="text-sm text-gray-600">
+              <h4 className={styles.typography.cardSubtitle("mb-2")}>
+                {getTabDisplayText()} by Target
+              </h4>
+              <p className={styles.typography.cardBody("text-gray-600")}>
                  {/* Updated placeholder text to reflect different views */}
                 [Placeholder: Displaying {viewMode === 'grid' ? 'top 12' : 'all'} targets sorted by {activeTab === 'clinical' ? 'clinical trials' : getTabDisplayText().toLowerCase()}.
                 {viewMode === 'grid' ? ' Hover over badges for disease/company lists.' : ' Scroll to see all targets and hover over cells for details.'}
