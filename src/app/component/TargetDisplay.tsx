@@ -24,10 +24,10 @@ const TableRow = ({ children, className = "" }: { children: React.ReactNode, cla
   <tr className={`border-b hover:bg-gray-50 ${className}`}>{children}</tr>
 );
 const TableHead = ({ children, className = "" }: { children: React.ReactNode, className?: string }) => (
-  <th className={`p-3 text-xs font-medium text-gray-500 uppercase tracking-wider text-left ${className}`}>{children}</th>
+  <th className={`p-3 text-xs font-medium text-gray-500 uppercase tracking-wider text-left border-r last:border-r-0 ${className}`}>{children}</th>
 );
 const TableCell = ({ children, className = "" }: { children: React.ReactNode, className?: string }) => (
-  <td className={`p-3 text-sm text-gray-700 ${className}`}>{children}</td>
+  <td className={`p-3 text-sm text-gray-700 border-r last:border-r-0 ${className}`}>{children}</td>
 );
 
 // --- Custom Toggle Components ---
@@ -59,7 +59,7 @@ const ToggleGroup = ({
   };
 
   return (
-    <div className={`inline-flex rounded-md shadow-sm ${className}`}>
+    <div className={`inline-flex rounded-md ${className}`}>
       {React.Children.map(children, (child) => {
         if (React.isValidElement(child)) {
           // Correctly type the child element
@@ -262,16 +262,40 @@ const TargetDisplay = () => {
             };
         });
 
-    // Sorting logic remains the same, using the processed TargetSummary fields
-    return processedTargets.sort((a, b) => {
-        switch (activeTab) {
-            case "clinical": return b.clinicalTrials - a.clinicalTrials;
-            case "phase1": return b.phase1 - a.phase1;
-            case "phase2": return b.phase2 - a.phase2;
-            case "phase3": return b.phase3 - a.phase3;
-            default: return b.clinicalTrials - a.clinicalTrials;
-        }
+    // First sort all targets by the active tab criteria
+    const allSortedTargets = processedTargets.sort((a, b) => {
+      switch (activeTab) {
+        case "clinical": return b.clinicalTrials - a.clinicalTrials;
+        case "phase1": return b.phase1 - a.phase1;
+        case "phase2": return b.phase2 - a.phase2;
+        case "phase3": return b.phase3 - a.phase3;
+        default: return b.clinicalTrials - a.clinicalTrials;
+      }
     });
+    
+    return allSortedTargets;
+  };
+
+  // Function to get targets for grid view (top 12 by clinical trials)
+  const getGridTargets = (): TargetSummary[] => {
+    const allTargets = getSortedTargets();
+    
+    // For grid, always get top 12 by clinical trials first
+    const top12ByClinical = [...allTargets].sort((a, b) => b.clinicalTrials - a.clinicalTrials).slice(0, 12);
+    
+    // Then sort those 12 according to active tab
+    if (activeTab !== "clinical") {
+      return top12ByClinical.sort((a, b) => {
+        switch (activeTab) {
+          case "phase1": return b.phase1 - a.phase1;
+          case "phase2": return b.phase2 - a.phase2;
+          case "phase3": return b.phase3 - a.phase3;
+          default: return 0;
+        }
+      });
+    }
+    
+    return top12ByClinical;
   };
 
   // --- Helper Functions (No changes needed here) ---
@@ -288,9 +312,9 @@ const TargetDisplay = () => {
   const getTabDisplayText = (): string => {
     switch (activeTab) {
       case "clinical": return "Clinical Trials";
-      case "phase1": return "Phase 1 Trials";
-      case "phase2": return "Phase 2 Trials";
-      case "phase3": return "Phase 3 Trials";
+      case "phase1": return "Phase 1";
+      case "phase2": return "Phase 2";
+      case "phase3": return "Phase 3";
       default: return "Clinical Trials";
     }
   };
@@ -303,7 +327,7 @@ const TargetDisplay = () => {
   // Get data ready for display
   const targetsToDisplay = getSortedTargets();
 
-  // --- Render Component (Minor label update for clarity) ---
+  // --- Render Component ---
   return (
     <TooltipProvider delayDuration={100}>
       <section className="w-full bg-white py-12 md:py-16">
@@ -315,24 +339,21 @@ const TargetDisplay = () => {
 
           {/* Controls: Tabs & View Toggle */}
           <div className="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            {/* Tabs */}
+            {/* Tabs - Updated styling to match RadioisotopePeriodicDisplay */}
             <div className="flex flex-wrap justify-center sm:justify-start gap-2">
               {(["clinical", "phase1", "phase2", "phase3"] as TabType[]).map(
                 (tab) => (
-                  <Button
+                  <button
                     key={tab}
-                    variant={activeTab === tab ? "default" : "outline"}
-                    size="sm"
                     onClick={() => setActiveTab(tab)}
-                    className={`${activeTab === tab ? 'bg-black text-white hover:bg-gray-800' : 'text-black border-gray-300 hover:bg-gray-100'}`}
+                    className={`px-4 py-2 rounded-md text-body-small font-helvetica-now transition-colors duration-150 ease-in-out ${activeTab === tab ? 'bg-black text-white' : 'bg-gray-200 text-black hover:bg-gray-400 hover:text-white'}`}
                   >
-                    {/* Display "Total" instead of "Clinical" for the first tab if preferred */}
-                    {tab === 'clinical' ? 'Total Trials' : getTabDisplayText()}
-                  </Button>
+                    {tab === 'clinical' ? 'Clinical Trials' : getTabDisplayText()}
+                  </button>
                 ),
               )}
             </div>
-            {/* View Mode Toggle */}
+            {/* View Mode Toggle - Remove shadow-sm */}
             <ToggleGroup
               value={viewMode}
               onValueChange={(value: string) => {
@@ -362,17 +383,17 @@ const TargetDisplay = () => {
           )}
 
           {/* ---- GRID VIEW ---- */}
-          {!isLoading && viewMode === "grid" && targetsToDisplay.length > 0 && (
+          {!isLoading && viewMode === "grid" && getGridTargets().length > 0 && (
              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-               {targetsToDisplay.map((target) => {
+               {getGridTargets().map((target) => {
                  const displayValue = getDisplayValue(target);
-                 // Updated label logic slightly for clarity
-                 const displayLabel = `${activeTab === 'clinical' ? 'total ' : ''}${getTabDisplayText().replace(' Trials', '').toLowerCase()} trials`;
+                 // Updated label logic for consistency
+                 const displayLabel = `${getTabDisplayText().toLowerCase()} trials`;
 
                  return (
                      <div
                        key={target.name}
-                       className="h-full bg-white rounded outline outline-1 outline-offset-[-1px] outline-gray-200 flex flex-col justify-between group transition-shadow duration-150 ease-in-out hover:shadow-lg overflow-hidden"
+                       className="h-full bg-white rounded outline outline-1 outline-offset-[-1px] outline-gray-200 flex flex-col justify-between group transition-shadow duration-150 ease-in-out overflow-hidden"
                      >
                        {/* Top Section */}
                        <div className="px-6 pt-12 pb-4 text-right">
@@ -407,24 +428,58 @@ const TargetDisplay = () => {
                                  </span>
                                </div>
                              </TooltipTrigger>
-                             <TooltipContent className="max-w-xs w-auto p-3 bg-black text-white rounded-md shadow-lg" side="bottom" align="center">
-                                {/* ListTooltipContent remains the same */}
-                               <ListTooltipContent items={target.diseases} label="Diseases" />
+                             <TooltipContent className="bg-white text-black p-0 rounded-md max-w-xs z-50 border border-light-grey shadow-none overflow-hidden" side="bottom" align="center">
+                               {/* Updated tooltip format - Similar to RadioisotopePeriodicDisplay */}
+                               <div className="w-full">
+                                 <ul className="max-h-40 overflow-y-auto w-full">
+                                   {target.diseases.length > 0 ? (
+                                     target.diseases.map((disease, i) => (
+                                       <li key={i} className="w-full">
+                                         <div className="px-3 py-2 text-body-small">{disease}</div>
+                                         {i < target.diseases.length - 1 && (
+                                           <div className="w-full border-b border-light-grey"></div>
+                                         )}
+                                       </li>
+                                     ))
+                                   ) : (
+                                     <li>
+                                       <div className="px-3 py-2 text-body-small text-grey">No specific diseases listed</div>
+                                     </li>
+                                   )}
+                                 </ul>
+                               </div>
                              </TooltipContent>
                            </Tooltip>
                            {/* Company Badge */}
                            <Tooltip>
-                              <TooltipTrigger asChild>
-                                <div className="px-3 py-1 bg-light-grey rounded-full flex justify-center items-center gap-1.5 cursor-help">
-                                  <span className="text-black text-xs sm:text-sm font-medium font-helvetica-now leading-none">
-                                    {target.companiesCount} Companies
-                                  </span>
-                                </div>
-                              </TooltipTrigger>
-                              <TooltipContent className="max-w-xs w-auto p-3 bg-black text-white rounded-md shadow-lg" side="bottom" align="center">
-                                {/* ListTooltipContent remains the same */}
-                                <ListTooltipContent items={target.companies} label="Companies" />
-                              </TooltipContent>
+                               <TooltipTrigger asChild>
+                                 <div className="px-3 py-1 bg-light-grey rounded-full flex justify-center items-center gap-1.5 cursor-help">
+                                   <span className="text-black text-xs sm:text-sm font-medium font-helvetica-now leading-none">
+                                     {target.companiesCount} Companies
+                                   </span>
+                                 </div>
+                               </TooltipTrigger>
+                               <TooltipContent className="bg-white text-black p-0 rounded-md max-w-xs z-50 border border-light-grey shadow-none overflow-hidden" side="bottom" align="center">
+                                 {/* Updated tooltip format - Similar to RadioisotopePeriodicDisplay */}
+                                 <div className="w-full">
+                                   <ul className="max-h-40 overflow-y-auto w-full">
+                                     {target.companies.length > 0 ? (
+                                       target.companies.map((company, i) => (
+                                         <li key={i} className="w-full">
+                                           <div className="px-3 py-2 text-body-small">{company}</div>
+                                           {i < target.companies.length - 1 && (
+                                             <div className="w-full border-b border-light-grey"></div>
+                                           )}
+                                         </li>
+                                       ))
+                                     ) : (
+                                       <li>
+                                         <div className="px-3 py-2 text-body-small text-grey">No specific companies listed</div>
+                                       </li>
+                                     )}
+                                   </ul>
+                                 </div>
+                               </TooltipContent>
                            </Tooltip>
                          </div>
                        </div>
@@ -436,46 +491,104 @@ const TargetDisplay = () => {
 
           {/* ---- TABLE VIEW ---- */}
           {!isLoading && viewMode === "table" && targetsToDisplay.length > 0 && (
-            <div className="mb-6 border border-gray-200 rounded-lg overflow-hidden shadow-sm">
-              <Table>
-                <TableHeader className="bg-gray-50">
-                  <TableRow>
-                    <TableHead className="text-left pl-4">Target</TableHead>
-                    {/* Changed Header for clarity */}
-                    <TableHead className="text-center">Total Trials</TableHead>
-                    <TableHead className="text-center">Phase 1</TableHead>
-                    <TableHead className="text-center">Phase 2</TableHead>
-                    <TableHead className="text-center">Phase 3</TableHead>
-                    <TableHead className="text-center">Diseases (Count)</TableHead>
-                    <TableHead className="text-center pr-4">Companies (Count)</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody className="bg-white divide-y divide-gray-200">
-                  {targetsToDisplay.map((target) => {
-                      // Tooltip data preparation and display logic remain the same
-                      const tooltipData = prepareTargetTooltipData(target);
+            <div className="mb-6 border border-gray-200 rounded-lg overflow-hidden">
+              <div className="max-h-[600px] overflow-y-auto">
+                <Table>
+                  <TableHeader className="bg-gray-50 sticky top-0 z-10">
+                    <TableRow>
+                      <TableHead className="text-left pl-4">Target</TableHead>
+                      <TableHead className="text-center">Clinical Trials</TableHead>
+                      <TableHead className="text-center">Phase 1</TableHead>
+                      <TableHead className="text-center">Phase 2</TableHead>
+                      <TableHead className="text-center">Phase 3</TableHead>
+                      <TableHead className="text-center">Diseases</TableHead>
+                      <TableHead className="text-center pr-4">Companies</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody className="bg-white divide-y divide-gray-200">
+                    {targetsToDisplay.map((target) => {
                       return (
-                        <Tooltip key={target.name}>
-                            <TooltipTrigger asChild>
-                                <TableRow className="cursor-help">
-                                  <TableCell className="font-medium text-left pl-4">{target.name}</TableCell>
-                                  <TableCell className="text-center">{target.clinicalTrials}</TableCell>
-                                  <TableCell className="text-center">{target.phase1}</TableCell>
-                                  <TableCell className="text-center">{target.phase2}</TableCell>
-                                  <TableCell className="text-center">{target.phase3}</TableCell>
-                                  <TableCell className="text-center">{target.diseaseCount}</TableCell>
-                                  <TableCell className="text-center pr-4">{target.companiesCount}</TableCell>
-                                </TableRow>
-                            </TooltipTrigger>
-                            <TooltipContent className="max-w-xs w-auto p-3 text-xs bg-black text-white rounded-md shadow-lg" side="top" align="center">
-                                {/* Use the original full tooltip content component */}
-                                <TargetTooltipContent data={tooltipData} />
-                            </TooltipContent>
-                        </Tooltip>
+                        <TableRow key={target.name} className="hover:bg-gray-50">
+                          <TableCell className="font-medium text-left pl-4">
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <span className="cursor-help">{target.name}</span>
+                              </TooltipTrigger>
+                              <TooltipContent className="bg-white text-black p-0 rounded-md max-w-xs z-50 border border-light-grey shadow-none overflow-hidden" side="top" align="center">
+                                <div className="px-3 py-2">
+                                  <h4 className="font-semibold">{target.name}</h4>
+                                  {target.fullName && <p className="text-sm mt-1">{target.fullName}</p>}
+                                  {target.description && !target.description.startsWith('Placeholder description') && (
+                                    <p className="text-xs mt-2 max-h-20 overflow-y-auto">{target.description}</p>
+                                  )}
+                                </div>
+                              </TooltipContent>
+                            </Tooltip>
+                          </TableCell>
+                          <TableCell className="text-center">{target.clinicalTrials}</TableCell>
+                          <TableCell className="text-center">{target.phase1}</TableCell>
+                          <TableCell className="text-center">{target.phase2}</TableCell>
+                          <TableCell className="text-center">{target.phase3}</TableCell>
+                          <TableCell className="text-center">
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <span className="cursor-help">{target.diseaseCount}</span>
+                              </TooltipTrigger>
+                              <TooltipContent className="bg-white text-black p-0 rounded-md max-w-xs z-50 border border-light-grey shadow-none overflow-hidden" side="top" align="center">
+                                <div className="w-full">
+                                  <ul className="max-h-40 overflow-y-auto w-full">
+                                    {target.diseases.length > 0 ? (
+                                      target.diseases.map((disease, i) => (
+                                        <li key={i} className="w-full">
+                                          <div className="px-3 py-2 text-body-small">{disease}</div>
+                                          {i < target.diseases.length - 1 && (
+                                            <div className="w-full border-b border-light-grey"></div>
+                                          )}
+                                        </li>
+                                      ))
+                                    ) : (
+                                      <li>
+                                        <div className="px-3 py-2 text-body-small text-grey">No specific diseases listed</div>
+                                      </li>
+                                    )}
+                                  </ul>
+                                </div>
+                              </TooltipContent>
+                            </Tooltip>
+                          </TableCell>
+                          <TableCell className="text-center pr-4">
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <span className="cursor-help">{target.companiesCount}</span>
+                              </TooltipTrigger>
+                              <TooltipContent className="bg-white text-black p-0 rounded-md max-w-xs z-50 border border-light-grey shadow-none overflow-hidden" side="top" align="center">
+                                <div className="w-full">
+                                  <ul className="max-h-40 overflow-y-auto w-full">
+                                    {target.companies.length > 0 ? (
+                                      target.companies.map((company, i) => (
+                                        <li key={i} className="w-full">
+                                          <div className="px-3 py-2 text-body-small">{company}</div>
+                                          {i < target.companies.length - 1 && (
+                                            <div className="w-full border-b border-light-grey"></div>
+                                          )}
+                                        </li>
+                                      ))
+                                    ) : (
+                                      <li>
+                                        <div className="px-3 py-2 text-body-small text-grey">No specific companies listed</div>
+                                      </li>
+                                    )}
+                                  </ul>
+                                </div>
+                              </TooltipContent>
+                            </Tooltip>
+                          </TableCell>
+                        </TableRow>
                       );
                     })}
-                </TableBody>
-              </Table>
+                  </TableBody>
+                </Table>
+              </div>
             </div>
           )}
 
@@ -495,11 +608,11 @@ const TargetDisplay = () => {
           <div className="mt-12 md:mt-16 border-t border-gray-200 pt-8">
             <div className="max-w-3xl mx-auto text-center">
                {/* Use dynamic text based on active tab */}
-              <h4 className="text-lg font-semibold mb-2 text-black font-helvetica-now">{activeTab === 'clinical' ? 'Total Trials' : getTabDisplayText()} by Target</h4>
+              <h4 className="text-lg font-semibold mb-2 text-black font-helvetica-now">{getTabDisplayText()} by Target</h4>
               <p className="text-sm text-gray-600">
-                 {/* Updated placeholder text */}
-                [Placeholder: Displaying targets sorted by {activeTab === 'clinical' ? 'total trials' : getTabDisplayText().toLowerCase()}.
-                {viewMode === 'grid' ? ' Hover over badges for disease/company lists.' : ' Hover over table rows for details.'}
+                 {/* Updated placeholder text to reflect different views */}
+                [Placeholder: Displaying {viewMode === 'grid' ? 'top 12' : 'all'} targets sorted by {activeTab === 'clinical' ? 'clinical trials' : getTabDisplayText().toLowerCase()}.
+                {viewMode === 'grid' ? ' Hover over badges for disease/company lists.' : ' Scroll to see all targets and hover over cells for details.'}
                  {apiData && !error && !isLoading && " Data loaded successfully."}
                  {error && !isLoading && " Displaying available sample data due to a loading error."} ]
               </p>
@@ -511,66 +624,5 @@ const TargetDisplay = () => {
     </TooltipProvider>
   );
 };
-
-// --- Helper Component for Original Tooltip Content (Table View) ---
-// No changes needed in TargetTooltipContent
-const TargetTooltipContent = ({ data }: { data: TargetTooltipData | null }) => {
-    if (!data) return null;
-
-    const renderList = (items: string[] | undefined, label: string, limit: number = 5) => {
-        if (!items || items.length === 0) {
-            return <p className="mt-1 pt-1 border-t border-gray-600 text-xs opacity-70">No specific {label.toLowerCase()} listed.</p>;
-        }
-        return (
-            <div className="mt-1 pt-1 border-t border-gray-600">
-                <p className="font-semibold mb-0.5">{label} ({items.length}):</p>
-                <ul className="list-disc list-inside pl-1 max-h-24 overflow-y-auto text-left text-xs">
-                    {items.slice(0, limit).map((item, i) => <li key={`${label}-${i}`}>{item}</li>)}
-                    {items.length > limit && <li className="opacity-70">...and {items.length - limit} more</li>}
-                </ul>
-            </div>
-        );
-    };
-
-    return (
-        <div className="space-y-2 text-xs">
-            <h4 className="font-semibold text-sm">{data.name}</h4>
-            {data.fullName && <p className="italic opacity-90 text-xs -mt-1 mb-1">{data.fullName}</p> }
-            <div className="space-y-1">
-                {/* Changed label for consistency */}
-                <p><span className="font-medium">Total Trials:</span> {data.clinicalTrials}</p>
-                <p><span className="font-medium">Phase Breakdown:</span> P1: {data.phase1}, P2: {data.phase2}, P3: {data.phase3}</p>
-            </div>
-            {data.description && !data.description.startsWith('Placeholder description') && ( // Avoid showing generic placeholder in tooltip
-                <div className="mt-1 pt-1 border-t border-gray-600">
-                    <p className="font-semibold mb-0.5">Description:</p>
-                    <p className="text-xs max-h-20 overflow-y-auto">{data.description}</p>
-                </div>
-            )}
-            {/* Uses diseases/companies derived from 'total' in getSortedTargets */}
-            {renderList(data.diseases, "Diseases")}
-            {renderList(data.companies, "Companies")}
-        </div>
-    );
-}
-
-// --- Helper Component for Badge Tooltip Content (Grid View) ---
-// No changes needed in ListTooltipContent
-const ListTooltipContent = ({ items, label, limit = 10 }: { items: string[], label: string, limit?: number }) => {
-  if (!items || items.length === 0) {
-    return <p className="text-xs opacity-70">No {label.toLowerCase()} listed.</p>;
-  }
-
-  return (
-    <div className="space-y-1">
-      <p className="font-semibold text-sm mb-0.5">{label} ({items.length}):</p>
-      <ul className="list-disc list-inside pl-1 max-h-40 overflow-y-auto text-left text-xs">
-        {items.slice(0, limit).map((item, i) => <li key={`${label}-${i}`}>{item}</li>)}
-        {items.length > limit && <li className="opacity-70">...and {items.length - limit} more</li>}
-      </ul>
-    </div>
-  );
-};
-
 
 export default TargetDisplay;

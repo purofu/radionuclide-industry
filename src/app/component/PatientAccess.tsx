@@ -1,17 +1,22 @@
 // components/PatientAccess.tsx
 "use client";
 
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 
 import RadiotherapyChart from './RadiotherapyChart';
-import GlobalAccessMapDisplay from './GlobalAccessMapDisplay';
-
-
 
 const PatientAccess: React.FC = () => {
+  const [activeTab, setActiveTab] = useState<number>(0);
+
+  // Define the tab options
+  const tabs = [
+    'Global distribution of eligible patients',
+    'Current reach of radiopharmaceuticals'
+  ];
+
   return (
-    <section className="relative w-full bg-white py-16 md:py-24">
+    <section className="relative w-full bg-white py-16 md:py-24 z-10">
       {/* Main grid container */}
       <div className="grid grid-cols-4 sm:grid-cols-8 md:grid-cols-12 lg:grid-cols-12">
         {/* Content container */}
@@ -44,12 +49,9 @@ const PatientAccess: React.FC = () => {
           </motion.div>
 
           {/* Two-column layout */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 items-start"> {/* Use items-start */}
-
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 items-start"> 
             {/* --- Column 1: Chart --- */}
             <motion.div
-              // REMOVED: border border-light-grey rounded-md bg-white
-              // Keep padding for spacing, adjust min-height if needed or let content define height
               className="flex flex-col justify-start p-6 min-h-[380px]"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -57,7 +59,7 @@ const PatientAccess: React.FC = () => {
               transition={{ duration: 0.6, delay: 0.5 }}
             >
               {/* Updated title to H5 and new text */}
-               <h5 className="text-h5 font-helvetica-now text-black mb-4"> {/* Assuming text-h5 class exists or use text-lg font-medium etc. */}
+               <h5 className="text-h5 font-helvetica-now text-black mb-4">
                   Distribution of high-energy external beam radiotherapy machines across country income groups
                </h5>
               <div className="flex-grow">
@@ -65,7 +67,6 @@ const PatientAccess: React.FC = () => {
               </div>
             </motion.div>
             {/* --- End Column 1 --- */}
-
 
             {/* --- Column 2: Original Text --- */}
             <motion.div
@@ -82,10 +83,62 @@ const PatientAccess: React.FC = () => {
             {/* --- End Column 2 --- */}
           </div>
 
+          {/* World Map Section with Tabs */}
+          <motion.div
+            className="mt-16 md:mt-24 mb-12"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, delay: 0.3 }}
+          >
+            <h4 className="text-h4 font-helvetica-now text-black mb-3">
+              The Treatment Gap: Eligible mCRPC patients vs actual radiopharmaceutical availability
+            </h4>
+            <p className="text-body font-helvetica-now text-grey mb-8">
+              Current radiopharmaceutical utilization reaches only a fraction of eligible patients worldwide
+            </p>
+
+            {/* Tab Navigation */}
+            <div className="flex flex-wrap gap-2 mb-4">
+              {tabs.map((tabLabel, index) => (
+                <button
+                  key={index}
+                  onClick={() => setActiveTab(index)}
+                  className={`px-4 py-2 rounded-md text-body-small font-helvetica-now transition-colors duration-150 ease-in-out ${
+                    activeTab === index 
+                      ? 'bg-black text-white' 
+                      : 'bg-gray-200 text-black hover:bg-gray-400 hover:text-white'
+                  }`}
+                  aria-pressed={activeTab === index}
+                >
+                  {tabLabel}
+                </button>
+              ))}
+            </div>
+
+            {/* SVG Maps - using standard img tags for reliability */}
+            <div className="w-full relative">
+              {/* Map 1 */}
+              {activeTab === 0 && (
+                <img 
+                  src="/world1.svg" 
+                  alt="Global distribution of eligible patients"
+                  className="w-full h-auto" 
+                />
+              )}
+              
+              {/* Map 2 */}
+              {activeTab === 1 && (
+                <img 
+                  src="/world2.svg" 
+                  alt="Current reach of radiopharmaceuticals"
+                  className="w-full h-auto" 
+                />
+              )}
+            </div>
+          </motion.div>
         </div>
       </div>
-      {/* Keep original CompanyTreemapDisplay */}
-      <GlobalAccessMapDisplay />
     </section>
   );
 };

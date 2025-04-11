@@ -5,6 +5,7 @@ import LigandsAndTargets from "./component/LigandsAndTargets";
 import IsotopesOverview from "./component/IsotopesOverview";
 import Companies from "./component/Companies";
 import PatientAccess from "./component/PatientAccess";
+import { Perspective } from "../components/ui";
 
 export default function Home() {
   return (
@@ -15,7 +16,7 @@ export default function Home() {
       <LigandsAndTargets />
       <Companies />
       <PatientAccess />
-
+      <Perspective />
     </div>
   );
 }

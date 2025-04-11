@@ -2,55 +2,50 @@
 "use client";
 
 import React, { useState, useEffect, useRef, useMemo } from "react";
-import { Button } from "@/components/ui/button";
 import {
     Tooltip,
     TooltipContent,
     TooltipProvider,
     TooltipTrigger,
-} from "@/components/ui/tooltip";
+} from "@/components/ui/tooltip"; // Assuming path is correct
 import * as d3 from 'd3-hierarchy';
 
 // --- Define Prop Types for Toggle Components ---
 interface ToggleGroupProps {
     children: React.ReactNode;
-    value?: string; // The currently active value
-    onValueChange?: (value: string) => void; // Callback when value changes
-    className?: string; // Optional additional classes for the group container
+    value?: string;
+    onValueChange?: (value: string) => void;
+    className?: string;
 }
 
 interface ToggleGroupItemProps {
     children: React.ReactNode;
-    value: string; // The value associated with this item
-    className?: string; // Optional additional classes for the item button
+    value: string;
+    className?: string;
     "aria-label"?: string;
-    isActive?: boolean; // Injected by ToggleGroup
-    onClick?: () => void;  // Injected by ToggleGroup
+    isActive?: boolean;
+    onClick?: () => void;
 }
 
-
-// --- Custom Toggle Components (Corrected) ---
+// --- Custom Toggle Components (Styled like TargetDisplay) ---
 const ToggleGroup = ({
     children,
     value,
     onValueChange,
-    className = "", // Destructure props correctly, provide default for className
+    className = "",
 }: ToggleGroupProps) => {
     const handleChildClick = (childValue: string) => {
-        if (onValueChange && childValue !== value) { // Only call if value changes
+        if (onValueChange && childValue !== value) {
             onValueChange(childValue);
         }
     };
-
     return (
-        // Use the destructured 'className' prop here
-        <div className={`inline-flex rounded-md shadow-sm ${className}`}>
+        <div className={`inline-flex rounded-md ${className}`}>
             {React.Children.map(children, (child) => {
                 if (React.isValidElement<ToggleGroupItemProps>(child)) {
-                    // Ensure the child has a 'value' prop before cloning
                     const childValue = child.props?.value;
                     if (typeof childValue === 'string') {
-                        return React.cloneElement(child, { // Pass type argument to cloneElement
+                        return React.cloneElement(child, {
                             isActive: childValue === value,
                             onClick: () => handleChildClick(childValue),
                         });
@@ -64,21 +59,20 @@ const ToggleGroup = ({
 
 const ToggleGroupItem = ({
     children,
-    // 'value' prop is needed internally by ToggleGroup but not directly used here for rendering logic
-    // value, // Can be omitted from destructuring if only needed via props in ToggleGroup
     className = "",
     "aria-label": ariaLabel,
-    isActive, // Injected by ToggleGroup
-    onClick,  // Injected by ToggleGroup
-}: ToggleGroupItemProps) => { // Use the defined props type
+    isActive,
+    onClick,
+}: ToggleGroupItemProps) => {
     return (
         <button
             type="button"
-            className={`relative inline-flex items-center px-3 py-1.5 text-caption font-medium border border-border focus:z-10 focus:outline-none focus:ring-1 focus:ring-ring ${isActive ? 'bg-primary text-primary-foreground z-10 ring-1 ring-ring' : 'bg-background text-foreground hover:bg-muted'} first:rounded-l-md last:rounded-r-md disabled:opacity-50 disabled:pointer-events-none ${className}`} // Adjusted styling
+            // Style matches tab buttons
+            className={`px-4 py-2 rounded-md text-sm font-medium font-helvetica-now transition-colors duration-150 ease-in-out ${isActive ? 'bg-black text-white' : 'bg-gray-200 text-black hover:bg-gray-400 hover:text-white'} ${className}`}
             aria-label={ariaLabel}
             aria-pressed={isActive}
             onClick={onClick}
-            disabled={isActive} // Optionally disable the active button
+            disabled={isActive} // Keep active button disabled
         >
             {children}
         </button>
@@ -86,71 +80,103 @@ const ToggleGroupItem = ({
 };
 
 
-// --- Custom Table Components (Keep As Is) ---
-const Table = ({ children, className = "" }: { children: React.ReactNode, className?: string }) => ( <table className={`w-full border-collapse ${className}`}>{children}</table> );
-const TableHeader = ({ children, className = "" }: { children: React.ReactNode, className?: string }) => ( <thead className={className}>{children}</thead> );
-const TableBody = ({ children, className = "" }: { children: React.ReactNode, className?: string }) => ( <tbody className={className}>{children}</tbody> );
-const TableRow = ({ children, className = "" }: { children: React.ReactNode, className?: string }) => ( <tr className={`border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted ${className}`}>{children}</tr> );
-const TableHead = ({ children, className = "" }: { children: React.ReactNode, className?: string }) => ( <th className={`h-10 px-3 text-left align-middle text-caption font-medium text-muted-foreground uppercase tracking-wider ${className}`}>{children}</th> );
-const TableCell = ({ children, className = "" }: { children: React.ReactNode, className?: string }) => ( <td className={`p-3 align-middle text-caption text-foreground ${className}`}>{children}</td> );
+// --- Custom Table Components (Restored & Styled) ---
+const Table = React.forwardRef<HTMLTableElement, React.HTMLAttributes<HTMLTableElement>>(
+    ({ className, ...props }, ref) => (
+        <table ref={ref} className={`w-full border-collapse caption-bottom text-sm ${className}`} {...props} />
+    )
+);
+Table.displayName = "Table";
 
+const TableHeader = React.forwardRef<HTMLTableSectionElement, React.HTMLAttributes<HTMLTableSectionElement>>(
+    ({ className, ...props }, ref) => (
+        <thead ref={ref} className={`bg-gray-50 [&_tr]:border-b border-gray-200 ${className}`} {...props} />
+    )
+);
+TableHeader.displayName = "TableHeader";
 
-// --- Interfaces (UPDATED for new JSON structure) ---
-interface StudyCounts {
-    all: number;
-    diagnostic: number;
-    therapy: number;
-}
-interface NctDetails {
-    count: number;
-    list: string[];
-}
-interface DiseaseDetail {
-    count: number;
-    list: string[];
-}
-interface CompanyPhaseData_New { // Represents data for a specific phase or total
-    study_counts: StudyCounts;
-    nct_ids: NctDetails;
-    diseases: DiseaseDetail;
-}
-// Represents the structure for a single company in the API response
-interface CompanySpecificData_New {
-    phase_1?: CompanyPhaseData_New; // Optional fields
-    phase_2?: CompanyPhaseData_New;
-    phase_3?: CompanyPhaseData_New;
-    phase_other?: CompanyPhaseData_New; // Keep if potentially present
-    total: CompanyPhaseData_New; // Assume 'total' is always present for listed companies
-}
-// Main API Data structure - Allows other top-level keys
-interface ApiData {
+const TableBody = React.forwardRef<HTMLTableSectionElement, React.HTMLAttributes<HTMLTableSectionElement>>(
+    ({ className, ...props }, ref) => (
+        <tbody ref={ref} className={`divide-y divide-gray-200 bg-white ${className}`} {...props} />
+    )
+);
+TableBody.displayName = "TableBody";
 
-    company?: { [key: string]: CompanySpecificData_New }; // Optional top-level key
-    metadata?: { total_trials_processed?: number; }; // Optional top-level key
-    // Allow any other keys that might be present at the top level
+const TableRow = React.forwardRef<HTMLTableRowElement, React.HTMLAttributes<HTMLTableRowElement>>(
+    ({ className, ...props }, ref) => (
+        <tr ref={ref} className={`hover:bg-gray-50 ${className}`} {...props} />
+    )
+);
+TableRow.displayName = "TableRow";
 
-}
+const TableHead = React.forwardRef<HTMLTableCellElement, React.ThHTMLAttributes<HTMLTableCellElement>>(
+    ({ className, ...props }, ref) => (
+        <th ref={ref} className={`px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider ${className}`} {...props} />
+    )
+);
+TableHead.displayName = "TableHead";
 
-// Represents the *processed* data structure used for rendering (Treemap nodes, Table rows)
+const TableCell = React.forwardRef<HTMLTableCellElement, React.TdHTMLAttributes<HTMLTableCellElement>>(
+    ({ className, ...props }, ref) => (
+        <td ref={ref} className={`px-6 py-4 whitespace-nowrap text-sm text-gray-900 ${className}`} {...props} />
+    )
+);
+TableCell.displayName = "TableCell";
+
+// --- Interfaces (Expanded for phase data) ---
+interface StudyCounts { all: number; diagnostic: number; therapy: number; }
+interface NctDetails { count: number; list: string[]; }
+interface DiseaseDetail { count: number; list: string[]; }
+interface CompanyPhaseData_New { study_counts: StudyCounts; nct_ids: NctDetails; diseases: DiseaseDetail; }
+interface CompanySpecificData_New { phase_1?: CompanyPhaseData_New; phase_2?: CompanyPhaseData_New; phase_3?: CompanyPhaseData_New; phase_other?: CompanyPhaseData_New; total: CompanyPhaseData_New; }
+interface ApiData { company?: { [key: string]: CompanySpecificData_New }; metadata?: { total_trials_processed?: number; }; }
+// Data node used for processing and rendering with phase-specific numbers
 interface CompanyTreemapNodeData {
-    name: string;           // Company name
-    value: number;          // Value used for treemap size (usually total trials for the selected phase/tab)
-    allTrials: number;      // Total trials for the selected phase/tab
-    diagnosticTrials: number;// Diagnostic trials for the selected phase/tab
-    therapyTrials: number;    // Therapy trials for the selected phase/tab
-    diseaseCount: number;   // Unique disease count for the selected phase/tab
-    diseases: string[];       // List of unique diseases for the selected phase/tab
+    name: string;
+    value: number; // Value for active tab (sorting/sizing)
+    allTrials: number; // Total trials
+    phase1Trials: number; // Phase 1 trials
+    phase2Trials: number; // Phase 2 trials 
+    phase3Trials: number; // Phase 3 trials
+    diagnosticTrials: number; // Total Dx trials
+    therapyTrials: number; // Total Tx trials
+    diseaseCount: number; // Total disease count
+    diseases: string[]; // Total disease list
 }
-interface TreemapHierarchyNode extends d3.HierarchyRectangularNode<CompanyTreemapNodeData> {
-    data: CompanyTreemapNodeData;
-}
+interface TreemapHierarchyNode extends d3.HierarchyRectangularNode<CompanyTreemapNodeData> { data: CompanyTreemapNodeData; }
 type TabType = "clinical" | "phase1" | "phase2" | "phase3";
 type ViewModeType = "treemap" | "table";
 
+// --- Color Constants & Styling Helpers ---
+// Using CSS variables with fallbacks for broader compatibility
+const COLOR_LIGHT_THERAPY = 'var(--color-light-therapy, #ebeef4)';
+const COLOR_LIGHT_DIAGNOSTIC = 'var(--color-light-diagnostic, #d8cece)';
+const COLOR_BLACK = 'var(--color-black, #000000)';
+const COLOR_PURPLE = 'var(--color-purple, #8A2BE2)';
+const COLOR_PRIMARY_BLUE = 'var(--color-primary-blue, #007bff)';
+const COLOR_BADGE_TEXT = 'var(--color-light-therapy, #ffffff)';
+const TEXT_COLOR_ON_GRADIENT = 'var(--color-black, #000000)';
 
-// --- Color Constants (Removed unused badge colors) ---
-const COLOR_THERAPY = '#ebeef4'; // Example: Light Grayish Blue
-const COLOR_DIAGNOSTIC = '#d8cece'; // Example: Light Grayish Pink
+// Helper function to generate background style for treemap tiles
+const getTileBackgroundStyle = (diag: number, therapy: number, total: number): React.CSSProperties => {
+    if (total <= 0 || (diag <= 0 && therapy <= 0)) {
+        return { background: `linear-gradient(to right, ${COLOR_LIGHT_THERAPY} 50%, ${COLOR_LIGHT_DIAGNOSTIC} 50%)` };
+    }
+    const therapyPercent = Math.min((therapy / total) * 100, 100);
+    // Gradient: Therapy color first, then Diagnostic fills the rest
+    return { background: `linear-gradient(to right, ${COLOR_LIGHT_THERAPY} ${therapyPercent}%, ${COLOR_LIGHT_DIAGNOSTIC} ${therapyPercent}%)`};
+};
+
+// Get the correct value for the active tab
+const getValueForActiveTab = (data: CompanyTreemapNodeData, activeTab: TabType): number => {
+    switch (activeTab) {
+        case "phase1": return data.phase1Trials || 0;
+        case "phase2": return data.phase2Trials || 0;
+        case "phase3": return data.phase3Trials || 0;
+        case "clinical": 
+        default: return data.allTrials;
+    }
+};
 
 // --- Main Component ---
 const CompanyTreemapDisplay = () => {
@@ -162,7 +188,7 @@ const CompanyTreemapDisplay = () => {
     const treemapContainerRef = useRef<HTMLDivElement>(null);
     const [dimensions, setDimensions] = useState<{ width: number; height: number }>({ width: 0, height: 0 });
 
-    // --- Resize Observer (Logic remains the same, structure checked) ---
+    // --- Resize Observer (Keep as before) ---
     useEffect(() => {
         const container = treemapContainerRef.current;
         if (!container || viewMode !== 'treemap' || isLoading) return;
@@ -183,9 +209,7 @@ const CompanyTreemapDisplay = () => {
         const initialHeight = container.clientHeight;
         if (initialWidth > 0 && initialHeight > 0 && (dimensions.width !== initialWidth || dimensions.height !== initialHeight)) {
              if (animationFrameId) cancelAnimationFrame(animationFrameId);
-             animationFrameId = requestAnimationFrame(() => {
-                  setDimensions({ width: initialWidth, height: initialHeight });
-             });
+             animationFrameId = requestAnimationFrame(() => { setDimensions({ width: initialWidth, height: initialHeight }); });
         }
         return () => {
             if (animationFrameId) cancelAnimationFrame(animationFrameId);
@@ -193,371 +217,383 @@ const CompanyTreemapDisplay = () => {
         };
     }, [isLoading, viewMode, dimensions.width, dimensions.height]);
 
-
-    // --- Data Fetching (Logic remains the same, structure checked) ---
+    // --- Data Fetching (Enhanced error handling) ---
     useEffect(() => {
         const fetchData = async () => {
-            setIsLoading(true);
+            setIsLoading(true); 
             setError(null);
+            
+            // Add timeout for fetch operation
+            const timeoutPromise = new Promise<never>((_, reject) => 
+                setTimeout(() => reject(new Error("Request timed out after 15 seconds")), 15000)
+            );
+            
             const apiUrl = "https://r-eco-52zl8.ondigitalocean.app/visualising";
-            // console.log(`Workspaceing data from: ${apiUrl}`); // Keep console logs minimal if not debugging
-
             try {
-                const response = await fetch(apiUrl);
-                // console.log("API Response Status:", response.status);
-
-                if (!response.ok) {
-                    let errorBody = `HTTP error! status: ${response.status}`;
-                    try {
-                        const bodyText = await response.text();
-                        errorBody += ` - ${bodyText.substring(0, 200)}`;
-                    } catch { /* Ignore error during error text retrieval */ }
-                    throw new Error(errorBody);
-                }
-
+                // Race between fetch and timeout
+                const response = await Promise.race([
+                    fetch(apiUrl),
+                    timeoutPromise
+                ]) as Response;
+                
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
                 const rawData = await response.json();
-                // console.log("API Data Received (raw):", rawData);
-
-                // **Data Validation (remains the same)**
-                if (!rawData || typeof rawData !== 'object' || Array.isArray(rawData)) {
-                    console.error("Fetched data is not a valid JSON object:", rawData);
-                    throw new Error("Invalid data structure received from API. Expected a JSON object.");
-                }
-                if (!rawData.company) {
-                    console.warn("API response received, but it does not contain a 'company' key. Visualizations requiring company data may be empty.", rawData);
+                
+                // More detailed validation
+                if (!rawData) throw new Error("Empty response received");
+                if (typeof rawData !== 'object') throw new Error(`Invalid data type: ${typeof rawData}`);
+                if (Array.isArray(rawData)) throw new Error("Received array instead of object");
+                
+                // Check for company data
+                if (!rawData.company || Object.keys(rawData.company).length === 0) {
+                    console.warn("API response missing or empty 'company' key:", rawData);
+                    setError("Data structure is incomplete. No company information found.");
+                } else {
+                    console.log("Data loaded successfully:", 
+                        `Companies: ${Object.keys(rawData.company).length}`, 
+                        `Total trials: ${rawData.metadata?.total_trials_processed || 'unknown'}`);
                 }
                 setApiData(rawData as ApiData);
-
             } catch (err) {
-                console.error("Failed to fetch or process company data:", err);
-                setError(err instanceof Error ? err.message : "An unknown error occurred during data fetching or processing.");
-            } finally {
-                setIsLoading(false);
+                console.error("Failed to fetch/process data:", err);
+                setError(err instanceof Error ? `Error: ${err.message}` : "Unknown error occurred while loading data.");
+            } finally { 
+                setIsLoading(false); 
             }
         };
         fetchData();
-    }, []); // Fetch only on component mount
+    }, []);
 
-
-    // --- Data Processing (Logic remains the same, structure checked, unused '_' removed) ---
+    // --- Data Processing (Updated to extract phase data) ---
     const getProcessedCompanies = (): CompanyTreemapNodeData[] => {
-        if (!apiData || !apiData.company) {
-            // console.log("getProcessedCompanies: No apiData or apiData.company found.");
-            return [];
-        }
-        const phaseKeyMap: Record<TabType, keyof CompanySpecificData_New> = {
-            clinical: "total", // Assuming "clinical trials" in example was typo for "total" or based on old data
-            phase1: "phase_1",
-            phase2: "phase_2",
-            phase3: "phase_3",
-        };
+        if (!apiData || !apiData.company) return [];
+        const phaseKeyMap: Record<TabType, keyof CompanySpecificData_New> = { clinical: "total", phase1: "phase_1", phase2: "phase_2", phase3: "phase_3" };
         const currentPhaseKey = phaseKeyMap[activeTab];
+
         const processedNodes: CompanyTreemapNodeData[] = Object.entries(apiData.company)
-             // Removed unused key variable '_' from filter destructuring
-            .filter(([, companyData]) => companyData && typeof companyData === 'object')
+            .filter(([, companyData]) => companyData?.total?.study_counts && companyData?.total?.diseases) // Ensure total data exists
             .map(([name, companyData]): CompanyTreemapNodeData | null => {
                 const phaseData = companyData[currentPhaseKey];
-                if (!phaseData || !phaseData.study_counts || !phaseData.diseases) {
-                    return null;
-                }
-                const value = phaseData.study_counts.all ?? 0;
-                // Filter out companies with zero trials *here* before sorting
-                if (value <= 0) {
-                    return null;
-                }
+                const totalData = companyData.total;
+
+                // If specific phase data is needed for filtering and doesn't exist, skip
+                if (!phaseData?.study_counts) return null;
+
+                const valueForSort = phaseData.study_counts.all ?? 0;
+                // Filter out based on the active tab's value *before* creating node
+                if (valueForSort <= 0 && activeTab !== 'clinical') return null; // Allow clinical even if 0 if we want to show all companies? No, filter needed.
+                if (valueForSort <= 0) return null;
+
                 return {
                     name: name,
-                    value: value,
-                    allTrials: value,
-                    diagnosticTrials: phaseData.study_counts.diagnostic ?? 0,
-                    therapyTrials: phaseData.study_counts.therapy ?? 0,
-                    diseaseCount: phaseData.diseases.count ?? 0,
-                    diseases: phaseData.diseases.list ?? [],
+                    value: valueForSort, // Use active tab's value for sorting/sizing
+                    // Extract all phase data 
+                    allTrials: totalData.study_counts.all ?? 0,
+                    phase1Trials: companyData.phase_1?.study_counts.all ?? 0,
+                    phase2Trials: companyData.phase_2?.study_counts.all ?? 0,
+                    phase3Trials: companyData.phase_3?.study_counts.all ?? 0,
+                    diagnosticTrials: totalData.study_counts.diagnostic ?? 0,
+                    therapyTrials: totalData.study_counts.therapy ?? 0,
+                    diseaseCount: totalData.diseases.count ?? 0,
+                    diseases: totalData.diseases.list ?? [],
                 };
             })
-            .filter((data): data is CompanyTreemapNodeData => data !== null); // Filter out nulls
-        processedNodes.sort((a, b) => b.value - a.value);
+            .filter((data): data is CompanyTreemapNodeData => data !== null);
+
+        processedNodes.sort((a, b) => b.value - a.value); // Sort by active tab's value
         return processedNodes;
     };
-    const processedData = useMemo(getProcessedCompanies, [apiData, activeTab]);
-    const top15Companies = useMemo(() => processedData.slice(0, 15), [processedData]);
+    const processedData = useMemo(getProcessedCompanies, [apiData, activeTab]); // All data for table view
+    const top15Companies = useMemo(() => processedData.slice(0, 15), [processedData]); // Top 15 for treemap view
 
-    // --- Calculate Treemap Layout (Corrected D3 logic preserved) ---
+    // --- Calculate Treemap Layout (Added Padding) ---
     const treemapLayout = useMemo(() => {
-        if (!top15Companies || top15Companies.length === 0 || dimensions.width <= 0 || dimensions.height <= 0) {
-            return null;
-        }
+        if (!top15Companies || top15Companies.length === 0 || dimensions.width <= 0 || dimensions.height <= 0) return null;
         type RootNodeData = { name: string; children: CompanyTreemapNodeData[] };
         const root = d3.hierarchy<RootNodeData | CompanyTreemapNodeData>({ name: "root", children: top15Companies })
-            .sum(d => (d as CompanyTreemapNodeData).value ?? 0)
+            .sum(d => Math.max((d as CompanyTreemapNodeData).value, 1)) // Use value, ensure minimum size for visibility
             .sort((a, b) => (b.value ?? 0) - (a.value ?? 0));
         const treemapGenerator = d3.treemap<CompanyTreemapNodeData>()
             .size([dimensions.width, dimensions.height])
-            .paddingOuter(5)
-            .paddingInner(2)
+            .paddingOuter(8) // Increased padding around the treemap
+            .paddingTop(8)
+            .paddingRight(8)
+            .paddingBottom(8)
+            .paddingLeft(8)
+            .paddingInner(8) // Increased space between tiles
             .round(true);
         return treemapGenerator(root as d3.HierarchyNode<CompanyTreemapNodeData>);
-    }, [top15Companies, dimensions.width, dimensions.height]);
+    }, [top15Companies, dimensions.width, dimensions.height]); // Recalculate when data or dimensions change
 
-    // --- Helper to get Tab Display Text (Logic remains same, checked) ---
+    // --- Helper to get Tab Display Text (Keep as before) ---
     const getTabDisplayText = (tab: TabType): string => {
-        switch (tab) {
-            case "clinical": return "All Trials"; // Matches example "All Trials"
-            case "phase1": return "Phase 1";
-            case "phase2": return "Phase 2";
-            case "phase3": return "Phase 3";
-            default: return "Unknown";
-        }
+        switch (tab) { case "clinical": return "All Trials"; case "phase1": return "Phase 1"; case "phase2": return "Phase 2"; case "phase3": return "Phase 3"; default: return "Unknown"; }
     };
 
-    // --- Helper for calculating text color (Logic remains same, checked, unused 'e' removed) ---
-    const getTextColor = (backgroundColor: string): string => {
-        try {
-            const color = backgroundColor.substring(1);
-            const rgb = parseInt(color, 16);
-            const r = (rgb >> 16) & 0xff;
-            const g = (rgb >> 8) & 0xff;
-            const b = (rgb >> 0) & 0xff;
-            const luma = 0.2126 * r + 0.7152 * g + 0.0722 * b;
-            return luma < 140 ? 'white' : 'black';
-        } catch { // Removed unused 'e' variable
-            return 'black';
-        }
-    };
-
-    // --- Render Component (Applying styling from example, fixed unescaped entities) ---
+    // --- Render Component ---
     return (
         <TooltipProvider delayDuration={100}>
-            {/* Restore section classes */}
             <section className="w-full bg-background py-12 md:py-16">
-                {/* Restore container classes */}
                 <div className="container mx-auto px-4 sm:px-6 lg:px-8 flex flex-col">
-                    {/* Restore title classes */}
+                    {/* Header */}
                     <h2 className="text-3xl md:text-4xl font-bold mb-8 text-center text-foreground font-helvetica-now">
-                        Top 15 Companies by Trial Activity
+                        Company Trial Activity
                     </h2>
 
-                    {/* Restore controls layout classes */}
+                    {/* Controls */}
                     <div className="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                        {/* Restore tabs container classes */}
+                        {/* Tabs */}
                         <div className="flex flex-wrap justify-center sm:justify-start gap-2">
                             {(["clinical", "phase1", "phase2", "phase3"] as TabType[]).map(
                                 (tab) => (
-                                    // Use Shadcn Button as in example
-                                    <Button
+                                    <button
                                         key={tab}
-                                        variant={activeTab === tab ? "default" : "outline"}
-                                        size="sm"
                                         onClick={() => setActiveTab(tab)}
+                                        className={`px-4 py-2 rounded-md text-sm font-medium font-helvetica-now transition-colors duration-150 ease-in-out ${activeTab === tab ? 'bg-black text-white' : 'bg-gray-200 text-black hover:bg-gray-400 hover:text-white'}`}
                                         disabled={isLoading}
                                     >
                                         {getTabDisplayText(tab)}
-                                    </Button>
+                                    </button>
                                 ),
                             )}
                         </div>
-                        {/* Restore ToggleGroup usage and classes */}
+                        {/* View Toggle */}
                         <ToggleGroup
                             value={viewMode}
                             onValueChange={(value: string) => { if (value) setViewMode(value as ViewModeType); }}
-                            className="justify-center sm:justify-end" // Class from example
+                            className="justify-center sm:justify-end"
                         >
                             <ToggleGroupItem value="treemap" aria-label="Treemap View">
-                                {/* Use SVG from example or keep existing one */}
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                                  <path d="M1.5 0A1.5 1.5 0 0 0 0 1.5v13A1.5 1.5 0 0 0 1.5 16h13a1.5 1.5 0 0 0 1.5-1.5v-13A1.5 1.5 0 0 0 14.5 0h-13zM1 1.5a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 .5.5v3a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-3zm4 0a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 .5.5v5a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-5zm4 0a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 .5.5v3a.5.5 0 0 1-.5.5h-5a.5.5 0 0 1-.5-.5v-3zM1 5.5a.5.5 0 0 1 .5-.5h6a.5.5 0 0 1 .5.5v5a.5.5 0 0 1-.5.5h-6a.5.5 0 0 1-.5-.5v-5zm10 2a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-6zM8 7.5a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 .5.5v3a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-3zM1 11.5a.5.5 0 0 1 .5-.5h6a.5.5 0 0 1 .5.5v3a.5.5 0 0 1-.5.5h-6a.5.5 0 0 1-.5-.5v-3z"/>
-                                </svg>
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" > <rect x="3" y="3" width="7" height="7" rx="1" fill="currentColor" /> <rect x="14" y="3" width="7" height="7" rx="1" fill="currentColor" /> <rect x="3" y="14" width="7" height="7" rx="1" fill="currentColor" /> <rect x="14" y="14" width="7" height="7" rx="1" fill="currentColor" /> </svg>
                             </ToggleGroupItem>
                             <ToggleGroupItem value="table" aria-label="Table View">
-                                {/* Use SVG from example or keep existing one */}
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                                    <path d="M0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2zm15 2h-4v3h4V4zm0 4h-4v3h4V8zm0 4h-4v3h3a1 1 0 0 0 1-1v-2zm-5 3v-3H6v3h4zm-5 0v-3H1v2a1 1 0 0 0 1 1h3zm-4-4h4V8H1v3zm0-4h4V4H1v3zm5-3v3h4V4H6zm4 4H6v3h4V8z"/>
-                                </svg>
+                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" > <path d="M3 5H21V7H3V5Z" fill="currentColor" /> <path d="M3 11H21V13H3V11Z" fill="currentColor" /> <path d="M3 17H21V19H3V17Z" fill="currentColor" /> </svg>
                             </ToggleGroupItem>
                         </ToggleGroup>
                     </div>
 
-                    {/* Restore Loading State styling */}
-                    {isLoading && (
-                        <div className="flex-grow w-full min-h-[600px] flex items-center justify-center text-center p-10 text-muted-foreground">
-                            <p>Loading company data...</p>
-                        </div>
-                    )}
+                    {/* Loading / Error States */}
+                    {isLoading && <div className="flex-grow min-h-[400px] flex items-center justify-center text-muted-foreground"><p>Loading company data...</p></div>}
+                    {error && !isLoading && <div role="alert" className="my-6 p-4 bg-destructive/10 text-destructive border border-destructive/30 rounded-md text-center"><p className="font-semibold">Error Loading Data</p><p className="text-sm">{error}</p></div>}
 
-                    {/* Restore Error Message styling */}
-                     {error && !isLoading && (
-                         <div role="alert" className="my-6 p-4 bg-destructive/10 text-destructive border border-destructive/30 rounded-md text-center">
-                             <p className="font-semibold">Error Loading Data</p> {/* Match text */}
-                             <p className="text-sm">{error}</p> {/* Add text-sm */}
-                         </div>
-                     )}
-
-
-                    {/* Content Area: Treemap or Table */}
-                    {/* Restore outer content div classes */}
-                    {!isLoading && !error && apiData && (
+                    {/* Content Area */}
+                    {!isLoading && !error && apiData?.company && ( // Ensure company data exists before rendering views
                         <div className="flex-grow w-full min-h-[600px]">
-                            {/* ---- TREEMAP VIEW ---- */}
+
+                            {/* ---- TREEMAP VIEW (Rendering Cards as Tiles) ---- */}
                             {viewMode === 'treemap' && (
-                                // Restore treemap container classes
                                 <div
                                     ref={treemapContainerRef}
-                                    className="relative w-full h-[600px] md:h-[700px] overflow-hidden mb-6 border border-border rounded-md" // Added border/rounded
+                                    className="relative w-full h-[700px] overflow-hidden mb-6 bg-muted/20" // Consistent height
                                     aria-label={`Treemap of top 15 companies by ${getTabDisplayText(activeTab)} trials`}
                                 >
-                                    {/* Restore treemap rendering logic and classes */}
                                     {treemapLayout && treemapLayout.leaves().length > 0 ? (
                                         treemapLayout.leaves().map((leaf: TreemapHierarchyNode) => {
                                             const leafData = leaf.data;
                                             const tileWidth = leaf.x1 - leaf.x0;
                                             const tileHeight = leaf.y1 - leaf.y0;
-                                            const tileBgColor = leafData.diagnosticTrials > leafData.therapyTrials ? COLOR_DIAGNOSTIC : COLOR_THERAPY;
-                                            const textColor = getTextColor(tileBgColor);
-                                            const showDetails = tileWidth > 80 && tileHeight > 40;
+                                            // Use TOTAL counts for background and display
+                                            const backgroundStyle = getTileBackgroundStyle(leafData.diagnosticTrials, leafData.therapyTrials, leafData.allTrials);
+                                            const textColor = TEXT_COLOR_ON_GRADIENT;
+                                            const badgeTextColor = COLOR_BADGE_TEXT;
+
+                                            // --- More refined Adaptive Rendering Conditions ---
+                                            const isVerySmallTile = tileWidth < 90 || tileHeight < 70;
+                                            const isSmallTile = tileWidth < 120 || tileHeight < 90;
+                                            const showBadges = !isVerySmallTile; // Hide badges on very small tiles
+                                            const showCompanyName = true; // Always show, but smaller on small tiles 
+                                            const showLargeNumber = true; // Always show, but adjust size
+
+                                            // Adjust font size based on tile area and dimensions
+                                            const area = tileWidth * tileHeight;
+                                            let numberFontSize = area < 5000 ? '1rem' : area < 10000 ? '1.5rem' : area < 25000 ? '2.5rem' : '3.5rem';
+                                            if (numberFontSize === '3.5rem' && tileHeight < 100) numberFontSize = '2.5rem';
+                                            
+                                            // Company name size adjustment
+                                            const companyNameSize = isSmallTile ? 
+                                                (isVerySmallTile ? 'text-xs' : 'text-sm') : 
+                                                'text-[21px]';
 
                                             return (
-                                                <Tooltip key={leafData.name}>
+                                                // Tooltip wraps the positioned div
+                                                <Tooltip key={leafData.name} delayDuration={150}>
                                                     <TooltipTrigger asChild>
-                                                        {/* Restore tile div classes */}
+                                                        {/* The Tile Div: Positioned by D3 */}
                                                         <div
-                                                            className="absolute overflow-hidden border border-background/50 flex flex-col justify-start items-start p-1.5 md:p-2 text-xs transition-all duration-200 ease-in-out hover:ring-2 hover:ring-ring hover:z-10"
+                                                            className="absolute overflow-hidden rounded-lg cursor-pointer outline outline-1 outline-offset-[-0.98px] outline-white"
                                                             style={{
                                                                 left: `${leaf.x0}px`,
                                                                 top: `${leaf.y0}px`,
                                                                 width: `${tileWidth}px`,
                                                                 height: `${tileHeight}px`,
-                                                                backgroundColor: tileBgColor,
+                                                                ...backgroundStyle,
                                                                 color: textColor,
                                                             }}
                                                         >
-                                                            <span className="font-bold text-xs md:text-sm line-clamp-1">{leafData.name}</span>
-                                                            {showDetails && (
-                                                                <>
-                                                                    <span className="text-[10px] md:text-xs opacity-90 mt-0.5">Trials: {leafData.allTrials}</span>
-                                                                     {leafData.diagnosticTrials > 0 && <span className="text-[10px] opacity-80">Dx: {leafData.diagnosticTrials}</span>}
-                                                                     {leafData.therapyTrials > 0 && <span className="text-[10px] opacity-80">Tx: {leafData.therapyTrials}</span>}
-                                                                </>
-                                                            )}
-                                                            {!showDetails && tileWidth > 10 && tileHeight > 10 && (
-                                                                <span className="text-[10px] font-medium mt-0.5 opacity-90">{leafData.allTrials}</span>
-                                                            )}
+                                                            {/* Inner structure for card content */}
+                                                            <div className={`w-full h-full ${isVerySmallTile ? 'p-2' : isSmallTile ? 'p-3' : 'p-6'} flex flex-col justify-between items-start`}>
+                                                                {/* Top Section */}
+                                                                <div className="w-full flex justify-between items-start gap-1">
+                                                                    {/* Large Number - SHOW ACTIVE TAB VALUE */}
+                                                                    {showLargeNumber ? (
+                                                                        <div className="font-medium font-['Helvetica_Now_Display']" 
+                                                                             style={{ fontSize: numberFontSize, lineHeight: 1.1 }}>
+                                                                            {getValueForActiveTab(leafData, activeTab)}
+                                                                        </div>
+                                                                    ) : <div />}
+
+                                                                    {/* Badges - Hide on very small tiles */}
+                                                                    {showBadges && (
+                                                                        <div className="flex justify-start items-center gap-2 shrink-0">
+                                                                            {/* Disease Badge */}
+                                                                            {leafData.diseaseCount > 0 && (
+                                                                                <div className="px-3 py-0.5 rounded-[90px] flex justify-center items-center gap-2.5" 
+                                                                                     style={{ backgroundColor: COLOR_BLACK }}>
+                                                                                    <div className={`text-center ${isSmallTile ? 'text-sm' : 'text-lg'} font-bold font-['Helvetica_Now_Display'] leading-tight`}
+                                                                                         style={{ color: COLOR_BADGE_TEXT }}>
+                                                                                        {leafData.diseaseCount}
+                                                                                    </div>
+                                                                                </div>
+                                                                            )}
+                                                                            {/* Diagnostic Badge */}
+                                                                            {leafData.diagnosticTrials > 0 && (
+                                                                                <div className="px-3 py-0.5 rounded-[90px] flex justify-center items-center gap-2.5" 
+                                                                                     style={{ backgroundColor: COLOR_PURPLE }}>
+                                                                                    <div className={`text-center ${isSmallTile ? 'text-sm' : 'text-lg'} font-bold font-['Helvetica_Now_Display'] leading-tight`}
+                                                                                         style={{ color: COLOR_BADGE_TEXT }}>
+                                                                                        {leafData.diagnosticTrials}
+                                                                                    </div>
+                                                                                </div>
+                                                                            )}
+                                                                            {/* Therapy Badge */}
+                                                                            {leafData.therapyTrials > 0 && (
+                                                                                <div className="px-3 py-0.5 rounded-[90px] flex justify-center items-center gap-2.5" 
+                                                                                     style={{ backgroundColor: COLOR_PRIMARY_BLUE }}>
+                                                                                    <div className={`text-center ${isSmallTile ? 'text-sm' : 'text-lg'} font-bold font-['Helvetica_Now_Display'] leading-tight`}
+                                                                                         style={{ color: COLOR_BADGE_TEXT }}>
+                                                                                        {leafData.therapyTrials}
+                                                                                    </div>
+                                                                                </div>
+                                                                            )}
+                                                                        </div>
+                                                                    )}
+                                                                </div>
+
+                                                                {/* Bottom Section: Company Name - Adaptive Size */}
+                                                                {showCompanyName && (
+                                                                    <div className="self-stretch inline-flex justify-between items-center mt-auto">
+                                                                        <div className={`flex-1 justify-start text-Black ${companyNameSize} font-medium font-['Helvetica_Now_Display'] leading-tight line-clamp-2`}>
+                                                                            {leafData.name}
+                                                                        </div>
+                                                                    </div>
+                                                                )}
+                                                            </div>
                                                         </div>
                                                     </TooltipTrigger>
-                                                    {/* Restore TooltipContent classes */}
-                                                    <TooltipContent side="top" align="center" className="bg-background/95 text-foreground border-border shadow-lg rounded-md p-3 max-w-xs">
-                                                        <CompanyTooltipContent data={leafData} activeTab={activeTab} />
+                                                    <TooltipContent
+                                                        side="top"
+                                                        align="center"
+                                                        className="bg-background text-foreground border border-border rounded-md shadow-lg p-3 max-w-xs"
+                                                    >
+                                                        <CompanyTooltipContent data={leafData} activeTab={activeTab} getTabDisplayText={getTabDisplayText} />
                                                     </TooltipContent>
                                                 </Tooltip>
                                             );
                                         })
                                     ) : (
-                                        // Restore "no data" message styling for treemap
                                         <div className="absolute inset-0 flex items-center justify-center text-muted-foreground p-4 text-center">
-                                             {/* Fixed unescaped entities */}
-                                             <p>{dimensions.width <= 0 || dimensions.height <= 0 ? "Treemap container has no dimensions." : `No company data available for the &apos;${getTabDisplayText(activeTab)}&apos; category to display the treemap.`}</p>
+                                            <p>{dimensions.width <= 0 || dimensions.height <= 0 ? "Adjusting treemap layout..." : `No company data available for the '${getTabDisplayText(activeTab)}' category.`}</p>
                                         </div>
                                     )}
                                 </div>
                             )}
 
-                            {/* ---- TABLE VIEW ---- */}
+                            {/* ---- TABLE VIEW (Matched with TargetDisplay) ---- */}
                             {viewMode === 'table' && (
-                                // Restore table container classes
-                                <div className="mb-6 border border-border rounded-lg overflow-x-auto shadow-sm bg-card">
-                                    {/* Restore table rendering logic and classes */}
-                                    {top15Companies.length > 0 ? (
-                                        <Table>
-                                            {/* Restore TableHeader classes */}
-                                            <TableHeader className="bg-muted/50">
-                                                {/* Restore TableRow classes */}
-                                                <TableRow className="border-b-0">
-                                                    {/* Restore TableHead classes */}
-                                                    <TableHead className="w-[40%] min-w-[200px]">Company</TableHead>
-                                                    <TableHead className="text-right">Total Trials ({getTabDisplayText(activeTab)})</TableHead>
-                                                    <TableHead className="text-right">Diagnostic Trials</TableHead>
-                                                    <TableHead className="text-right">Therapy Trials</TableHead>
-                                                    <TableHead className="text-right">Disease Count</TableHead>
-                                                </TableRow>
-                                            </TableHeader>
-                                            {/* Restore TableBody classes */}
-                                            <TableBody className="divide-y divide-border">
-                                                {top15Companies.map((company) => (
-                                                    <Tooltip key={company.name}>
-                                                        <TooltipTrigger asChild>
-                                                            {/* Restore TableRow */}
-                                                            <TableRow>
-                                                                {/* Restore TableCell classes */}
+                                <>
+                                    {processedData.length > 0 ? (
+                                        <div className="mb-6 overflow-hidden shadow ring-1 ring-black ring-opacity-5 rounded-lg h-[700px]"> {/* Matched styling */}
+                                            <div className="h-full overflow-y-auto"> {/* Full height with scrolling */}
+                                                <Table>
+                                                    <TableHeader>
+                                                        <TableRow>
+                                                            <TableHead className="w-[30%] min-w-[150px]">Company</TableHead>
+                                                            <TableHead className="text-right">Trials ({getTabDisplayText(activeTab)})</TableHead>
+                                                            <TableHead className="text-right">Phase 1</TableHead>
+                                                            <TableHead className="text-right">Phase 2</TableHead>
+                                                            <TableHead className="text-right">Phase 3</TableHead>
+                                                            <TableHead className="text-right">Total</TableHead>
+                                                        </TableRow>
+                                                    </TableHeader>
+                                                    <TableBody>
+                                                        {processedData.map((company) => (
+                                                            <TableRow key={company.name}>
                                                                 <TableCell className="font-medium">{company.name}</TableCell>
-                                                                <TableCell className="text-right font-semibold">{company.allTrials}</TableCell>
-                                                                <TableCell className="text-right">{company.diagnosticTrials}</TableCell>
-                                                                <TableCell className="text-right">{company.therapyTrials}</TableCell>
-                                                                <TableCell className="text-right">{company.diseaseCount}</TableCell>
+                                                                <TableCell className="text-right font-semibold">{company.value}</TableCell>
+                                                                <TableCell className="text-right">{company.phase1Trials}</TableCell>
+                                                                <TableCell className="text-right">{company.phase2Trials}</TableCell>
+                                                                <TableCell className="text-right">{company.phase3Trials}</TableCell>
+                                                                <TableCell className="text-right">{company.allTrials}</TableCell>
                                                             </TableRow>
-                                                        </TooltipTrigger>
-                                                        {/* Restore TooltipContent classes */}
-                                                        <TooltipContent side="top" align="start" className="bg-background/95 text-foreground border-border shadow-lg rounded-md p-3 max-w-xs">
-                                                            <CompanyTooltipContent data={company} activeTab={activeTab} />
-                                                        </TooltipContent>
-                                                    </Tooltip>
-                                                ))}
-                                            </TableBody>
-                                        </Table>
+                                                        ))}
+                                                    </TableBody>
+                                                </Table>
+                                            </div>
+                                        </div>
                                     ) : (
-                                        // Restore "no data" message styling for table
-                                        <div className="text-center p-10 text-muted-foreground">
-                                            {/* Fixed unescaped entities */}
-                                            <p>No company data available for the &apos;{getTabDisplayText(activeTab)}&apos; category to display the table.</p>
+                                        <div className="text-center p-10 text-gray-500 h-[700px] flex items-center justify-center bg-white border border-gray-200 rounded-lg"> {/* Matched styling */}
+                                            <p>No company data available for the &apos;{getTabDisplayText(activeTab)}&apos; category to display in the table.</p>
                                         </div>
                                     )}
-                                </div>
+                                </>
                             )}
                         </div>
                     )}
-                    {/* Restore handling for apiData being null after load */}
-                     {!isLoading && !error && !apiData && (
-                          <div className="text-center p-10 text-muted-foreground">
-                               <p>Data could not be loaded or processed correctly.</p>
-                          </div>
-                      )}
+                     {/* Handle case where apiData exists but apiData.company is missing/empty */}
+                     {!isLoading && !error && apiData && !apiData.company && (
+                         <div className="text-center p-10 text-muted-foreground min-h-[400px] flex items-center justify-center">
+                             <p>Data loaded, but no company information was found in the response.</p>
+                         </div>
+                     )}
 
-
-                    {/* Restore Footer Summary Text structure and classes */}
+                    {/* Footer */}
                     <div className="mt-8 border-t border-border pt-8 text-muted-foreground text-sm text-center">
-                        {/* Conditional rendering logic remains the same, fixed unescaped entities */}
-                        {apiData?.metadata?.total_trials_processed && !isLoading && !error && (
-                          <p>
-                               Analysis based on {apiData.metadata.total_trials_processed.toLocaleString()} processed trials.
-                               {/* Fixed unescaped entities */}
-                               {top15Companies.length > 0 ? ` Displaying top ${top15Companies.length} companies for the &apos;${getTabDisplayText(activeTab)}&apos; category.` : ` No companies found matching the criteria for the &apos;${getTabDisplayText(activeTab)}&apos; category.`}
-                          </p>
+                        {/* Footer logic remains similar, adjust text slightly */}
+                         {apiData?.metadata?.total_trials_processed && !isLoading && !error && apiData?.company && (
+                            <p>
+                                Analysis based on {apiData.metadata.total_trials_processed.toLocaleString()} processed trials.
+                                {viewMode === 'treemap' && top15Companies.length > 0 && ` Displaying top ${top15Companies.length} companies via treemap for '${getTabDisplayText(activeTab)}'.`}
+                                {viewMode === 'table' && processedData.length > 0 && ` Displaying ${processedData.length} companies via table for '${getTabDisplayText(activeTab)}'.`}
+                                {((viewMode === 'treemap' && top15Companies.length === 0) || (viewMode === 'table' && processedData.length === 0)) && ` No companies found matching the criteria for '${getTabDisplayText(activeTab)}'.`}
+                            </p>
                         )}
-                        {!isLoading && !error && apiData && top15Companies.length === 0 && (
-                            // Fixed unescaped entities
-                            <p>No companies met the criteria for display in the &apos;{getTabDisplayText(activeTab)}&apos; category.</p>
-                        )}
-                        {!isLoading && !error && apiData && !apiData.company && (
-                            // Fixed unescaped entities
-                            <p>Data loaded, but the expected &apos;company&apos; information was not found in the response.</p>
-                        )}
+                         {!isLoading && !error && apiData && processedData.length === 0 && apiData.company && ( <p>No companies met the criteria for display in the &apos;{getTabDisplayText(activeTab)}&apos; category.</p> )}
+                         {!isLoading && !error && apiData && !apiData.company && ( <p>Data loaded, but required &apos;company&apos; information was missing.</p> )}
                     </div>
-                </div> {/* End Container */}
+                </div>
             </section>
         </TooltipProvider>
     );
 };
 
-// --- Helper Component for Tooltip Content (Restore styling from example) ---
-const CompanyTooltipContent = React.memo(({ data, activeTab }: { data: CompanyTreemapNodeData | null, activeTab: TabType }) => {
-    if (!data) return null;
 
-    // renderList function structure remains the same
+// --- Tooltip Content Component (Keep as refined before) ---
+const CompanyTooltipContent = React.memo(({ data, activeTab, showOnly, getTabDisplayText }: { 
+    data: CompanyTreemapNodeData | null, 
+    activeTab: TabType, 
+    showOnly?: 'diseases' | 'all',
+    getTabDisplayText: (tab: TabType) => string 
+}) => {
+    if (!data) return null;
+    const isOnlyDiseases = showOnly === 'diseases';
+
     const renderList = (items: string[], maxToShow = 5, title: string) => {
-        if (!items || items.length === 0) return null;
+        if (!items || items.length === 0) return <p className="text-muted-foreground/70 text-[10px] italic mt-1">{title}: None listed.</p>;
         const displayItems = items.slice(0, maxToShow);
         const remainingCount = items.length - maxToShow;
         return (
-            <div>
-                <p className="font-semibold text-foreground/90 mb-0.5">{title}:</p>
+            <div className={isOnlyDiseases ? "" : "pt-1.5 mt-1.5 border-t border-border/50"}> {/* Slightly more padding */}
+                <p className="font-semibold text-foreground/90 mb-1 text-xs">{title}:</p>
                 <ul className="list-disc list-inside pl-1 space-y-0.5">
                     {displayItems.map((item, index) => (
                         <li key={index} className="text-muted-foreground text-[11px] leading-tight">{item}</li>
@@ -570,43 +606,33 @@ const CompanyTooltipContent = React.memo(({ data, activeTab }: { data: CompanyTr
         );
     };
 
-    const phaseTextMap: Record<TabType, string> = {
-        clinical: "All Clinical Trials", // Matches example
-        phase1: "Phase 1 Trials",       // Matches example
-        phase2: "Phase 2 Trials",       // Matches example
-        phase3: "Phase 3 Trials"        // Matches example
-    };
+    // More descriptive phase text for tooltip
+    const phaseTextMap: Record<TabType, string> = { clinical: "Trials (All Phases)", phase1: "Phase 1 Trials", phase2: "Phase 2 Trials", phase3: "Phase 3 Trials" };
+    const sortValueLabel = activeTab === 'clinical' ? 'Total Trials' : `${getTabDisplayText(activeTab)} Trials`;
 
-    // Restore main div classes and internal structure/classes
     return (
-        <div className="space-y-2 text-xs font-helvetica-now-text"> {/* Restore space-y-2 */}
+        <div className="space-y-1.5 text-xs font-helvetica-now-text">
             <h4 className="font-bold text-sm text-foreground mb-1.5">{data.name}</h4>
-            {/* Restore grid classes */}
-            <div className="grid grid-cols-2 gap-x-3 gap-y-1 text-[11px]">
-                 <div className="font-medium text-foreground/90">Category:</div>
-                 <div className="text-right text-muted-foreground">{phaseTextMap[activeTab]}</div>
 
-                 <div className="font-medium text-foreground/90">Total Trials:</div>
-                 <div className="text-right text-muted-foreground">{data.allTrials}</div>
+             {!isOnlyDiseases && (
+                 <div className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1 text-[11px]">
+                    {/* Show the value used for sorting/sizing */}
+                    <div className="font-medium text-foreground/90">{sortValueLabel} (Sort):</div>
+                    <div className="text-right text-muted-foreground font-semibold">{data.value}</div>
 
-                 <div className="font-medium text-foreground/90">Diagnostic:</div>
-                 <div className="text-right text-muted-foreground">{data.diagnosticTrials}</div>
-
-                 <div className="font-medium text-foreground/90">Therapy:</div>
-                 <div className="text-right text-muted-foreground">{data.therapyTrials}</div>
-
-                 <div className="font-medium text-foreground/90">Unique Diseases:</div>
-                 <div className="text-right text-muted-foreground">{data.diseaseCount}</div>
-            </div>
-            {/* Restore disease list section classes */}
-            {data.diseases && data.diseases.length > 0 && (
-                <div className="pt-1 mt-1 border-t border-border/50">
-                    {renderList(data.diseases, 5, "Top Diseases")}
-                </div>
-            )}
-             {(!data.diseases || data.diseases.length === 0) && (
-                 <p className="text-muted-foreground/70 text-[10px] italic pt-1 mt-1 border-t border-border/50">No specific diseases listed for this category.</p>
+                    {/* Always show totals */}
+                    <div className="font-medium text-foreground/90">Total Trials:</div>
+                    <div className="text-right text-muted-foreground">{data.allTrials}</div>
+                    <div className="font-medium text-foreground/90">Diagnostic:</div>
+                    <div className="text-right text-muted-foreground">{data.diagnosticTrials}</div>
+                    <div className="font-medium text-foreground/90">Therapy:</div>
+                    <div className="text-right text-muted-foreground">{data.therapyTrials}</div>
+                    <div className="font-medium text-foreground/90">Diseases:</div>
+                    <div className="text-right text-muted-foreground">{data.diseaseCount}</div>
+                 </div>
              )}
+
+            {renderList(data.diseases, isOnlyDiseases ? 10 : 5, isOnlyDiseases ? `Top Diseases (${data.diseaseCount} total)` : "Top Diseases (Overall)")}
         </div>
     );
 });
