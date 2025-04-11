@@ -23,6 +23,16 @@ interface GeoJSONData {
   features: GeoFeature[];
 }
 
+// Type aliases to help with D3 data binding
+type GeoFeatureWithId = {
+  id: string;
+  geometry: GeoPermissibleObjects;
+  properties: {
+    name: string;
+    [key: string]: any;
+  };
+};
+
 // Data for both maps
 const theranosticsUseData = [
   { country: "DEU", name: "Germany", value: 55, opacity: 1.0 },
@@ -169,13 +179,11 @@ const GlobalAccessMapDisplay: React.FC = () => {
       currentData.forEach(d => {
         dataLookup.set(d.country, d);
       });
-      
       // Function to determine fill opacity based on country code
-      const getOpacity = (countryCode) => {
+      const getOpacity = (countryCode: string) => {
         const data = dataLookup.get(countryCode);
         return data ? data.opacity : 0.05; // Default opacity for countries with no data
       };
-      
       // Create a group for the map
       const mapGroup = svg.append("g");
       
@@ -183,15 +191,23 @@ const GlobalAccessMapDisplay: React.FC = () => {
       mapGroup.selectAll("path")
         .data(worldMapData.features)
         .join("path")
-        .attr("d", d => pathGenerator(d))
+        .attr("d", function(d) {
+          // Need to access geometry with type safety
+          const feature = d as GeoFeatureWithId;
+          return pathGenerator(feature.geometry);
+        })
         .attr("fill", "var(--per-background)")
         .attr("stroke", "#fff")
         .attr("stroke-width", 0.5)
-        .attr("opacity", d => getOpacity(d.id))
+        .attr("opacity", function(d) {
+          const feature = d as GeoFeatureWithId;
+          return getOpacity(feature.id);
+        })
         .on("mouseover", function(event, d) {
           if (!tooltipRef.current) return;
           
-          const countryCode = d.id;
+          const feature = d as GeoFeatureWithId;
+          const countryCode = feature.id;
           const countryData = dataLookup.get(countryCode);
           
           if (countryData) {

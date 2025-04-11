@@ -693,7 +693,7 @@ const RadiopharmaceuticalsSection = () => {
             {/* Scrollable content */}
             <div className="h-[600px] overflow-y-auto pr-4 scrollbar-none">
               <div className="flex flex-col gap-8 pb-8">
-                {diagnosticCategories.map((category, categoryIdx) => (
+                {diagnosticCategories.map((category) => (
                   <div
                     key={`${category.field}-${category.type}`}
                     className="flex flex-col"
@@ -776,7 +776,7 @@ const RadiopharmaceuticalsSection = () => {
             {/* Scrollable content */}
             <div className="h-[600px] overflow-y-auto pr-4 scrollbar-none">
               <div className="flex flex-col gap-8 pb-8">
-                {oncologyCategories.map((category, categoryIdx) => (
+                {oncologyCategories.map((category) => (
                   <div
                     key={`${category.field}-${category.type}`}
                     className="flex flex-col"

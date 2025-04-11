@@ -7,9 +7,6 @@ import { motion } from 'framer-motion';
 import RadiotherapyChart from './RadiotherapyChart';
 import GlobalAccessMapDisplay from './GlobalAccessMapDisplay';
 
-// Interface and Data remain the same...
-interface TargetingMethod { /* ... */ }
-const targetingMethodsData: TargetingMethod[] = [ /* ... */ ];
 
 
 const PatientAccess: React.FC = () => {

@@ -124,12 +124,11 @@ interface CompanySpecificData_New {
 }
 // Main API Data structure - Allows other top-level keys
 interface ApiData {
-    isotope?: { [key: string]: any }; // Optional top-level key
-    target?: { [key: string]: any };  // Optional top-level key
+
     company?: { [key: string]: CompanySpecificData_New }; // Optional top-level key
     metadata?: { total_trials_processed?: number; }; // Optional top-level key
     // Allow any other keys that might be present at the top level
-    [key: string]: any;
+
 }
 
 // Represents the *processed* data structure used for rendering (Treemap nodes, Table rows)
@@ -138,9 +137,9 @@ interface CompanyTreemapNodeData {
     value: number;          // Value used for treemap size (usually total trials for the selected phase/tab)
     allTrials: number;      // Total trials for the selected phase/tab
     diagnosticTrials: number;// Diagnostic trials for the selected phase/tab
-    therapyTrials: number;   // Therapy trials for the selected phase/tab
+    therapyTrials: number;    // Therapy trials for the selected phase/tab
     diseaseCount: number;   // Unique disease count for the selected phase/tab
-    diseases: string[];     // List of unique diseases for the selected phase/tab
+    diseases: string[];       // List of unique diseases for the selected phase/tab
 }
 interface TreemapHierarchyNode extends d3.HierarchyRectangularNode<CompanyTreemapNodeData> {
     data: CompanyTreemapNodeData;
@@ -149,16 +148,9 @@ type TabType = "clinical" | "phase1" | "phase2" | "phase3";
 type ViewModeType = "treemap" | "table";
 
 
-// --- Color Constants (Restore original example values or keep adjusted ones if preferred) ---
+// --- Color Constants (Removed unused badge colors) ---
 const COLOR_THERAPY = '#ebeef4'; // Example: Light Grayish Blue
 const COLOR_DIAGNOSTIC = '#d8cece'; // Example: Light Grayish Pink
-const COLOR_BADGE_DISEASE_BG = '#282829'; // Example: Very Dark Gray
-const COLOR_BADGE_DISEASE_TEXT = COLOR_DIAGNOSTIC;
-const COLOR_BADGE_DX_BG = '#6f608f'; // Example: Muted Purple
-const COLOR_BADGE_DX_TEXT = COLOR_DIAGNOSTIC;
-// const COLOR_BADGE_TX_BG = '#4a6f8a'; // Use this adjusted color from previous edits...
-const COLOR_BADGE_TX_BG = '#0000ff'; // ...or restore the blue from the example
-const COLOR_BADGE_TX_TEXT = COLOR_DIAGNOSTIC;
 
 // --- Main Component ---
 const CompanyTreemapDisplay = () => {
@@ -208,7 +200,7 @@ const CompanyTreemapDisplay = () => {
             setIsLoading(true);
             setError(null);
             const apiUrl = "https://r-eco-52zl8.ondigitalocean.app/visualising";
-            // console.log(`Fetching data from: ${apiUrl}`); // Keep console logs minimal if not debugging
+            // console.log(`Workspaceing data from: ${apiUrl}`); // Keep console logs minimal if not debugging
 
             try {
                 const response = await fetch(apiUrl);
@@ -219,7 +211,7 @@ const CompanyTreemapDisplay = () => {
                     try {
                         const bodyText = await response.text();
                         errorBody += ` - ${bodyText.substring(0, 200)}`;
-                    } catch (e) { /* Ignore */ }
+                    } catch { /* Ignore error during error text retrieval */ }
                     throw new Error(errorBody);
                 }
 
@@ -247,7 +239,7 @@ const CompanyTreemapDisplay = () => {
     }, []); // Fetch only on component mount
 
 
-    // --- Data Processing (Logic remains the same, structure checked) ---
+    // --- Data Processing (Logic remains the same, structure checked, unused '_' removed) ---
     const getProcessedCompanies = (): CompanyTreemapNodeData[] => {
         if (!apiData || !apiData.company) {
             // console.log("getProcessedCompanies: No apiData or apiData.company found.");
@@ -261,7 +253,8 @@ const CompanyTreemapDisplay = () => {
         };
         const currentPhaseKey = phaseKeyMap[activeTab];
         const processedNodes: CompanyTreemapNodeData[] = Object.entries(apiData.company)
-            .filter(([_, companyData]) => companyData && typeof companyData === 'object')
+             // Removed unused key variable '_' from filter destructuring
+            .filter(([, companyData]) => companyData && typeof companyData === 'object')
             .map(([name, companyData]): CompanyTreemapNodeData | null => {
                 const phaseData = companyData[currentPhaseKey];
                 if (!phaseData || !phaseData.study_counts || !phaseData.diseases) {
@@ -317,7 +310,7 @@ const CompanyTreemapDisplay = () => {
         }
     };
 
-    // --- Helper for calculating text color (Logic remains same, checked) ---
+    // --- Helper for calculating text color (Logic remains same, checked, unused 'e' removed) ---
     const getTextColor = (backgroundColor: string): string => {
         try {
             const color = backgroundColor.substring(1);
@@ -327,12 +320,12 @@ const CompanyTreemapDisplay = () => {
             const b = (rgb >> 0) & 0xff;
             const luma = 0.2126 * r + 0.7152 * g + 0.0722 * b;
             return luma < 140 ? 'white' : 'black';
-        } catch (e) {
+        } catch { // Removed unused 'e' variable
             return 'black';
         }
     };
 
-    // --- Render Component (Applying styling from example) ---
+    // --- Render Component (Applying styling from example, fixed unescaped entities) ---
     return (
         <TooltipProvider delayDuration={100}>
             {/* Restore section classes */}
@@ -446,7 +439,7 @@ const CompanyTreemapDisplay = () => {
                                                                 </>
                                                             )}
                                                             {!showDetails && tileWidth > 10 && tileHeight > 10 && (
-                                                               <span className="text-[10px] font-medium mt-0.5 opacity-90">{leafData.allTrials}</span>
+                                                                <span className="text-[10px] font-medium mt-0.5 opacity-90">{leafData.allTrials}</span>
                                                             )}
                                                         </div>
                                                     </TooltipTrigger>
@@ -460,7 +453,8 @@ const CompanyTreemapDisplay = () => {
                                     ) : (
                                         // Restore "no data" message styling for treemap
                                         <div className="absolute inset-0 flex items-center justify-center text-muted-foreground p-4 text-center">
-                                             <p>{dimensions.width <= 0 || dimensions.height <= 0 ? "Treemap container has no dimensions." : `No company data available for the '${getTabDisplayText(activeTab)}' category to display the treemap.`}</p>
+                                             {/* Fixed unescaped entities */}
+                                             <p>{dimensions.width <= 0 || dimensions.height <= 0 ? "Treemap container has no dimensions." : `No company data available for the &apos;${getTabDisplayText(activeTab)}&apos; category to display the treemap.`}</p>
                                         </div>
                                     )}
                                 </div>
@@ -511,7 +505,8 @@ const CompanyTreemapDisplay = () => {
                                     ) : (
                                         // Restore "no data" message styling for table
                                         <div className="text-center p-10 text-muted-foreground">
-                                            <p>No company data available for the '{getTabDisplayText(activeTab)}' category to display the table.</p>
+                                            {/* Fixed unescaped entities */}
+                                            <p>No company data available for the &apos;{getTabDisplayText(activeTab)}&apos; category to display the table.</p>
                                         </div>
                                     )}
                                 </div>
@@ -520,27 +515,30 @@ const CompanyTreemapDisplay = () => {
                     )}
                     {/* Restore handling for apiData being null after load */}
                      {!isLoading && !error && !apiData && (
-                           <div className="text-center p-10 text-muted-foreground">
+                          <div className="text-center p-10 text-muted-foreground">
                                <p>Data could not be loaded or processed correctly.</p>
-                           </div>
-                       )}
+                          </div>
+                      )}
 
 
                     {/* Restore Footer Summary Text structure and classes */}
                     <div className="mt-8 border-t border-border pt-8 text-muted-foreground text-sm text-center">
-                       {/* Conditional rendering logic remains the same */}
-                       {apiData?.metadata?.total_trials_processed && !isLoading && !error && (
+                        {/* Conditional rendering logic remains the same, fixed unescaped entities */}
+                        {apiData?.metadata?.total_trials_processed && !isLoading && !error && (
                           <p>
-                              Analysis based on {apiData.metadata.total_trials_processed.toLocaleString()} processed trials.
-                              {top15Companies.length > 0 ? ` Displaying top ${top15Companies.length} companies for the '${getTabDisplayText(activeTab)}' category.` : ` No companies found matching the criteria for the '${getTabDisplayText(activeTab)}' category.`}
+                               Analysis based on {apiData.metadata.total_trials_processed.toLocaleString()} processed trials.
+                               {/* Fixed unescaped entities */}
+                               {top15Companies.length > 0 ? ` Displaying top ${top15Companies.length} companies for the &apos;${getTabDisplayText(activeTab)}&apos; category.` : ` No companies found matching the criteria for the &apos;${getTabDisplayText(activeTab)}&apos; category.`}
                           </p>
-                       )}
-                       {!isLoading && !error && apiData && top15Companies.length === 0 && (
-                           <p>No companies met the criteria for display in the '{getTabDisplayText(activeTab)}' category.</p>
-                       )}
-                       {!isLoading && !error && apiData && !apiData.company && (
-                           <p>Data loaded, but the expected 'company' information was not found in the response.</p>
-                       )}
+                        )}
+                        {!isLoading && !error && apiData && top15Companies.length === 0 && (
+                            // Fixed unescaped entities
+                            <p>No companies met the criteria for display in the &apos;{getTabDisplayText(activeTab)}&apos; category.</p>
+                        )}
+                        {!isLoading && !error && apiData && !apiData.company && (
+                            // Fixed unescaped entities
+                            <p>Data loaded, but the expected &apos;company&apos; information was not found in the response.</p>
+                        )}
                     </div>
                 </div> {/* End Container */}
             </section>

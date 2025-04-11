@@ -265,7 +265,7 @@ const IsotopesOverview: React.FC = () => {
                      viewport={{ once: true }}
                      transition={{ duration: 0.8, delay: 0.4 }}
                  >
-                     {barChartData.map((item, index) => {
+                     {barChartData.map((item) => {
                        // Dynamically get current value based on active tab
                        const currentValue = activeTab === 'trials' ? item.trialValue : item.companyValue;
                        // Calculate dynamic height in pixels

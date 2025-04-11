@@ -31,6 +31,16 @@ const TableCell = ({ children, className = "" }: { children: React.ReactNode, cl
 );
 
 // --- Custom Toggle Components ---
+// Define an interface for ToggleGroupItem props
+interface ToggleGroupItemProps {
+  children: React.ReactNode;
+  value: string;
+  className?: string;
+  "aria-label"?: string;
+  isActive?: boolean;
+  onClick?: () => void;
+}
+
 const ToggleGroup = ({
   children,
   value,
@@ -52,9 +62,11 @@ const ToggleGroup = ({
     <div className={`inline-flex rounded-md shadow-sm ${className}`}>
       {React.Children.map(children, (child) => {
         if (React.isValidElement(child)) {
-          return React.cloneElement(child as React.ReactElement<any>, {
-            isActive: child.props.value === value,
-            onClick: () => handleChildClick(child.props.value),
+          // Correctly type the child element
+          const typedChild = child as React.ReactElement<ToggleGroupItemProps>;
+          return React.cloneElement(typedChild, {
+            isActive: typedChild.props.value === value,
+            onClick: () => handleChildClick(typedChild.props.value),
           });
         }
         return child;
@@ -70,14 +82,7 @@ const ToggleGroupItem = ({
   "aria-label": ariaLabel,
   isActive,
   onClick,
-}: {
-  children: React.ReactNode,
-  value: string,
-  className?: string,
-  "aria-label"?: string,
-  isActive?: boolean,
-  onClick?: () => void,
-}) => {
+}: ToggleGroupItemProps) => {
   return (
     <button
       type="button"
