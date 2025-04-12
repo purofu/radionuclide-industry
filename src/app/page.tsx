@@ -5,18 +5,33 @@ import LigandsAndTargets from "./component/LigandsAndTargets";
 import IsotopesOverview from "./component/IsotopesOverview";
 import Companies from "./component/Companies";
 import PatientAccess from "./component/PatientAccess";
-import { Perspective } from "../components/ui";
+import { Perspective, ProgressNav } from "../components/ui";
 
 export default function Home() {
   return (
-    <div className="min-h-screen">
-      <HeroSection />
-      <IntroductionSection />
-      <IsotopesOverview />
-      <LigandsAndTargets />
-      <Companies />
-      <PatientAccess />
-      <Perspective />
+    <div className="min-h-screen relative">
+      <ProgressNav />
+      <section id="hero">
+        <HeroSection />
+      </section>
+      <section id="introduction">
+        <IntroductionSection />
+      </section>
+      <section id="isotopes">
+        <IsotopesOverview />
+      </section>
+      <section id="ligands">
+        <LigandsAndTargets />
+      </section>
+      <section id="companies">
+        <Companies />
+      </section>
+      <section id="patient">
+        <PatientAccess />
+      </section>
+      <section id="perspective">
+        <Perspective />
+      </section>
     </div>
   );
 }
