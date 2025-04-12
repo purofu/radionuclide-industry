@@ -9,27 +9,17 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip"; // Assuming this path is correct
-import styles from "@/theme/components"; // Import component styles
-
-// --- Custom Table Components ---
-const Table = ({ children, className = "" }: { children: React.ReactNode, className?: string }) => (
-  <table className={`w-full border-collapse ${className}`}>{children}</table>
-);
-const TableHeader = ({ children, className = "" }: { children: React.ReactNode, className?: string }) => (
-  <thead className={className}>{children}</thead>
-);
-const TableBody = ({ children, className = "" }: { children: React.ReactNode, className?: string }) => (
-  <tbody className={className}>{children}</tbody>
-);
-const TableRow = ({ children, className = "" }: { children: React.ReactNode, className?: string }) => (
-  <tr className={`border-b hover:bg-gray-50 ${className}`}>{children}</tr>
-);
-const TableHead = ({ children, className = "" }: { children: React.ReactNode, className?: string }) => (
-  <th className={`p-3 text-xs font-medium text-gray-500 uppercase tracking-wider text-left border-r last:border-r-0 ${className}`}>{children}</th>
-);
-const TableCell = ({ children, className = "" }: { children: React.ReactNode, className?: string }) => (
-  <td className={`p-3 text-sm text-gray-700 border-r last:border-r-0 ${className}`}>{children}</td>
-);
+import { Tabs, GridIcon, TableIcon } from "@/components/ui"; // Import our new Tabs component
+import { 
+  Table, 
+  TableHeader, 
+  TableBody, 
+  TableRow, 
+  TableHead, 
+  TableCell, 
+  TableWithTooltips,
+  TooltipList
+} from "@/components/ui/table";
 
 // --- Custom Toggle Components ---
 // Define an interface for ToggleGroupItem props
@@ -96,7 +86,6 @@ const ToggleGroupItem = ({
     </button>
   );
 };
-
 
 // --- Interfaces for NEW API Structure ---
 interface StudyCounts {
@@ -332,220 +321,103 @@ const TargetDisplay = () => {
   return (
     <TooltipProvider delayDuration={100}>
       <section className="w-full bg-white py-12 md:py-16">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Title */}
-          <div className="mb-8 w-6/12">
-            <h4 className={styles.typography.introTitle("mb-2")}>
-            Tumor targets by volume of studies and clinical stage
-            </h4>
-            <span className={styles.typography.body("text-grey")}>Tumor-targets are emerging as promising clinical approaches that offer noninvasive, real-time diagnosis of tumour lesions and highly effective, safe treatments with strong antitumour efficacy. </span>
-          </div>
-          {/* Controls: Tabs & View Toggle */}
-          <div className="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            {/* Tabs - Updated styling to match RadioisotopePeriodicDisplay */}
-            <div className="flex flex-wrap justify-center sm:justify-start gap-2">
-              {(["clinical", "phase1", "phase2", "phase3"] as TabType[]).map(
-                (tab) => (
-                  <button
-                    key={tab}
-                    onClick={() => setActiveTab(tab)}
-                    className={`px-4 py-2 rounded-md ${styles.typography.bodySmall()} transition-colors duration-150 ease-in-out ${activeTab === tab ? 'bg-black text-white' : 'bg-gray-200 text-black hover:bg-gray-400 hover:text-white'}`}
-                  >
-                    {tab === 'clinical' ? 'Clinical Trials' : getTabDisplayText()}
-                  </button>
-                ),
-              )}
+        {/* Main grid container - Using exactly the same structure as LigandsAndTargets */}
+        <div className="grid grid-cols-4 sm:grid-cols-8 md:grid-cols-12 lg:grid-cols-12">
+          {/* Content container with identical padding to LigandsAndTargets */}
+          <div className="col-span-4 sm:col-span-8 md:col-span-12 lg:col-span-12 px-8 md:px-16 lg:px-24">
+            {/* Title */}
+            <div className="mb-8 w-full md:w-8/12">
+              <h3 className="text-h4">
+                Tumor targets by volume of studies and clinical stage
+              </h3>
+              <span className="text-body text-grey">Tumor-targets are emerging as promising clinical approaches that offer noninvasive, real-time diagnosis of tumour lesions and highly effective, safe treatments with strong antitumour efficacy. </span>
             </div>
-            {/* View Mode Toggle - Remove shadow-sm */}
-            <ToggleGroup
-              value={viewMode}
-              onValueChange={(value: string) => {
-                if (value) setViewMode(value as ViewModeType);
-              }}
-              className="justify-center sm:justify-end"
-            >
-              <ToggleGroupItem value="grid" aria-label="Grid View">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" > <rect x="3" y="3" width="7" height="7" rx="1" fill="currentColor" /> <rect x="14" y="3" width="7" height="7" rx="1" fill="currentColor" /> <rect x="3" y="14" width="7" height="7" rx="1" fill="currentColor" /> <rect x="14" y="14" width="7" height="7" rx="1" fill="currentColor" /> </svg>
-              </ToggleGroupItem>
-              <ToggleGroupItem value="table" aria-label="Table View">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" > <path d="M3 5H21V7H3V5Z" fill="currentColor" /> <path d="M3 11H21V13H3V11Z" fill="currentColor" /> <path d="M3 17H21V19H3V17Z" fill="currentColor" /> </svg>
-              </ToggleGroupItem>
-            </ToggleGroup>
-          </div>
+            
+            {/* Controls: Tabs & View Toggle using the new Tabs component with fixed labels */}
+            <Tabs 
+              titleTabs={[
+                { id: 'clinical', label: 'Clinical Trials' },
+                { id: 'phase1', label: 'Phase 1' },
+                { id: 'phase2', label: 'Phase 2' },
+                { id: 'phase3', label: 'Phase 3' },
+              ]}
+              iconTabs={[
+                { id: 'grid', icon: <GridIcon />, ariaLabel: 'Grid View' },
+                { id: 'table', icon: <TableIcon />, ariaLabel: 'Table View' },
+              ]}
+              defaultTitleTab={activeTab}
+              defaultIconTab={viewMode}
+              onTitleTabChange={(tabId) => setActiveTab(tabId as TabType)}
+              onIconTabChange={(tabId) => setViewMode(tabId as ViewModeType)}
+              className="mb-8"
+            />
 
-          {/* Loading State */}
-          {isLoading && (
-            <div className={styles.status.loading()}>
-              <p>Loading target data...</p>
-            </div>
-          )}
+            {/* Loading State */}
+            {isLoading && (
+              <div className="flex justify-center items-center p-12 text-center text-gray-500">
+                <p>Loading target data...</p>
+              </div>
+            )}
 
-          {/* Error Message */}
-          {error && !isLoading && (
-            <div className={styles.status.error()}>
-              <p>{error}</p>
-            </div>
-          )}
+            {/* Error Message */}
+            {error && !isLoading && (
+              <div className="p-6 bg-red-50 text-red-600 rounded-md mb-6">
+                <p>{error}</p>
+              </div>
+            )}
 
-          {/* ---- GRID VIEW ---- */}
-          {!isLoading && viewMode === "grid" && getGridTargets().length > 0 && (
-             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-               {getGridTargets().map((target) => {
-                 const displayValue = getDisplayValue(target);
-                 // Updated label logic for consistency
-                 const displayLabel = `${getTabDisplayText().toLowerCase()} trials`;
+            {/* ---- GRID VIEW ---- */}
+            {!isLoading && viewMode === "grid" && getGridTargets().length > 0 && (
+              <div className="overflow-x-auto pb-4">
+                <div className="flex md:grid md:grid-cols-3 lg:grid-cols-4 gap-6">
+                  {getGridTargets().map((target) => {
+                    const displayValue = getDisplayValue(target);
 
-                 return (
-                     <div
-                       key={target.name}
-                       className={styles.card.base("h-full justify-between group overflow-hidden")}
-                     >
-                       {/* Top Section */}
-                       <div className="px-6 pt-12 pb-4 text-right">
-                           <span className={styles.typography.displayValue("align-baseline")}>{displayValue}</span>
-                           <span className={styles.typography.displayLabel("block mt-1")}>{displayLabel}</span>
-                       </div>
-                       {/* Middle Section with Placeholder Image */}
-                       <div className="flex-grow px-6 flex justify-center items-center">
-                         <img 
-                           src="/protein.png" 
-                           alt={`${target.name} structure visualization`} 
-                           className="w-full h-auto object-cover my-4"
-                         />
-                       </div>
-                       {/* Bottom Section */}
-                       <div className="px-6 pb-6 flex flex-col justify-start items-start gap-3">
-                         <h3 className={styles.typography.cardTitle("self-stretch")}>
-                           {target.name}
-                         </h3>
-                         <div className="self-stretch flex flex-col justify-start items-start gap-1">
-                           {target.fullName && (
-                             <span className={styles.typography.cardSubtitle()}>
-                               {target.fullName}
-                             </span>
-                           )}
-                           <p className={styles.typography.cardBody("line-clamp-4")}>
-                             {target.description || "No description available."}
-                           </p>
-                         </div>
-                         {/* Badges with Individual Tooltips */}
-                         <div className="flex flex-wrap justify-start items-start gap-2 mt-2">
-                           {/* Disease Badge */}
-                           <Tooltip>
-                             <TooltipTrigger asChild>
-                               <div className={styles.badge.base(styles.badge.disease())}>
-                                 <span className={styles.typography.bodySmall("font-body")}>
-                                   {target.diseaseCount} Disease Types
-                                 </span>
-                               </div>
-                             </TooltipTrigger>
-                             <TooltipContent className="bg-white text-black p-0 rounded-md max-w-xs z-50 border border-light-grey shadow-none overflow-hidden" side="bottom" align="center">
-                               {/* Updated tooltip format - Similar to RadioisotopePeriodicDisplay */}
-                               <div className="w-full">
-                                 <ul className="max-h-40 overflow-y-auto w-full">
-                                   {target.diseases.length > 0 ? (
-                                     target.diseases.map((disease, i) => (
-                                       <li key={i} className="w-full">
-                                         <div className="px-3 py-2 text-body-small">{disease}</div>
-                                         {i < target.diseases.length - 1 && (
-                                           <div className="w-full border-b border-light-grey"></div>
-                                         )}
-                                       </li>
-                                     ))
-                                   ) : (
-                                     <li>
-                                       <div className="px-3 py-2 text-body-small text-grey">No specific diseases listed</div>
-                                     </li>
-                                   )}
-                                 </ul>
-                               </div>
-                             </TooltipContent>
-                           </Tooltip>
-                           {/* Company Badge */}
-                           <Tooltip>
-                               <TooltipTrigger asChild>
-                                 <div className={styles.badge.base(styles.badge.company())}>
-                                   <span className={styles.typography.bodySmall("font-medium")}>
-                                     {target.companiesCount} Companies
-                                   </span>
-                                 </div>
-                               </TooltipTrigger>
-                               <TooltipContent className="bg-white text-black p-0 rounded-md max-w-xs z-50 border border-light-grey shadow-none overflow-hidden" side="bottom" align="center">
-                                 {/* Updated tooltip format - Similar to RadioisotopePeriodicDisplay */}
-                                 <div className="w-full">
-                                   <ul className="max-h-40 overflow-y-auto w-full">
-                                     {target.companies.length > 0 ? (
-                                       target.companies.map((company, i) => (
-                                         <li key={i} className="w-full">
-                                           <div className="px-3 py-2 text-body-small">{company}</div>
-                                           {i < target.companies.length - 1 && (
-                                             <div className="w-full border-b border-light-grey"></div>
-                                           )}
-                                         </li>
-                                       ))
-                                     ) : (
-                                       <li>
-                                         <div className="px-3 py-2 text-body-small text-grey">No specific companies listed</div>
-                                       </li>
-                                     )}
-                                   </ul>
-                                 </div>
-                               </TooltipContent>
-                           </Tooltip>
-                         </div>
-                       </div>
-                    </div>
-                 );
-               })}
-             </div>
-          )}
-
-          {/* ---- TABLE VIEW ---- */}
-          {!isLoading && viewMode === "table" && targetsToDisplay.length > 0 && (
-            <div className="mb-6 border border-gray-200 rounded-lg overflow-hidden">
-              <div className="max-h-[600px] overflow-y-auto">
-                <Table>
-                  <TableHeader className="bg-gray-50 sticky top-0 z-10">
-                    <TableRow>
-                      <TableHead className="text-left pl-4">Target</TableHead>
-                      <TableHead className="text-center">Clinical Trials</TableHead>
-                      <TableHead className="text-center">Phase 1</TableHead>
-                      <TableHead className="text-center">Phase 2</TableHead>
-                      <TableHead className="text-center">Phase 3</TableHead>
-                      <TableHead className="text-center">Diseases</TableHead>
-                      <TableHead className="text-center pr-4">Companies</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody className="bg-white divide-y divide-gray-200">
-                    {targetsToDisplay.map((target) => {
-                      return (
-                        <TableRow key={target.name} className="hover:bg-gray-50">
-                          <TableCell className="font-medium text-left pl-4">
+                    return (
+                      <div
+                        key={target.name}
+                        className="bg-white border border-gray-200 rounded-xl shadow-sm hover:shadow-md transition-shadow h-full flex flex-col justify-between overflow-hidden min-w-[280px] w-[280px] md:w-auto md:min-w-0"
+                      >
+                        {/* Top Section */}
+                        <div className="px-6 pt-12 pb-4 text-right">
+                          <span className="text-5xl font-bold align-baseline">{displayValue}</span>
+                          <span className="text-sm text-gray-500 uppercase tracking-wide block mt-1">Total Clinical Trials</span>
+                        </div>
+                        {/* Middle Section with Placeholder Image */}
+                        <div className="flex-grow px-6 flex justify-center items-center">
+                          <img 
+                            src="/protein.png" 
+                            alt={`${target.name} structure visualization`} 
+                            className="w-full h-auto object-cover my-4"
+                          />
+                        </div>
+                        {/* Bottom Section */}
+                        <div className="px-6 pb-6 flex flex-col justify-start items-start gap-3">
+                          <h3 className="text-xl font-semibold self-stretch">
+                            {target.name}
+                          </h3>
+                          <div className="self-stretch flex flex-col justify-start items-start gap-1">
+                            {target.fullName && (
+                              <span className="text-base text-black">
+                                {target.fullName}
+                              </span>
+                            )}
+                            <p className="text-sm text-gray-500 line-clamp-4">
+                              {target.description || "No description available."}
+                            </p>
+                          </div>
+                          {/* Badges with Individual Tooltips */}
+                          <div className="flex flex-wrap justify-start items-start gap-2 mt-2">
+                            {/* Disease Badge */}
                             <Tooltip>
                               <TooltipTrigger asChild>
-                                <span className="cursor-help">{target.name}</span>
-                              </TooltipTrigger>
-                              <TooltipContent className="bg-white text-black p-0 rounded-md max-w-xs z-50 border border-light-grey shadow-none overflow-hidden" side="top" align="center">
-                                <div className="px-3 py-2">
-                                  <h4 className={styles.typography.cardSubtitle()}>{target.name}</h4>
-                                  {target.fullName && <p className={styles.typography.bodySmall("mt-1")}>{target.fullName}</p>}
-                                  {target.description && !target.description.startsWith('Placeholder description') && (
-                                    <p className={styles.typography.bodySmall("mt-2 max-h-20 overflow-y-auto text-xs")}>{target.description}</p>
-                                  )}
+                                <div className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-800">
+                                  <span className="text-xs font-body">
+                                    {target.diseaseCount} Disease Types
+                                  </span>
                                 </div>
-                              </TooltipContent>
-                            </Tooltip>
-                          </TableCell>
-                          <TableCell className="text-center">{target.clinicalTrials}</TableCell>
-                          <TableCell className="text-center">{target.phase1}</TableCell>
-                          <TableCell className="text-center">{target.phase2}</TableCell>
-                          <TableCell className="text-center">{target.phase3}</TableCell>
-                          <TableCell className="text-center">
-                            <Tooltip>
-                              <TooltipTrigger asChild>
-                                <span className="cursor-help">{target.diseaseCount}</span>
                               </TooltipTrigger>
-                              <TooltipContent className="bg-white text-black p-0 rounded-md max-w-xs z-50 border border-light-grey shadow-none overflow-hidden" side="top" align="center">
+                              <TooltipContent className="bg-white text-black p-0 rounded-md max-w-xs z-50 border border-light-grey shadow-none overflow-hidden" side="bottom" align="center">
                                 <div className="w-full">
                                   <ul className="max-h-40 overflow-y-auto w-full">
                                     {target.diseases.length > 0 ? (
@@ -566,13 +438,16 @@ const TargetDisplay = () => {
                                 </div>
                               </TooltipContent>
                             </Tooltip>
-                          </TableCell>
-                          <TableCell className="text-center pr-4">
+                            {/* Company Badge */}
                             <Tooltip>
                               <TooltipTrigger asChild>
-                                <span className="cursor-help">{target.companiesCount}</span>
+                                <div className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-800">
+                                  <span className="text-xs font-medium">
+                                    {target.companiesCount} Companies
+                                  </span>
+                                </div>
                               </TooltipTrigger>
-                              <TooltipContent className="bg-white text-black p-0 rounded-md max-w-xs z-50 border border-light-grey shadow-none overflow-hidden" side="top" align="center">
+                              <TooltipContent className="bg-white text-black p-0 rounded-md max-w-xs z-50 border border-light-grey shadow-none overflow-hidden" side="bottom" align="center">
                                 <div className="w-full">
                                   <ul className="max-h-40 overflow-y-auto w-full">
                                     {target.companies.length > 0 ? (
@@ -593,46 +468,115 @@ const TargetDisplay = () => {
                                 </div>
                               </TooltipContent>
                             </Tooltip>
-                          </TableCell>
-                        </TableRow>
-                      );
-                    })}
-                  </TableBody>
-                </Table>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* ---- TABLE VIEW ---- */}
+            {!isLoading && viewMode === "table" && targetsToDisplay.length > 0 && (
+              <div className="overflow-x-auto w-full">
+                <TableWithTooltips className="mb-6 w-full">
+                  <Table>
+                    <TableHeader className="sticky top-0 z-20">
+                      <TableRow>
+                        <TableHead align="left" className="pl-4">Target</TableHead>
+                        <TableHead align="center">Clinical Trials</TableHead>
+                        <TableHead align="center">Phase 1</TableHead>
+                        <TableHead align="center">Phase 2</TableHead>
+                        <TableHead align="center">Phase 3</TableHead>
+                        <TableHead align="center">Diseases</TableHead>
+                        <TableHead align="center" className="pr-4">Companies</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {targetsToDisplay.map((target) => {
+                        return (
+                          <TableRow key={target.name}>
+                            <TableCell align="left" className="pl-4"
+                              hasTooltip={true}
+                              tooltipContent={
+                                <div className="px-3 py-2">
+                                  <h4 className="text-sm text-gray-600 font-medium">{target.name}</h4>
+                                  {target.fullName && <p className="text-base text-black mt-1">{target.fullName}</p>}
+                                  {target.description && !target.description.startsWith('Placeholder description') && (
+                                    <p className="text-xs mt-2 max-h-20 overflow-y-auto">{target.description}</p>
+                                  )}
+                                </div>
+                              }
+                            >
+                              {target.name}
+                            </TableCell>
+                            <TableCell align="center">
+                              {target.clinicalTrials}
+                            </TableCell>
+                            <TableCell align="center">
+                              {target.phase1}
+                            </TableCell>
+                            <TableCell align="center">
+                              {target.phase2}
+                            </TableCell>
+                            <TableCell align="center">
+                              {target.phase3}
+                            </TableCell>
+                            <TableCell align="center" 
+                              hasTooltip={target.diseaseCount > 0}
+                              tooltipContent={
+                                <TooltipList items={target.diseases} />
+                              }
+                            >
+                              {target.diseaseCount}
+                            </TableCell>
+                            <TableCell align="center" className="pr-4" 
+                              hasTooltip={target.companiesCount > 0}
+                              tooltipContent={
+                                <TooltipList items={target.companies} />
+                              }
+                            >
+                              {target.companiesCount}
+                            </TableCell>
+                          </TableRow>
+                        );
+                      })}
+                    </TableBody>
+                  </Table>
+                </TableWithTooltips>
+              </div>
+            )}
+
+            {/* No Data Message */}
+            {!isLoading && targetsToDisplay.length === 0 && (
+              <div className="text-center p-8 bg-gray-50 rounded-lg w-full">
+                <p>
+                  {error
+                    ? "Sample data is currently unavailable due to a loading error."
+                    : "No target data found or API returned empty target list."}
+                </p>
+              </div>
+            )}
+
+            {/* Placeholder Summary Text */}
+            <div className="mt-12 md:mt-16 border-t border-gray-200 pt-8 w-full">
+              <div className="max-w-3xl mx-auto text-center">
+                {/* Use dynamic text based on active tab */}
+                <h4 className="text-sm text-gray-600 font-medium mb-2">
+                  {getTabDisplayText()} by Target
+                </h4>
+                <p className="text-sm text-gray-600">
+                  {/* Updated placeholder text to reflect different views */}
+                  [Placeholder: Displaying {viewMode === 'grid' ? 'top 12' : 'all'} targets sorted by {activeTab === 'clinical' ? 'clinical trials' : getTabDisplayText().toLowerCase()}.
+                  {viewMode === 'grid' ? ' Hover over badges for disease/company lists.' : ' Scroll to see all targets and hover over cells for details.'}
+                  {apiData && !error && !isLoading && " Data loaded successfully."}
+                  {error && !isLoading && " Displaying available sample data due to a loading error."} ]
+                </p>
               </div>
             </div>
-          )}
-
-          {/* No Data Message */}
-          {!isLoading && targetsToDisplay.length === 0 && (
-             <div className={styles.status.empty()}>
-               <p>
-                 {error
-                   ? "Sample data is currently unavailable due to a loading error."
-                   // Updated message slightly
-                   : "No target data found or API returned empty target list."}
-               </p>
-             </div>
-           )}
-
-          {/* Placeholder Summary Text */}
-          <div className="mt-12 md:mt-16 border-t border-gray-200 pt-8">
-            <div className="max-w-3xl mx-auto text-center">
-               {/* Use dynamic text based on active tab */}
-              <h4 className={styles.typography.cardSubtitle("mb-2")}>
-                {getTabDisplayText()} by Target
-              </h4>
-              <p className={styles.typography.cardBody("text-gray-600")}>
-                 {/* Updated placeholder text to reflect different views */}
-                [Placeholder: Displaying {viewMode === 'grid' ? 'top 12' : 'all'} targets sorted by {activeTab === 'clinical' ? 'clinical trials' : getTabDisplayText().toLowerCase()}.
-                {viewMode === 'grid' ? ' Hover over badges for disease/company lists.' : ' Scroll to see all targets and hover over cells for details.'}
-                 {apiData && !error && !isLoading && " Data loaded successfully."}
-                 {error && !isLoading && " Displaying available sample data due to a loading error."} ]
-              </p>
-            </div>
           </div>
-
-        </div> {/* End Container */}
+        </div>
       </section>
     </TooltipProvider>
   );

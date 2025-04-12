@@ -8,6 +8,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "../../components/ui/tooltip"; // Assuming this path is correct
+import { Tabs } from "@/components/ui"; // Import our new Tabs component
 
 // --- Interfaces (Updated to match provided JSON structure) ---
 interface StudyCounts {
@@ -118,7 +119,8 @@ const RadioisotopePeriodicDisplay = () => {
 
     switch (activeTab) {
       case "halflife":
-        value = element?.symbol || "?";
+        // Show half-life instead of element symbol
+        value = radioisotopeHalfLives[isotopeName] || "?";
         break;
       case "phase1":
         // Access using the new key 'phase_1'
@@ -244,9 +246,22 @@ const RadioisotopePeriodicDisplay = () => {
 
   // Helper to determine color intensity based on value
   const getOpacityBasedOnValue = (value: string | number): string => {
-    if (activeTab === 'halflife' || typeof value === 'string') return 'opacity-100';
+    if (activeTab === 'halflife') {
+      // For half-life tab, adjust opacity based on the half-life time
+      if (typeof value === 'string') {
+        // Check for minutes (m)
+        if (value.includes('m')) return 'opacity-40';
+        // Check for hours (h)
+        if (value.includes('h')) return 'opacity-60';
+        // Check for days (d)
+        if (value.includes('d')) return 'opacity-80';
+        // Default opacity
+        return 'opacity-100';
+      }
+      return 'opacity-100';
+    }
     
-    // Numeric value - determine opacity based on relative scale
+    // For other tabs - numeric value - determine opacity based on relative scale
     const numValue = Number(value);
     if (numValue === 0) return 'opacity-40';
     if (numValue <= 2) return 'opacity-60';
@@ -264,19 +279,20 @@ const RadioisotopePeriodicDisplay = () => {
           Radioisotopes by study volume, clinical stage, diseases and companies
           </h2>
 
-          {/* Tabs (Keep as is) */}
-          <div className="mb-6 md:mb-8 flex flex-wrap  gap-2">
-             {(["halflife", "phase1", "phase2", "phase3", "disease", "companies"] as TabType[]).map((tab) => (
-               <button
-                 key={tab}
-                 onClick={() => handleTabClick(tab)}
-                 className={`px-4 py-2 rounded-md text-body-small font-helvetica-now transition-colors duration-150 ease-in-out ${activeTab === tab ? 'bg-black text-white' : 'bg-gray-200 text-black hover:bg-gray-400 hover:text-white'}`}
-               >
-                 {/* Simple Capitalization for display */}
-                 {tab === 'halflife' ? 'Half Life' : tab.charAt(0).toUpperCase() + tab.slice(1)}
-               </button>
-             ))}
-           </div>
+          {/* Replace existing tabs with our new Tabs component */}
+          <Tabs
+            titleTabs={[
+              { id: 'halflife', label: 'Half Life' },
+              { id: 'phase1', label: 'Phase 1' },
+              { id: 'phase2', label: 'Phase 2' },
+              { id: 'phase3', label: 'Phase 3' },
+              { id: 'disease', label: 'Disease' },
+              { id: 'companies', label: 'Companies' },
+            ]}
+            defaultTitleTab={activeTab}
+            onTitleTabChange={(tabId) => handleTabClick(tabId as TabType)}
+            className="mb-8"
+          />
 
           {/* Loading / Error States (Keep as is) */}
           {isLoading && <div className="text-center p-6 text-body text-gray-500"><p>Loading...</p></div>}
@@ -293,7 +309,7 @@ const RadioisotopePeriodicDisplay = () => {
                 return (
                   <div key={category}>
                     <h3 className="text-h5 font-helvetica-now text-black mb-4">{category}</h3>
-                    <div className="flex flex-wrap gap-3 md:gap-4">
+                    <div className="grid grid-cols-4 gap-3 sm:grid-cols-none sm:flex sm:flex-wrap sm:gap-3 md:gap-4">
                       {validIsotopes.map((isotopeName) => {
                         // Prepare data needed for display and tooltip
                         const displayValue = getDisplayValue(isotopeName);
@@ -310,20 +326,21 @@ const RadioisotopePeriodicDisplay = () => {
                               <div // Isotope Tile - Acts as Trigger
                                 className={`
                                   ${colors.bg} ${colors.text}
-                                  w-28 h-28 md:w-32 md:h-32
+                                  w-full sm:w-24 sm:h-24 md:w-28 md:h-28
                                   rounded-md p-2
                                   flex flex-col justify-between items-center relative
                                   transition-transform duration-150 ease-in-out hover:scale-105
                                   ${!hasApiData ? 'opacity-50' : opacityClass} 
                                   ${tooltipData ? 'cursor-pointer' : 'cursor-default'} 
                                 `}
+                                style={{ aspectRatio: '1/1' }}
                                 // Standard title attribute for basic info / accessibility fallback
                                 title={`${formatIsotopeName(isotopeName)} - ${getTabDisplayText()}: ${activeTab === 'halflife' ? radioisotopeHalfLives[isotopeName] || 'N/A' : displayValue}`}
                               >
                                 <div className="absolute top-1 left-1.5 text-xs opacity-70">{element?.atomic || ""}</div>
                                 <div className="flex-grow flex items-center justify-center">
                                   {/* Display the value determined by getDisplayValue */}
-                                  <span className="text-3xl md:text-4xl font-bold">{displayValue}</span>
+                                  <span className={`${activeTab === 'halflife' ? 'text-xl sm:text-xl md:text-2xl' : 'text-2xl sm:text-3xl md:text-3xl'} font-bold`}>{displayValue}</span>
                                 </div>
                                 <div className="w-full text-center text-xs whitespace-nowrap overflow-hidden text-ellipsis">{formatIsotopeName(isotopeName)}</div>
                               </div>
@@ -392,7 +409,7 @@ const RadioisotopePeriodicDisplay = () => {
 
           {/* Updated Footer Information */}
            {!isLoading && !error && apiData && (
-             <div className="mt-12 md:mt-16 border-ts ">               
+             <div className="mt-12 md:mt-16 border-ts">               
                <div className="text-left text-body-small font-helvetica-now text-grey md:my-8">
                   <p>Last updated: {new Date().toLocaleDateString('en-US', {year: 'numeric', month: 'long', day: 'numeric'})}</p>
                   <p className="mt-1">

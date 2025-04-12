@@ -1,6 +1,6 @@
 "use client";
 
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import styles from '@/theme/components'; // Import component styles
 
@@ -643,216 +643,179 @@ const RadiopharmaceuticalsSection = () => {
     return { diagnosticCategories, oncologyCategories };
   }, []);
 
-  // Add animation variants for smoother, more consistent animations
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.05,
-        delayChildren: 0.1
-      }
-    }
-  };
+  // State for active category
+  const [activeLeft, setActiveLeft] = useState<string>(diagnosticCategories[0]?.field || "");
+  const [activeRight, setActiveRight] = useState<string>(oncologyCategories[0]?.type || "");
 
-  const itemVariants = {
-    hidden: { opacity: 0, y: 15 },
+  // Simple animation variants
+  const fadeIn = {
+    hidden: { opacity: 0 },
     visible: { 
-      opacity: 1, 
-      y: 0,
-      transition: { 
-        type: "spring", 
-        stiffness: 50, 
-        damping: 10,
-        mass: 0.3
-      } 
+      opacity: 1,
+      transition: { duration: 0.3 }
     }
   };
 
   return (
-    <section className="w-full py-12 md:py-16 lg:py-20 relative">
-      {/* Main grid container - Using defined 12-col grid with proper padding */}
-      <div className="grid grid-cols-4 sm:grid-cols-8 md:grid-cols-12 lg:grid-cols-12 px-8 md:px-16 lg:px-24">
-        {/* Title section - span full width of the grid */}
+    <section className="w-full py-12 md:py-16 lg:py-20">
+      <div className="container mx-auto px-4 md:px-6 lg:px-8">
+        {/* Title section */}
         <motion.div
-          className="col-span-4 sm:col-span-8 md:col-span-12 lg:col-span-12 mb-12"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8, delay: 0.2 }}
+          className="w-full mb-12"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.8 }}
         >
-          <h4 className={styles.typography.cardTitle("mb-6")}>
+          <h2 className="text-3xl md:text-4xl font-bold">
             <span className="text-grey">Approved</span> <span className="text-black">therapeutic</span> <span className="text-grey">and</span> <span className="text-black">diagnostic</span> <span className="text-grey">agents</span>
-          </h4>
+          </h2>
         </motion.div>
 
-        {/* Two Column Layout - Using 12-column grid system */}
-        <div className="col-span-4 sm:col-span-8 md:col-span-12 lg:col-span-12">
-          <div className="grid grid-cols-4 sm:grid-cols-8 md:grid-cols-12 gap-8">
-            {/* Left Column - Diagnostics (non-oncology) - 6 columns on desktop */}
-            <div className="col-span-4 sm:col-span-8 md:col-span-6 lg:col-span-6 relative">              
-              {/* Scrollable content */}
-              <div className="h-[600px] overflow-y-auto pr-4 scrollbar-none">
-                <div className="flex flex-col gap-8 pb-8">
-                  {diagnosticCategories.map((category) => (
-                    <div
-                      key={`${category.field}-${category.type}`}
-                      className="flex flex-col"
-                    >
-                      {/* Category Header */}
-                      <div className="sticky top-0 bg-white z-10 py-4 mb-6" style={{ boxShadow: '0 10px 15px -10px rgba(255, 255, 255, 0.9)' }}>
-                        <span className="text-body font-helvetica-now">
-                          <span className="text-grey">{category.field} - </span>
-                          <span className="text-black font-medium">{category.type}</span>
-                        </span>
-                      </div>
-
-                      {/* Card list with variants and once:true to prevent re-animation */}
-                      <motion.div 
-                        className="flex flex-col gap-4"
-                        initial="hidden"
-                        whileInView="visible"
-                        viewport={{ once: true, margin: "-100px" }}
-                        variants={containerVariants}
-                      >
-                        {category.items.map((item, itemIdx) => (
-                          <motion.div
-                            key={itemIdx}
-                            className={styles.card.data("hover:border-purple hover:scale-[1.02] transition-all duration-300")}
-                            variants={itemVariants}
-                          >
-                            {/* Top part: Name/Brand + Company */}
-                            <div className="flex items-start justify-between mb-2 gap-2">
-                              <div className="flex-1 min-w-0 mr-2 truncate">
-                                <span className="text-purple font-helvetica-now">{item.isotope}</span>
-                                <span className="text-black font-helvetica-now"> {item.name} </span>
-                                {item.url && item.brandName ? (
-                                  <a href={item.url} target="_blank" rel="noopener noreferrer" className="text-primary-blue font-helvetica-now hover:underline">
-                                    ({item.brandName})
-                                  </a>
-                                ) : item.brandName ? (
-                                  <span className="text-primary-blue font-helvetica-now">
-                                    ({item.brandName})
-                                  </span>
-                                ) : null}
-                              </div>
-                              <span className="text-grey font-helvetica-now flex-shrink-0 text-right">{item.company}</span>
-                            </div>
-                            {/* Bottom part: Indication */}
-                            <div className={styles.typography.cardBody("text-grey mt-1 truncate")}>
-                              {item.indication}
-                            </div>
-                          </motion.div>
-                        ))}
-                      </motion.div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-              
-              {/* Gradient fade at bottom */}
-              <div className="absolute bottom-0 left-0 right-4 h-24 bg-gradient-to-t from-white to-transparent pointer-events-none"></div>
-              
-              {/* Scroll indicator */}
-              <motion.div 
-                className="absolute bottom-3 left-1/2 transform -translate-x-1/2 z-10 flex flex-col items-center"
-                animate={{ 
-                  opacity: [0.4, 0.8, 0.4],
-                  y: [0, 4, 0]
-                }}
-                transition={{
-                  duration: 2,
-                  repeat: Infinity,
-                  repeatType: "loop"
-                }}
-              >
-                <svg width="20" height="10" viewBox="0 0 20 10" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M1 1L10 8L19 1" stroke="#86898e" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-              </motion.div>
+        {/* Main content */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+          {/* Left Column - Diagnostics (non-oncology) */}
+          <div className="w-full">
+            {/* Tab navigation with underline */}
+            <div className="border-b border-grey/30 mb-6">
+              <nav className="flex overflow-x-auto pb-px hide-scrollbar">
+                {diagnosticCategories.map((category, index) => (
+                  <button
+                    key={`tab-diag-${index}`}
+                    onClick={() => setActiveLeft(category.field)}
+                    className={`inline-block px-5 py-3 text-sm font-medium transition-colors border-b-2 min-w-max mr-4 ${
+                      activeLeft === category.field 
+                        ? 'border-purple text-purple' 
+                        : 'border-transparent text-grey hover:text-black hover:border-grey/30'
+                    }`}
+                  >
+                    {category.field}
+                  </button>
+                ))}
+              </nav>
             </div>
             
-            {/* Right Column - Oncology (both diagnostic and therapy) - 6 columns on desktop */}
-            <div className="col-span-4 sm:col-span-8 md:col-span-6 lg:col-span-6 relative">              
-              {/* Scrollable content */}
-              <div className="h-[600px] overflow-y-auto pr-4 scrollbar-none">
-                <div className="flex flex-col gap-8 pb-8">
-                  {oncologyCategories.map((category) => (
-                    <div
-                      key={`${category.field}-${category.type}`}
-                      className="flex flex-col"
-                    >
-                      {/* Category Header */}
-                      <div className="sticky top-0 bg-white z-10 py-4 mb-6" style={{ boxShadow: '0 10px 15px -10px rgba(255, 255, 255, 0.9)' }}>
-                        <span className="text-body font-helvetica-now">
-                          <span className="text-grey">{category.field} - </span>
-                          <span className="text-black font-medium">{category.type}</span>
-                        </span>
-                      </div>
+            {/* Content with standard scrolling */}
+            <div className="h-[550px] overflow-y-auto pr-2">
+              {diagnosticCategories.map((category, catIndex) => (
+                <div
+                  key={`${category.field}-${category.type}`}
+                  className={activeLeft === category.field ? 'block' : 'hidden'}
+                >
+                  <div className="sticky top-0 bg-white z-10 py-3 border-b border-grey/20 mb-5">
+                    <h3 className="text-xl font-medium">
+                      <span className="text-grey">{category.field} - </span>
+                      <span className="text-black">{category.type}</span>
+                    </h3>
+                  </div>
 
-                      {/* Card list with variants and once:true to prevent re-animation */}
-                      <motion.div 
-                        className="flex flex-col gap-4"
+                  <div className="space-y-4 pb-8">
+                    {category.items.map((item, itemIdx) => (
+                      <motion.div
+                        key={itemIdx}
+                        className={styles.card.data("")}
                         initial="hidden"
-                        whileInView="visible"
-                        viewport={{ once: true, margin: "-100px" }}
-                        variants={containerVariants}
+                        animate="visible"
+                        variants={fadeIn}
                       >
-                        {category.items.map((item, itemIdx) => (
-                          <motion.div
-                            key={itemIdx}
-                            className={styles.card.data("hover:border-purple hover:scale-[1.02] transition-all duration-300")}
-                            variants={itemVariants}
-                          >
-                            {/* Top part: Name/Brand + Company */}
-                            <div className="flex items-start justify-between mb-2 gap-2">
-                              <div className="flex-1 min-w-0 mr-2 truncate">
-                                <span className="text-purple font-helvetica-now">{item.isotope}</span>
-                                <span className="text-black font-helvetica-now"> {item.name} </span>
-                                {item.url && item.brandName ? (
-                                  <a href={item.url} target="_blank" rel="noopener noreferrer" className="text-primary-blue font-helvetica-now hover:underline">
-                                    ({item.brandName})
-                                  </a>
-                                ) : item.brandName ? (
-                                  <span className="text-primary-blue font-helvetica-now">
-                                    ({item.brandName})
-                                  </span>
-                                ) : null}
-                              </div>
-                              <span className="text-grey font-helvetica-now flex-shrink-0 text-right">{item.company}</span>
-                            </div>
-                            {/* Bottom part: Indication */}
-                            <div className={styles.typography.cardBody("text-grey mt-1 truncate")}>
-                              {item.indication}
-                            </div>
-                          </motion.div>
-                        ))}
+                        {/* Top part: Name/Brand + Company */}
+                        <div className="flex items-start justify-between mb-2 gap-2">
+                          <div className="flex-1 min-w-0 mr-2">
+                            <span className="text-purple font-helvetica-now">{item.isotope}</span>
+                            <span className="text-black font-helvetica-now"> {item.name} </span>
+                            {item.url && item.brandName ? (
+                              <a href={item.url} target="_blank" rel="noopener noreferrer" className="text-primary-blue font-helvetica-now hover:underline">
+                                ({item.brandName})
+                              </a>
+                            ) : item.brandName ? (
+                              <span className="text-primary-blue font-helvetica-now">
+                                ({item.brandName})
+                              </span>
+                            ) : null}
+                          </div>
+                          <span className="text-grey font-helvetica-now flex-shrink-0 text-right">{item.company}</span>
+                        </div>
+                        {/* Bottom part: Indication */}
+                        <div className="text-sm text-grey mt-1">
+                          {item.indication}
+                        </div>
                       </motion.div>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
-              </div>
-              
-              {/* Gradient fade at bottom */}
-              <div className="absolute bottom-0 left-0 right-4 h-24 bg-gradient-to-t from-white to-transparent pointer-events-none"></div>
-              
-              {/* Scroll indicator */}
-              <motion.div 
-                className="absolute bottom-3 left-1/2 transform -translate-x-1/2 z-10 flex flex-col items-center"
-                animate={{ 
-                  opacity: [0.4, 0.8, 0.4],
-                  y: [0, 4, 0]
-                }}
-                transition={{
-                  duration: 2,
-                  repeat: Infinity,
-                  repeatType: "loop"
-                }}
-              >
-                <svg width="20" height="10" viewBox="0 0 20 10" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M1 1L10 8L19 1" stroke="#86898e" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-              </motion.div>
+              ))}
+            </div>
+          </div>
+          
+          {/* Right Column - Oncology (both diagnostic and therapy) */}
+          <div className="w-full">
+            {/* Tab navigation with underline */}
+            <div className="border-b border-grey/30 mb-6">
+              <nav className="flex overflow-x-auto pb-px hide-scrollbar">
+                {oncologyCategories.map((category, index) => (
+                  <button
+                    key={`tab-onc-${index}`}
+                    onClick={() => setActiveRight(category.type)}
+                    className={`inline-block px-5 py-3 text-sm font-medium transition-colors border-b-2 min-w-max mr-4 ${
+                      activeRight === category.type 
+                        ? 'border-purple text-purple' 
+                        : 'border-transparent text-grey hover:text-black hover:border-grey/30'
+                    }`}
+                  >
+                    {category.type}
+                  </button>
+                ))}
+              </nav>
+            </div>
+            
+            {/* Content with standard scrolling */}
+            <div className="h-[550px] overflow-y-auto pr-2">
+              {oncologyCategories.map((category, catIndex) => (
+                <div
+                  key={`${category.field}-${category.type}`}
+                  className={activeRight === category.type ? 'block' : 'hidden'}
+                >
+                  <div className="sticky top-0 bg-white z-10 py-3 border-b border-grey/20 mb-5">
+                    <h3 className="text-xl font-medium">
+                      <span className="text-grey">{category.field} - </span>
+                      <span className="text-black">{category.type}</span>
+                    </h3>
+                  </div>
+
+                  <div className="space-y-4 pb-8">
+                    {category.items.map((item, itemIdx) => (
+                      <motion.div
+                        key={itemIdx}
+                        className={styles.card.data("")}
+                        initial="hidden"
+                        animate="visible"
+                        variants={fadeIn}
+                      >
+                        {/* Top part: Name/Brand + Company */}
+                        <div className="flex items-start justify-between mb-2 gap-2">
+                          <div className="flex-1 min-w-0 mr-2">
+                            <span className="text-purple font-helvetica-now">{item.isotope}</span>
+                            <span className="text-black font-helvetica-now"> {item.name} </span>
+                            {item.url && item.brandName ? (
+                              <a href={item.url} target="_blank" rel="noopener noreferrer" className="text-primary-blue font-helvetica-now hover:underline">
+                                ({item.brandName})
+                              </a>
+                            ) : item.brandName ? (
+                              <span className="text-primary-blue font-helvetica-now">
+                                ({item.brandName})
+                              </span>
+                            ) : null}
+                          </div>
+                          <span className="text-grey font-helvetica-now flex-shrink-0 text-right">{item.company}</span>
+                        </div>
+                        {/* Bottom part: Indication */}
+                        <div className="text-sm text-grey mt-1">
+                          {item.indication}
+                        </div>
+                      </motion.div>
+                    ))}
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         </div>

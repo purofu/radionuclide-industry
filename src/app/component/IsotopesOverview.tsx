@@ -5,7 +5,8 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
 import RadioisotopePeriodicDisplay from './RadioisotopePeriodicDisplay';
-import DataTabs from './DataTabs';
+import { Tabs } from '@/components/ui';
+import SectionTitle from '@/components/SectionTitle';
 
 // Interface for Isotope Cards
 interface Isotope {
@@ -131,24 +132,8 @@ const IsotopesOverview: React.FC = () => {
   return (
     <> {/* Use Fragment to group multiple top-level sections */}
 
-      {/* ===== HEADER SECTION ===== */}
-      <div className="w-full bg-white">
-        <div className="grid grid-cols-4 sm:grid-cols-8 md:grid-cols-12 lg:grid-cols-12">
-          <div className="col-span-4 sm:col-span-8 md:col-span-12 lg:col-span-12 px-8 md:px-16 lg:px-24">
-            <div className="h-32 md:h-40 flex items-center justify-start">
-              {/* Title using text-h2 style from config */}
-              <h1 className="text-h2 font-helvetica-now text-black">
-                Radioisotope
-              </h1>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Divider Line - Fixed full width solution that prevents horizontal scrolling */}
-      <div className="w-full border-t border-light-grey" />
-      {/* ===== END HEADER SECTION ===== */}
-
+      {/* Replace the header section with SectionTitle */}
+      <SectionTitle number="01" title="Radioisotope" />
 
       {/* ===== ISOTOPES OVERVIEW SECTION ===== */}
       <section className="relative w-full bg-white">
@@ -250,8 +235,16 @@ const IsotopesOverview: React.FC = () => {
                  Strategic divergence in radioisotope development
              </motion.h3>
 
-             {/* Tabs Component */}
-             <DataTabs activeTab={activeTab} setActiveTab={setActiveTab} />
+             {/* Replace DataTabs with our new Tabs component */}
+             <Tabs
+               titleTabs={[
+                 { id: 'trials', label: 'Clinical Trials' },
+                 { id: 'companies', label: 'Companies' }
+               ]}
+               defaultTitleTab={activeTab}
+               onTitleTabChange={(tabId) => setActiveTab(tabId as 'trials' | 'companies')}
+               className="mb-8"
+             />
 
              {/* Chart and Text Area - Responsive grid, correctly adjusted column spans */}
              <div className="grid grid-cols-1 sm:grid-cols-8 md:grid-cols-8 lg:grid-cols-12 gap-8 md:gap-12">

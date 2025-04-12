@@ -8,7 +8,22 @@ import {
     TooltipProvider,
     TooltipTrigger,
 } from "@/components/ui/tooltip"; // Assuming path is correct
+import { Tabs, GridIcon, TableIcon } from "@/components/ui"; // Import our new Tabs component
 import * as d3 from 'd3-hierarchy';
+import * as d3Array from 'd3-array';
+import { treemapSquarify } from 'd3-hierarchy';
+import styles from "@/theme/components"; // Import component styles
+// Import our new table components
+import { 
+    Table as TableComponent, 
+    TableHeader as TableHeaderComponent, 
+    TableBody as TableBodyComponent, 
+    TableRow as TableRowComponent, 
+    TableHead as TableHeadComponent, 
+    TableCell as TableCellComponent, 
+    TableWithTooltips,
+    TooltipList
+} from "@/components/ui/table";
 
 // --- Define Prop Types for Toggle Components ---
 interface ToggleGroupProps {
@@ -78,50 +93,6 @@ const ToggleGroupItem = ({
         </button>
     );
 };
-
-
-// --- Custom Table Components (Restored & Styled) ---
-const Table = React.forwardRef<HTMLTableElement, React.HTMLAttributes<HTMLTableElement>>(
-    ({ className, ...props }, ref) => (
-        <table ref={ref} className={`w-full border-collapse caption-bottom text-sm ${className}`} {...props} />
-    )
-);
-Table.displayName = "Table";
-
-const TableHeader = React.forwardRef<HTMLTableSectionElement, React.HTMLAttributes<HTMLTableSectionElement>>(
-    ({ className, ...props }, ref) => (
-        <thead ref={ref} className={`bg-gray-50 [&_tr]:border-b border-gray-200 ${className}`} {...props} />
-    )
-);
-TableHeader.displayName = "TableHeader";
-
-const TableBody = React.forwardRef<HTMLTableSectionElement, React.HTMLAttributes<HTMLTableSectionElement>>(
-    ({ className, ...props }, ref) => (
-        <tbody ref={ref} className={`divide-y divide-gray-200 bg-white ${className}`} {...props} />
-    )
-);
-TableBody.displayName = "TableBody";
-
-const TableRow = React.forwardRef<HTMLTableRowElement, React.HTMLAttributes<HTMLTableRowElement>>(
-    ({ className, ...props }, ref) => (
-        <tr ref={ref} className={`hover:bg-gray-50 ${className}`} {...props} />
-    )
-);
-TableRow.displayName = "TableRow";
-
-const TableHead = React.forwardRef<HTMLTableCellElement, React.ThHTMLAttributes<HTMLTableCellElement>>(
-    ({ className, ...props }, ref) => (
-        <th ref={ref} className={`px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider ${className}`} {...props} />
-    )
-);
-TableHead.displayName = "TableHead";
-
-const TableCell = React.forwardRef<HTMLTableCellElement, React.TdHTMLAttributes<HTMLTableCellElement>>(
-    ({ className, ...props }, ref) => (
-        <td ref={ref} className={`px-6 py-4 whitespace-nowrap text-sm text-gray-900 ${className}`} {...props} />
-    )
-);
-TableCell.displayName = "TableCell";
 
 // --- Interfaces (Expanded for phase data) ---
 interface StudyCounts { all: number; diagnostic: number; therapy: number; }
@@ -306,7 +277,7 @@ const CompanyTreemapDisplay = () => {
     const processedData = useMemo(getProcessedCompanies, [apiData, activeTab]); // All data for table view
     const top15Companies = useMemo(() => processedData.slice(0, 15), [processedData]); // Top 15 for treemap view
 
-    // --- Calculate Treemap Layout (Added Padding) ---
+    // --- Calculate Treemap Layout (Optimized for box proportions) ---
     const treemapLayout = useMemo(() => {
         if (!top15Companies || top15Companies.length === 0 || dimensions.width <= 0 || dimensions.height <= 0) return null;
         type RootNodeData = { name: string; children: CompanyTreemapNodeData[] };
@@ -315,15 +286,16 @@ const CompanyTreemapDisplay = () => {
             .sort((a, b) => (b.value ?? 0) - (a.value ?? 0));
         const treemapGenerator = d3.treemap<CompanyTreemapNodeData>()
             .size([dimensions.width, dimensions.height])
-            .paddingOuter(8) // Increased padding around the treemap
-            .paddingTop(8)
-            .paddingRight(8)
-            .paddingBottom(8)
-            .paddingLeft(8)
-            .paddingInner(8) // Increased space between tiles
+            .paddingOuter(10) // Slightly increased outer padding
+            .paddingTop(10)
+            .paddingRight(10)
+            .paddingBottom(10)
+            .paddingLeft(10)
+            .paddingInner(10) // Slightly increased inner padding
+            .tile(treemapSquarify.ratio(1)) // Using ratio of 1 forces more square-like boxes
             .round(true);
         return treemapGenerator(root as d3.HierarchyNode<CompanyTreemapNodeData>);
-    }, [top15Companies, dimensions.width, dimensions.height]); // Recalculate when data or dimensions change
+    }, [top15Companies, dimensions.width, dimensions.height]);
 
     // --- Helper to get Tab Display Text (Keep as before) ---
     const getTabDisplayText = (tab: TabType): string => {
@@ -333,242 +305,331 @@ const CompanyTreemapDisplay = () => {
     // --- Render Component ---
     return (
         <TooltipProvider delayDuration={100}>
-            <section className="w-full bg-background py-12 md:py-16">
-                <div className="container mx-auto px-4 sm:px-6 lg:px-8 flex flex-col">
-                    {/* Header */}
-                    <h2 className="text-3xl md:text-4xl font-bold mb-8 text-center text-foreground font-helvetica-now">
-                        Company Trial Activity
-                    </h2>
+            <section className="relative w-full bg-white py-12 md:py-16">
+                <div className="px-8 md:px-16 lg:px-24">
+                    <h2 className="text-h3 font-helvetica-now text-black mb-8">Company analysis by clinical trials and study phases</h2>
 
-                    {/* Controls */}
-                    <div className="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                        {/* Tabs */}
-                        <div className="flex flex-wrap justify-center sm:justify-start gap-2">
-                            {(["clinical", "phase1", "phase2", "phase3"] as TabType[]).map(
-                                (tab) => (
-                                    <button
-                                        key={tab}
-                                        onClick={() => setActiveTab(tab)}
-                                        className={`px-4 py-2 rounded-md text-sm font-medium font-helvetica-now transition-colors duration-150 ease-in-out ${activeTab === tab ? 'bg-black text-white' : 'bg-gray-200 text-black hover:bg-gray-400 hover:text-white'}`}
-                                        disabled={isLoading}
-                                    >
-                                        {getTabDisplayText(tab)}
-                                    </button>
-                                ),
-                            )}
+                    <div className="flex flex-col gap-6 mb-8">
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between sm:gap-8 gap-4">
+                            {/* Replace tab buttons and toggle with our new Tabs component */}
+                            <Tabs
+                                titleTabs={[
+                                    { id: 'clinical', label: 'Clinical Trials' },
+                                    { id: 'phase1', label: 'Phase 1' },
+                                    { id: 'phase2', label: 'Phase 2' },
+                                    { id: 'phase3', label: 'Phase 3' },
+                                ]}
+                                iconTabs={[
+                                    { id: 'treemap', icon: <GridIcon />, ariaLabel: 'Treemap View' },
+                                    { id: 'table', icon: <TableIcon />, ariaLabel: 'Table View' },
+                                ]}
+                                defaultTitleTab={activeTab}
+                                defaultIconTab={viewMode}
+                                onTitleTabChange={(tabId) => setActiveTab(tabId as TabType)}
+                                onIconTabChange={(tabId) => setViewMode(tabId as ViewModeType)}
+                                className="w-full"
+                            />
                         </div>
-                        {/* View Toggle */}
-                        <ToggleGroup
-                            value={viewMode}
-                            onValueChange={(value: string) => { if (value) setViewMode(value as ViewModeType); }}
-                            className="justify-center sm:justify-end"
-                        >
-                            <ToggleGroupItem value="treemap" aria-label="Treemap View">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" > <rect x="3" y="3" width="7" height="7" rx="1" fill="currentColor" /> <rect x="14" y="3" width="7" height="7" rx="1" fill="currentColor" /> <rect x="3" y="14" width="7" height="7" rx="1" fill="currentColor" /> <rect x="14" y="14" width="7" height="7" rx="1" fill="currentColor" /> </svg>
-                            </ToggleGroupItem>
-                            <ToggleGroupItem value="table" aria-label="Table View">
-                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" > <path d="M3 5H21V7H3V5Z" fill="currentColor" /> <path d="M3 11H21V13H3V11Z" fill="currentColor" /> <path d="M3 17H21V19H3V17Z" fill="currentColor" /> </svg>
-                            </ToggleGroupItem>
-                        </ToggleGroup>
-                    </div>
 
-                    {/* Loading / Error States */}
-                    {isLoading && <div className="flex-grow min-h-[400px] flex items-center justify-center text-muted-foreground"><p>Loading company data...</p></div>}
-                    {error && !isLoading && <div role="alert" className="my-6 p-4 bg-destructive/10 text-destructive border border-destructive/30 rounded-md text-center"><p className="font-semibold">Error Loading Data</p><p className="text-sm">{error}</p></div>}
+                        {/* Loading / Error States */}
+                        {isLoading && <div className="flex-grow min-h-[400px] flex items-center justify-center text-muted-foreground"><p>Loading company data...</p></div>}
+                        {error && !isLoading && <div role="alert" className="my-6 p-4 bg-destructive/10 text-destructive border border-destructive/30 rounded-md text-center"><p className="font-semibold">Error Loading Data</p><p className="text-sm">{error}</p></div>}
 
-                    {/* Content Area */}
-                    {!isLoading && !error && apiData?.company && ( // Ensure company data exists before rendering views
-                        <div className="flex-grow w-full min-h-[600px]">
+                        {/* Content Area */}
+                        {!isLoading && !error && apiData?.company && ( // Ensure company data exists before rendering views
+                            <div className="flex-grow w-full min-h-[600px]">
 
-                            {/* ---- TREEMAP VIEW (Rendering Cards as Tiles) ---- */}
-                            {viewMode === 'treemap' && (
-                                <div
-                                    ref={treemapContainerRef}
-                                    className="relative w-full h-[700px] overflow-hidden mb-6 bg-muted/20" // Consistent height
-                                    aria-label={`Treemap of top 15 companies by ${getTabDisplayText(activeTab)} trials`}
-                                >
-                                    {treemapLayout && treemapLayout.leaves().length > 0 ? (
-                                        treemapLayout.leaves().map((leaf: TreemapHierarchyNode) => {
-                                            const leafData = leaf.data;
-                                            const tileWidth = leaf.x1 - leaf.x0;
-                                            const tileHeight = leaf.y1 - leaf.y0;
-                                            // Use TOTAL counts for background and display
-                                            const backgroundStyle = getTileBackgroundStyle(leafData.diagnosticTrials, leafData.therapyTrials, leafData.allTrials);
-                                            const textColor = TEXT_COLOR_ON_GRADIENT;
-                                            const badgeTextColor = COLOR_BADGE_TEXT;
+                                {/* ---- TREEMAP VIEW (Rendering Cards as Tiles) ---- */}
+                                {viewMode === 'treemap' && (
+                                    <div
+                                        ref={treemapContainerRef}
+                                        className="relative w-full h-[700px] overflow-hidden mb-6 bg-muted/20" // Consistent height
+                                        aria-label={`Treemap of top 15 companies by ${getTabDisplayText(activeTab)} trials`}
+                                    >
+                                        {treemapLayout && treemapLayout.leaves().length > 0 ? (
+                                            treemapLayout.leaves().map((leaf: TreemapHierarchyNode) => {
+                                                const leafData = leaf.data;
+                                                const tileWidth = leaf.x1 - leaf.x0;
+                                                const tileHeight = leaf.y1 - leaf.y0;
+                                                // Use TOTAL counts for background and display
+                                                const backgroundStyle = getTileBackgroundStyle(leafData.diagnosticTrials, leafData.therapyTrials, leafData.allTrials);
+                                                const textColor = TEXT_COLOR_ON_GRADIENT;
+                                                const badgeTextColor = COLOR_BADGE_TEXT;
 
-                                            // --- More refined Adaptive Rendering Conditions ---
-                                            const isVerySmallTile = tileWidth < 90 || tileHeight < 70;
-                                            const isSmallTile = tileWidth < 120 || tileHeight < 90;
-                                            const showBadges = !isVerySmallTile; // Hide badges on very small tiles
-                                            const showCompanyName = true; // Always show, but smaller on small tiles 
-                                            const showLargeNumber = true; // Always show, but adjust size
+                                                // --- More refined Adaptive Rendering Conditions ---
+                                                const isExtremelySmallTile = tileWidth < 70 || tileHeight < 60;
+                                                const isVerySmallTile = (tileWidth < 90 || tileHeight < 70) && !isExtremelySmallTile;
+                                                const isSmallTile = (tileWidth < 120 || tileHeight < 90) && !isVerySmallTile && !isExtremelySmallTile;
+                                                const isNarrowTile = tileWidth < 100 && tileHeight > 120; // Tall but narrow tiles
+                                                const isWideTile = tileWidth > 200 && tileHeight < 100; // Wide but short tiles
 
-                                            // Adjust font size based on tile area and dimensions
-                                            const area = tileWidth * tileHeight;
-                                            let numberFontSize = area < 5000 ? '1rem' : area < 10000 ? '1.5rem' : area < 25000 ? '2.5rem' : '3.5rem';
-                                            if (numberFontSize === '3.5rem' && tileHeight < 100) numberFontSize = '2.5rem';
-                                            
-                                            // Company name size adjustment
-                                            const companyNameSize = isSmallTile ? 
-                                                (isVerySmallTile ? 'text-xs' : 'text-sm') : 
-                                                'text-[21px]';
+                                                // Determine badge layout orientation based on tile shape
+                                                const useBadgesVerticalLayout = isNarrowTile || tileWidth < 140;
+                                                const showBadges = !isExtremelySmallTile; // Hide badges on extremely small tiles
+                                                const showCompanyName = true; // Always show, but smaller on small tiles 
+                                                const showLargeNumber = true; // Always show, but adjust size
 
-                                            return (
-                                                // Tooltip wraps the positioned div
-                                                <Tooltip key={leafData.name} delayDuration={150}>
-                                                    <TooltipTrigger asChild>
-                                                        {/* The Tile Div: Positioned by D3 */}
-                                                        <div
-                                                            className="absolute overflow-hidden rounded-lg cursor-pointer outline outline-1 outline-offset-[-0.98px] outline-white"
-                                                            style={{
-                                                                left: `${leaf.x0}px`,
-                                                                top: `${leaf.y0}px`,
-                                                                width: `${tileWidth}px`,
-                                                                height: `${tileHeight}px`,
-                                                                ...backgroundStyle,
-                                                                color: textColor,
-                                                            }}
-                                                        >
-                                                            {/* Inner structure for card content */}
-                                                            <div className={`w-full h-full ${isVerySmallTile ? 'p-2' : isSmallTile ? 'p-3' : 'p-6'} flex flex-col justify-between items-start`}>
-                                                                {/* Top Section */}
-                                                                <div className="w-full flex justify-between items-start gap-1">
-                                                                    {/* Large Number - SHOW ACTIVE TAB VALUE */}
-                                                                    {showLargeNumber ? (
-                                                                        <div className="font-medium font-['Helvetica_Now_Display']" 
-                                                                             style={{ fontSize: numberFontSize, lineHeight: 1.1 }}>
-                                                                            {getValueForActiveTab(leafData, activeTab)}
-                                                                        </div>
-                                                                    ) : <div />}
+                                                // Adjust font size based on tile area and dimensions
+                                                const area = tileWidth * tileHeight;
+                                                let numberFontSize = area < 5000 ? '1rem' : area < 10000 ? '1.5rem' : area < 25000 ? '2.5rem' : '3.5rem';
+                                                if (numberFontSize === '3.5rem' && tileHeight < 100) numberFontSize = '2.5rem';
+                                                if (isNarrowTile && numberFontSize === '2.5rem') numberFontSize = '1.5rem';
 
-                                                                    {/* Badges - Hide on very small tiles */}
-                                                                    {showBadges && (
-                                                                        <div className="flex justify-start items-center gap-2 shrink-0">
-                                                                            {/* Disease Badge */}
-                                                                            {leafData.diseaseCount > 0 && (
-                                                                                <div className="px-3 py-0.5 rounded-[90px] flex justify-center items-center gap-2.5" 
-                                                                                     style={{ backgroundColor: COLOR_BLACK }}>
-                                                                                    <div className={`text-center ${isSmallTile ? 'text-sm' : 'text-lg'} font-bold font-['Helvetica_Now_Display'] leading-tight`}
-                                                                                         style={{ color: COLOR_BADGE_TEXT }}>
-                                                                                        {leafData.diseaseCount}
+                                                // Badge size adjustment - make them smaller overall
+                                                const badgeFontSize = isVerySmallTile || isSmallTile ? 'text-xs' : (isWideTile ? 'text-sm' : 'text-xs');
+                                                const badgePadding = isVerySmallTile || isSmallTile ? 'px-2 py-0.5' : 'px-2 py-0.5';
+
+                                                // Company name size adjustment - based on area AND company importance
+                                                const getCompanyNameSize = () => {
+                                                    // Calculate area and aspect ratio of the tile
+                                                    const aspectRatio = tileWidth / tileHeight;
+                                                    
+                                                    // Get the company's actual value (for the active tab)
+                                                    const companyValue = getValueForActiveTab(leafData, activeTab);
+                                                    
+                                                    // Calculate importance factor (0.7 to 1.3 range)
+                                                    // Higher values get larger fonts, lower values get smaller fonts
+                                                    const importanceFactor = Math.min(1.3, Math.max(0.7, 0.9 + (companyValue / 50 * 0.4)));
+                                                    
+                                                    // Detect extremely skewed rectangles (very thin or very short)
+                                                    const isExtremeAspectRatio = aspectRatio < 0.4 || aspectRatio > 2.5;
+                                                    
+                                                    // Base size primarily on area, with adjustments for aspect ratio
+                                                    let baseSize = 'text-[7px]';
+                                                    if (area < 3000) baseSize = 'text-[7px]';
+                                                    else if (area < 5000) baseSize = isExtremeAspectRatio ? 'text-[8px]' : 'text-[9px]';
+                                                    else if (area < 8000) baseSize = isExtremeAspectRatio ? 'text-[9px]' : 'text-[10px]';
+                                                    else if (area < 12000) baseSize = isExtremeAspectRatio ? 'text-xs' : 'text-sm';
+                                                    else if (area < 18000) baseSize = isExtremeAspectRatio ? 'text-sm' : 'text-base';
+                                                    else if (area < 25000) baseSize = isExtremeAspectRatio ? 'text-base' : 'text-lg';
+                                                    else baseSize = isExtremeAspectRatio ? 'text-lg' : 'text-[21px]';
+                                                    
+                                                    // Now adjust based on company value
+                                                    // For high value companies, try to use a larger font size regardless of box dimensions
+                                                    if (companyValue > 30) {
+                                                        if (baseSize === 'text-[7px]') return 'text-[9px]';
+                                                        if (baseSize === 'text-[8px]') return 'text-[10px]';
+                                                        if (baseSize === 'text-[9px]') return 'text-xs';
+                                                        if (baseSize === 'text-[10px]') return 'text-sm';
+                                                        if (baseSize === 'text-xs') return 'text-sm';
+                                                        if (baseSize === 'text-sm') return 'text-base';
+                                                        if (baseSize === 'text-base') return 'text-lg';
+                                                        return 'text-[21px]';
+                                                    }
+                                                    
+                                                    // For low value companies, use a smaller font
+                                                    if (companyValue < 10) {
+                                                        if (baseSize === 'text-lg' || baseSize === 'text-[21px]') return 'text-base';
+                                                        if (baseSize === 'text-base') return 'text-sm';
+                                                        if (baseSize === 'text-sm') return 'text-xs';
+                                                        if (baseSize === 'text-xs') return 'text-[10px]';
+                                                        if (baseSize === 'text-[10px]') return 'text-[9px]';
+                                                        if (baseSize === 'text-[9px]') return 'text-[8px]';
+                                                        return 'text-[7px]';
+                                                    }
+                                                    
+                                                    // For medium values, keep the base size
+                                                    return baseSize;
+                                                };
+
+                                                const companyNameSize = getCompanyNameSize();
+
+                                                // More adaptive line clamping based on both area and height
+                                                const nameLineClamp = () => {
+                                                    const area = tileWidth * tileHeight;
+                                                    if (area < 5000 || tileHeight < 70) return 'line-clamp-1';
+                                                    if (area < 15000 || tileHeight < 100) return 'line-clamp-2';
+                                                    return 'line-clamp-3';
+                                                };
+
+                                                return (
+                                                    // Tooltip wraps the positioned div
+                                                    <Tooltip key={leafData.name} delayDuration={150}>
+                                                        <TooltipTrigger asChild>
+                                                            {/* The Tile Div: Positioned by D3 */}
+                                                            <div
+                                                                className="absolute overflow-hidden rounded-lg cursor-pointer outline outline-1 outline-offset-[-0.98px] outline-white"
+                                                                style={{
+                                                                    left: `${leaf.x0}px`,
+                                                                    top: `${leaf.y0}px`,
+                                                                    width: `${tileWidth}px`,
+                                                                    height: `${tileHeight}px`,
+                                                                    ...backgroundStyle,
+                                                                    color: textColor,
+                                                                }}
+                                                            >
+                                                                {/* Inner structure for card content */}
+                                                                <div className={`w-full h-full ${isVerySmallTile ? 'p-2' : isSmallTile ? 'p-3' : 'p-6'} flex flex-col justify-between items-start`}>
+                                                                    {/* Top Section */}
+                                                                    <div className="w-full flex justify-between items-start gap-1">
+                                                                        {/* Large Number - SHOW ACTIVE TAB VALUE */}
+                                                                        {showLargeNumber ? (
+                                                                            <div className="font-medium font-['Helvetica_Now_Display']" 
+                                                                                 style={{ fontSize: numberFontSize, lineHeight: 1.1 }}>
+                                                                                {getValueForActiveTab(leafData, activeTab)}
+                                                                            </div>
+                                                                        ) : <div />}
+
+                                                                        {/* Badges - Hide on extremely small tiles */}
+                                                                        {showBadges && (
+                                                                            <div className={`flex ${useBadgesVerticalLayout ? 'flex-col' : 'flex-row'} ${useBadgesVerticalLayout ? 'gap-1' : 'gap-2'} shrink-0 items-end`}>
+                                                                                {/* Disease Badge */}
+                                                                                {leafData.diseaseCount > 0 && (
+                                                                                    <div className={`${badgePadding} rounded-full flex justify-center items-center`} 
+                                                                                        style={{ backgroundColor: COLOR_BLACK }}>
+                                                                                        <div className={`text-center ${badgeFontSize} font-medium font-['Helvetica_Now_Display'] leading-tight`}
+                                                                                            style={{ color: COLOR_BADGE_TEXT }}>
+                                                                                            {leafData.diseaseCount}
+                                                                                        </div>
                                                                                     </div>
-                                                                                </div>
-                                                                            )}
-                                                                            {/* Diagnostic Badge */}
-                                                                            {leafData.diagnosticTrials > 0 && (
-                                                                                <div className="px-3 py-0.5 rounded-[90px] flex justify-center items-center gap-2.5" 
-                                                                                     style={{ backgroundColor: COLOR_PURPLE }}>
-                                                                                    <div className={`text-center ${isSmallTile ? 'text-sm' : 'text-lg'} font-bold font-['Helvetica_Now_Display'] leading-tight`}
-                                                                                         style={{ color: COLOR_BADGE_TEXT }}>
-                                                                                        {leafData.diagnosticTrials}
+                                                                                )}
+                                                                                {/* Diagnostic Badge */}
+                                                                                {leafData.diagnosticTrials > 0 && (
+                                                                                    <div className={`${badgePadding} rounded-full flex justify-center items-center`} 
+                                                                                        style={{ backgroundColor: COLOR_PURPLE }}>
+                                                                                        <div className={`text-center ${badgeFontSize} font-medium font-['Helvetica_Now_Display'] leading-tight`}
+                                                                                            style={{ color: COLOR_BADGE_TEXT }}>
+                                                                                            {leafData.diagnosticTrials}
+                                                                                        </div>
                                                                                     </div>
-                                                                                </div>
-                                                                            )}
-                                                                            {/* Therapy Badge */}
-                                                                            {leafData.therapyTrials > 0 && (
-                                                                                <div className="px-3 py-0.5 rounded-[90px] flex justify-center items-center gap-2.5" 
-                                                                                     style={{ backgroundColor: COLOR_PRIMARY_BLUE }}>
-                                                                                    <div className={`text-center ${isSmallTile ? 'text-sm' : 'text-lg'} font-bold font-['Helvetica_Now_Display'] leading-tight`}
-                                                                                         style={{ color: COLOR_BADGE_TEXT }}>
-                                                                                        {leafData.therapyTrials}
+                                                                                )}
+                                                                                {/* Therapy Badge */}
+                                                                                {leafData.therapyTrials > 0 && (
+                                                                                    <div className={`${badgePadding} rounded-full flex justify-center items-center`} 
+                                                                                        style={{ backgroundColor: COLOR_PRIMARY_BLUE }}>
+                                                                                        <div className={`text-center ${badgeFontSize} font-medium font-['Helvetica_Now_Display'] leading-tight`}
+                                                                                            style={{ color: COLOR_BADGE_TEXT }}>
+                                                                                            {leafData.therapyTrials}
+                                                                                        </div>
                                                                                     </div>
-                                                                                </div>
-                                                                            )}
+                                                                                )}
+                                                                            </div>
+                                                                        )}
+                                                                    </div>
+
+                                                                    {/* Bottom Section: Company Name - Area-based adaptive sizing */}
+                                                                    {showCompanyName && (
+                                                                        <div className="self-stretch inline-flex justify-between items-center mt-auto">
+                                                                            <div className={`flex-1 justify-start text-Black ${companyNameSize} font-medium font-['Helvetica_Now_Display'] leading-tight ${nameLineClamp()}`}>
+                                                                                {leafData.name}
+                                                                            </div>
                                                                         </div>
                                                                     )}
                                                                 </div>
-
-                                                                {/* Bottom Section: Company Name - Adaptive Size */}
-                                                                {showCompanyName && (
-                                                                    <div className="self-stretch inline-flex justify-between items-center mt-auto">
-                                                                        <div className={`flex-1 justify-start text-Black ${companyNameSize} font-medium font-['Helvetica_Now_Display'] leading-tight line-clamp-2`}>
-                                                                            {leafData.name}
-                                                                        </div>
-                                                                    </div>
-                                                                )}
                                                             </div>
-                                                        </div>
-                                                    </TooltipTrigger>
-                                                    <TooltipContent
-                                                        side="top"
-                                                        align="center"
-                                                        className="bg-background text-foreground border border-border rounded-md shadow-lg p-3 max-w-xs"
-                                                    >
-                                                        <CompanyTooltipContent data={leafData} activeTab={activeTab} getTabDisplayText={getTabDisplayText} />
-                                                    </TooltipContent>
-                                                </Tooltip>
-                                            );
-                                        })
-                                    ) : (
-                                        <div className="absolute inset-0 flex items-center justify-center text-muted-foreground p-4 text-center">
-                                            <p>{dimensions.width <= 0 || dimensions.height <= 0 ? "Adjusting treemap layout..." : `No company data available for the '${getTabDisplayText(activeTab)}' category.`}</p>
-                                        </div>
-                                    )}
-                                </div>
-                            )}
-
-                            {/* ---- TABLE VIEW (Matched with TargetDisplay) ---- */}
-                            {viewMode === 'table' && (
-                                <>
-                                    {processedData.length > 0 ? (
-                                        <div className="mb-6 overflow-hidden shadow ring-1 ring-black ring-opacity-5 rounded-lg h-[700px]"> {/* Matched styling */}
-                                            <div className="h-full overflow-y-auto"> {/* Full height with scrolling */}
-                                                <Table>
-                                                    <TableHeader>
-                                                        <TableRow>
-                                                            <TableHead className="w-[30%] min-w-[150px]">Company</TableHead>
-                                                            <TableHead className="text-right">Trials ({getTabDisplayText(activeTab)})</TableHead>
-                                                            <TableHead className="text-right">Phase 1</TableHead>
-                                                            <TableHead className="text-right">Phase 2</TableHead>
-                                                            <TableHead className="text-right">Phase 3</TableHead>
-                                                            <TableHead className="text-right">Total</TableHead>
-                                                        </TableRow>
-                                                    </TableHeader>
-                                                    <TableBody>
-                                                        {processedData.map((company) => (
-                                                            <TableRow key={company.name}>
-                                                                <TableCell className="font-medium">{company.name}</TableCell>
-                                                                <TableCell className="text-right font-semibold">{company.value}</TableCell>
-                                                                <TableCell className="text-right">{company.phase1Trials}</TableCell>
-                                                                <TableCell className="text-right">{company.phase2Trials}</TableCell>
-                                                                <TableCell className="text-right">{company.phase3Trials}</TableCell>
-                                                                <TableCell className="text-right">{company.allTrials}</TableCell>
-                                                            </TableRow>
-                                                        ))}
-                                                    </TableBody>
-                                                </Table>
+                                                        </TooltipTrigger>
+                                                        <TooltipContent
+                                                            side="top"
+                                                            align="center"
+                                                            className="bg-background text-foreground border border-border rounded-md shadow-lg p-3 max-w-xs"
+                                                        >
+                                                            <CompanyTooltipContent data={leafData} activeTab={activeTab} getTabDisplayText={getTabDisplayText} />
+                                                        </TooltipContent>
+                                                    </Tooltip>
+                                                );
+                                            })
+                                        ) : (
+                                            <div className="absolute inset-0 flex items-center justify-center text-muted-foreground p-4 text-center">
+                                                <p>{dimensions.width <= 0 || dimensions.height <= 0 ? "Adjusting treemap layout..." : `No company data available for the '${getTabDisplayText(activeTab)}' category.`}</p>
                                             </div>
-                                        </div>
-                                    ) : (
-                                        <div className="text-center p-10 text-gray-500 h-[700px] flex items-center justify-center bg-white border border-gray-200 rounded-lg"> {/* Matched styling */}
-                                            <p>No company data available for the &apos;{getTabDisplayText(activeTab)}&apos; category to display in the table.</p>
-                                        </div>
-                                    )}
-                                </>
-                            )}
-                        </div>
-                    )}
-                     {/* Handle case where apiData exists but apiData.company is missing/empty */}
-                     {!isLoading && !error && apiData && !apiData.company && (
-                         <div className="text-center p-10 text-muted-foreground min-h-[400px] flex items-center justify-center">
-                             <p>Data loaded, but no company information was found in the response.</p>
-                         </div>
-                     )}
+                                        )}
+                                    </div>
+                                )}
 
-                    {/* Footer */}
-                    <div className="mt-8 border-t border-border pt-8 text-muted-foreground text-sm text-center">
-                        {/* Footer logic remains similar, adjust text slightly */}
-                         {apiData?.metadata?.total_trials_processed && !isLoading && !error && apiData?.company && (
-                            <p>
-                                Analysis based on {apiData.metadata.total_trials_processed.toLocaleString()} processed trials.
-                                {viewMode === 'treemap' && top15Companies.length > 0 && ` Displaying top ${top15Companies.length} companies via treemap for '${getTabDisplayText(activeTab)}'.`}
-                                {viewMode === 'table' && processedData.length > 0 && ` Displaying ${processedData.length} companies via table for '${getTabDisplayText(activeTab)}'.`}
-                                {((viewMode === 'treemap' && top15Companies.length === 0) || (viewMode === 'table' && processedData.length === 0)) && ` No companies found matching the criteria for '${getTabDisplayText(activeTab)}'.`}
-                            </p>
+                                {/* ---- TABLE VIEW ---- */}
+                                {!isLoading && viewMode === "table" && getProcessedCompanies().length > 0 && (
+                                    <TableWithTooltips className="mb-6">
+                                        <TableComponent>
+                                            <TableHeaderComponent className="sticky top-0 z-20">
+                                                <TableRowComponent>
+                                                    <TableHeadComponent align="left">Company</TableHeadComponent>
+                                                    <TableHeadComponent align="center">Clinical Trials</TableHeadComponent>
+                                                    <TableHeadComponent align="center">Phase 1</TableHeadComponent>
+                                                    <TableHeadComponent align="center">Phase 2</TableHeadComponent>
+                                                    <TableHeadComponent align="center">Phase 3</TableHeadComponent>
+                                                    <TableHeadComponent align="center">Diseases</TableHeadComponent>
+                                                    <TableHeadComponent align="center">Diagnostic / Therapy</TableHeadComponent>
+                                                </TableRowComponent>
+                                            </TableHeaderComponent>
+                                            <TableBodyComponent>
+                                                {getProcessedCompanies().map((company) => {
+                                                    return (
+                                                        <TableRowComponent key={company.name}>
+                                                            <TableCellComponent align="left" 
+                                                                hasTooltip={true} 
+                                                                tooltipContent={
+                                                                    <div className="px-3 py-2">
+                                                                        <h4 className={styles.typography.cardSubtitle()}>{company.name}</h4>
+                                                                    </div>
+                                                                }
+                                                            >
+                                                                {company.name}
+                                                            </TableCellComponent>
+                                                            <TableCellComponent align="center">
+                                                                {company.allTrials}
+                                                            </TableCellComponent>
+                                                            <TableCellComponent align="center">
+                                                                {company.phase1Trials}
+                                                            </TableCellComponent>
+                                                            <TableCellComponent align="center">
+                                                                {company.phase2Trials}
+                                                            </TableCellComponent>
+                                                            <TableCellComponent align="center">
+                                                                {company.phase3Trials}
+                                                            </TableCellComponent>
+                                                            <TableCellComponent align="center" 
+                                                                hasTooltip={company.diseaseCount > 0} 
+                                                                tooltipContent={company.diseases.length > 0 ? 
+                                                                    <TooltipList items={company.diseases} /> : 
+                                                                    <div className="px-3 py-2 text-body-small text-grey">No diseases listed</div>
+                                                                }
+                                                            >
+                                                                {company.diseaseCount}
+                                                            </TableCellComponent>
+                                                            <TableCellComponent align="center">
+                                                                <div className="flex justify-center space-x-4">
+                                                                    {company.diagnosticTrials > 0 && (
+                                                                        <span className="px-4 py-1.5 text-xs rounded-full bg-light-diagnostic">
+                                                                            {company.diagnosticTrials}
+                                                                        </span>
+                                                                    )}
+                                                                    {company.therapyTrials > 0 && (
+                                                                        <span className="px-4 py-1.5 text-xs rounded-full bg-light-therapy">
+                                                                            {company.therapyTrials}
+                                                                        </span>
+                                                                    )}
+                                                                </div>
+                                                            </TableCellComponent>
+                                                        </TableRowComponent>
+                                                    );
+                                                })}
+                                            </TableBodyComponent>
+                                        </TableComponent>
+                                    </TableWithTooltips>
+                                )}
+                            </div>
                         )}
-                         {!isLoading && !error && apiData && processedData.length === 0 && apiData.company && ( <p>No companies met the criteria for display in the &apos;{getTabDisplayText(activeTab)}&apos; category.</p> )}
-                         {!isLoading && !error && apiData && !apiData.company && ( <p>Data loaded, but required &apos;company&apos; information was missing.</p> )}
+                         {/* Handle case where apiData exists but apiData.company is missing/empty */}
+                         {!isLoading && !error && apiData && !apiData.company && (
+                             <div className="text-center p-10 text-muted-foreground min-h-[400px] flex items-center justify-center">
+                                 <p>Data loaded, but no company information was found in the response.</p>
+                             </div>
+                         )}
+
+                        {/* Footer */}
+                        <div className="mt-8 border-t border-border pt-8 text-muted-foreground text-sm text-center">
+                            {/* Footer logic remains similar, adjust text slightly */}
+                             {apiData?.metadata?.total_trials_processed && !isLoading && !error && apiData?.company && (
+                                <p>
+                                    Analysis based on {apiData.metadata.total_trials_processed.toLocaleString()} processed trials.
+                                    {viewMode === 'treemap' && top15Companies.length > 0 && ` Displaying top ${top15Companies.length} companies via treemap for '${getTabDisplayText(activeTab)}'.`}
+                                    {viewMode === 'table' && processedData.length > 0 && ` Displaying ${processedData.length} companies via table for '${getTabDisplayText(activeTab)}'.`}
+                                    {((viewMode === 'treemap' && top15Companies.length === 0) || (viewMode === 'table' && processedData.length === 0)) && ` No companies found matching the criteria for '${getTabDisplayText(activeTab)}'.`}
+                                </p>
+                            )}
+                             {!isLoading && !error && apiData && processedData.length === 0 && apiData.company && ( <p>No companies met the criteria for display in the &apos;{getTabDisplayText(activeTab)}&apos; category.</p> )}
+                             {!isLoading && !error && apiData && !apiData.company && ( <p>Data loaded, but required &apos;company&apos; information was missing.</p> )}
+                        </div>
                     </div>
                 </div>
             </section>

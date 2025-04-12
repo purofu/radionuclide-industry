@@ -4,6 +4,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import CompanyTreemapDisplay from './CompanyTreemapDisplay';
+import SectionTitle from '@/components/SectionTitle';
 
 // Interface for the Targeting Method Cards
 interface TargetingMethod {
@@ -50,97 +51,88 @@ const targetingMethodsData: TargetingMethod[] = [
 
 const Companies: React.FC = () => {
   return (
-    <section className="relative w-full bg-white py-16 md:py-24">
-      {/* Main grid container - Using defined 16-col grid */}
-      <div className="grid grid-cols-4 sm:grid-cols-8 md:grid-cols-12 lg:grid-cols-12">
-        {/* Content container with padding */}
-        <div className="col-span-4 sm:col-span-8 md:col-span-12 lg:col-span-12 px-8 md:px-16 lg:px-24">
+    <>
+      {/* Add SectionTitle at the top */}
+      <SectionTitle number="03" title="Companies" />
+    
+      <section className="relative w-full bg-white py-16 md:py-24">
+        {/* Main grid container - Using defined 16-col grid */}
+        <div className="grid grid-cols-4 sm:grid-cols-8 md:grid-cols-12 lg:grid-cols-12">
+          {/* Content container with padding */}
+          <div className="col-span-4 sm:col-span-8 md:col-span-12 lg:col-span-12 px-8 md:px-16 lg:px-24">
 
-          {/* Section Title */}
-          <motion.div
-            className="mb-10 md:mb-12 text-left"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8, delay: 0.1 }}
-          >
-            {/* Using text-h2 style and font from config */}
-            <h1 className="text-h2 font-helvetica-now text-black">
-             Companies
-            </h1>
-          </motion.div>
-
-          {/* Introductory Paragraph */}
-          <motion.div
-            className="mb-12 md:mb-16 text-left max-w-4xl"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-          >
-             {/* Using text-body style and font from config */}
-            <p className="text-h3 font-helvetica-now text-black">
-            The radiopharmaceutical landscape is experiencing unprecedented growth, with a diverse array of players—from emerging biotechs to established pharmaceutical giants—actively developing novel therapies across multiple targets and isotopes.
-            </p>
-          </motion.div>
-
-          {/* Two-column layout with card and text */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
-            {/* Company Card - Taking half the space */}
+            {/* Introductory Paragraph */}
             <motion.div
-              key={targetingMethodsData[0].title}
-              className="flex flex-col justify-between p-6 border border-light-grey rounded-md bg-white min-h-[380px]"
+              className="mb-12 md:mb-16 text-left max-w-4xl"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.5 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
             >
-              {/* Top section: Count and Label */}
-              <div className='w-full mb-4'>
-                <div className="text-h1 justify-left font-helvetica-now text-black leading-none">
-                  {targetingMethodsData[0].count}
-                </div>
-                <div className="text-body-small font-helvetica-now text-grey mt-1">
-                  {targetingMethodsData[0].countLabel}
-                </div>
-              </div>
-
-              {/* Bottom section: Title, Description, and Tags */}
-              <div className="flex flex-col gap-2">
-                <h4 className="text-h4 font-helvetica-now text-black">
-                  {targetingMethodsData[0].title}
-                </h4>
-                <p className="text-body-small font-helvetica-now text-black mb-2">
-                  {targetingMethodsData[0].description}
-                </p>
-                <div className="flex flex-wrap gap-2">
-                  {targetingMethodsData[0].tags.map((tag) => (
-                    <div key={tag.name} className={`px-3 py-1 ${tag.bgColor} rounded-full flex items-center`}>
-                      <p className="text-body-small font-helvetica-now text-black">{tag.name}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </motion.div>
-
-            {/* Text Content - Taking the other half of the space */}
-            <motion.div
-              className="flex flex-col justify-center p-6 min-h-[380px]"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.6 }}
-            >
-              <p className="text-body font-helvetica-now text-grey">
-                This ecosystem creates a remarkable level of interdependence. Competitors frequently become collaborators through strategic partnerships and acquisitions that address specialized capabilities gaps—whether in isotope production, targeting technology, manufacturing expertise, or delivery infrastructure.
+               {/* Using text-body style and font from config */}
+              <p className="text-h3 font-helvetica-now text-black">
+              The radiopharmaceutical landscape is experiencing unprecedented growth, with a diverse array of players—from emerging biotechs to established pharmaceutical giants—actively developing novel therapies across multiple targets and isotopes.
               </p>
             </motion.div>
-          </div>
 
+            {/* Two-column layout with card and text */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+              {/* Company Card - Taking half the space */}
+              <motion.div
+                key={targetingMethodsData[0].title}
+                className="flex flex-col justify-between p-6 border border-light-grey rounded-md bg-white min-h-[380px]"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, delay: 0.5 }}
+              >
+                {/* Top section: Count and Label */}
+                <div className='w-full mb-4'>
+                  <div className="text-h1 justify-left font-helvetica-now text-black leading-none">
+                    {targetingMethodsData[0].count}
+                  </div>
+                  <div className="text-body-small font-helvetica-now text-grey mt-1">
+                    {targetingMethodsData[0].countLabel}
+                  </div>
+                </div>
+
+                {/* Bottom section: Title, Description, and Tags */}
+                <div className="flex flex-col gap-2">
+                  <h4 className="text-h4 font-helvetica-now text-black">
+                    {targetingMethodsData[0].title}
+                  </h4>
+                  <p className="text-body-small font-helvetica-now text-black mb-2">
+                    {targetingMethodsData[0].description}
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {targetingMethodsData[0].tags.map((tag) => (
+                      <div key={tag.name} className={`px-3 py-1 ${tag.bgColor} rounded-full flex items-center`}>
+                        <p className="text-body-small font-helvetica-now text-black">{tag.name}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </motion.div>
+
+              {/* Text Content - Taking the other half of the space */}
+              <motion.div
+                className="flex flex-col justify-center p-6 min-h-[380px]"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, delay: 0.6 }}
+              >
+                <p className="text-body font-helvetica-now text-grey">
+                  This ecosystem creates a remarkable level of interdependence. Competitors frequently become collaborators through strategic partnerships and acquisitions that address specialized capabilities gaps—whether in isotope production, targeting technology, manufacturing expertise, or delivery infrastructure.
+                </p>
+              </motion.div>
+            </div>
+
+          </div>
         </div>
-      </div>
-      <CompanyTreemapDisplay />
-    </section>
+        <CompanyTreemapDisplay />
+      </section>
+    </>
   );
 };
 

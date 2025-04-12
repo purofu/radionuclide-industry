@@ -1,12 +1,9 @@
 // src/app/components/DonutChart.tsx
-"use client"; // Required for hooks and D3 manipulation
+"use client"; // Required for client-side React components
 
-// Import useCallback along with other hooks
-import React, { useState, useRef, useEffect, useCallback } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import * as d3 from "d3";
-import type { PieArcDatum } from "d3-shape";
-import { motion } from "framer-motion";
-
+import { PieArcDatum } from "d3-shape";
 
 // Interfaces
 interface DataItem {
@@ -14,340 +11,353 @@ interface DataItem {
   subcategory: string;
   count: number;
 }
+
 interface Totals {
   Therapy: number;
   Diagnosis: number;
 }
-interface ColorMap {
-  Therapy: string;
-  Diagnosis: string;
-}
+
 interface InnerDataItem {
   key: "Therapy" | "Diagnosis";
   value: number;
+  color: string;
 }
 
 const DonutChart = () => {
   const svgRef = useRef<SVGSVGElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
-  const [hasAnimated, setHasAnimated] = useState(false); // Track if animation has run
+  const [hasAnimated, setHasAnimated] = useState(false);
 
   // Data
   const data: DataItem[] = [
-     { category: "Therapy", subcategory: "Oncology", count: 13 },
-     { category: "Diagnosis", subcategory: "Oncology", count: 25 },
-     { category: "Diagnosis", subcategory: "Cardiovascular", count: 8 },
-     { category: "Diagnosis", subcategory: "Nephrotic", count: 4 },
-     { category: "Diagnosis", subcategory: "Hepatopulmonary", count: 4 },
-     { category: "Diagnosis", subcategory: "Neurodegenerative", count: 11 },
-     { category: "Diagnosis", subcategory: "Osteomyelitis", count: 2 },
-   ];
+    { category: "Therapy", subcategory: "Oncology", count: 13 },
+    { category: "Diagnosis", subcategory: "Oncology", count: 25 },
+    { category: "Diagnosis", subcategory: "Cardiovascular", count: 8 },
+    { category: "Diagnosis", subcategory: "Nephrotic", count: 4 },
+    { category: "Diagnosis", subcategory: "Hepatopulmonary", count: 4 },
+    { category: "Diagnosis", subcategory: "Neurodegenerative", count: 11 },
+    { category: "Diagnosis", subcategory: "Osteomyelitis", count: 2 },
+  ];
 
-   const totals: Totals = {
-     Therapy: data
-       .filter((d) => d.category === "Therapy")
-       .reduce((s, d) => s + d.count, 0),
-     Diagnosis: data
-       .filter((d) => d.category === "Diagnosis")
-       .reduce((s, d) => s + d.count, 0),
-   };
-
-  // Use hardcoded hex colors instead of CSS variables for D3 compatibility
-  const colorMap: ColorMap = {
-    Therapy: "#0000ff", // primary-blue - hardcoded instead of CSS variable 
-    Diagnosis: "#6f608f" // purple - hardcoded instead of CSS variable
+  // Calculate totals
+  const totals: Totals = {
+    Therapy: data
+      .filter((d) => d.category === "Therapy")
+      .reduce((s, d) => s + d.count, 0),
+    Diagnosis: data
+      .filter((d) => d.category === "Diagnosis")
+      .reduce((s, d) => s + d.count, 0),
   };
 
-  // Improved subcategory color function to use opacity percentages for diagnoses
-  const getSubcategoryColor = useCallback((
-    category: "Therapy" | "Diagnosis",
-    subcategory: string,
-    index: number,
-  ): string => {
-    // Base colors hardcoded instead of using CSS variables
-    const baseColor = category === "Therapy" ? 
-      "#0000ff" : // primary-blue hardcoded hex
-      "#6f608f"; // purple hardcoded hex
-    
-    // Always use full color for Therapy
-    if (category === "Therapy") return baseColor;
-    
-    // For Diagnosis subcategories, apply opacity based on index
-    // Using d3.color for better color manipulation
-    const color = d3.color(baseColor);
-    if (!color) return baseColor;
-    
-    // Oncology (index 0) gets 100%, then descending in 10% increments with minimum 50%
-    const opacityPercent = Math.max(50, 100 - (index * 10)) / 100;
-    color.opacity = opacityPercent;
-    
-    return color.toString();
-  }, []);
+  // Colors
+  const colors = {
+    Therapy: "#0000ff", // primary-blue
+    Diagnosis: "#6f608f", // purple
+  };
 
-  // Enhanced responsive sizing useEffect - only set animation flag once
+  // Responsive sizing
   useEffect(() => {
+    if (!containerRef.current) return;
+    
     const updateDimensions = () => {
-      if (containerRef.current) {
-        const container = containerRef.current;
-        
-        // Simple, reliable approach to dimensions
-        const containerWidth = container.offsetWidth;
-        // Use 98% of container height to leave minimal space for title and legend
-        const containerHeight = container.offsetHeight * 0.98;
-        
-        // Ensure minimum dimensions, with further increased minimum height
-        const effectiveWidth = Math.max(containerWidth, 300);
-        const effectiveHeight = Math.max(containerHeight, 800); // Further increased height
-        
-        setDimensions({ width: effectiveWidth, height: effectiveHeight });
-      }
+      const container = containerRef.current;
+      if (!container) return;
+      
+      const rect = container.getBoundingClientRect();
+      setDimensions({
+        width: Math.max(rect.width, 300),
+        height: Math.max(rect.height, 350)
+      });
     };
     
-    // Initial update with a longer delay to ensure DOM layout is complete
-    setTimeout(updateDimensions, 300);
-    window.addEventListener("resize", updateDimensions);
+    // Initial update
+    updateDimensions();
     
-    // Only set animated flag if it hasn't been set before
+    // Set up ResizeObserver for better responsiveness
+    const resizeObserver = new ResizeObserver(updateDimensions);
+    resizeObserver.observe(containerRef.current);
+    
+    // Set animation flag
     if (!hasAnimated) {
       setTimeout(() => setHasAnimated(true), 300);
     }
     
-    return () => window.removeEventListener("resize", updateDimensions);
+    return () => {
+      if (containerRef.current) {
+        resizeObserver.disconnect();
+      }
+    };
   }, [hasAnimated]);
 
-  // Improved scaling function for better responsiveness
-  const getScaledValue = useCallback((value: number): number => {
-      const baseWidth = 768; // Base width for scaling
-      const scale = Math.max(0.7, dimensions.width / baseWidth); // Increased minimum scale
-      return value * scale;
-  }, [dimensions.width]);
-
-  // D3 Drawing Effect with right alignment
+  // D3 Chart Drawing
   useEffect(() => {
     if (dimensions.width <= 0 || dimensions.height <= 0 || !svgRef.current) return;
 
+    // Select SVG and clear previous content
     const svg = d3.select(svgRef.current);
     svg.selectAll("*").remove();
 
+    // Get dimensions
     const width = dimensions.width;
     const height = dimensions.height;
-    const margin = getScaledValue(40);
     
-    // Use a larger portion of the available height for the chart
-    const effectiveRadius = Math.min(width * 0.8, height * 0.85) / 2;
-
-    if (effectiveRadius <= 0) return;
-
-    // Increase the outer radius to better utilize the space
+    // Set proper margins for right alignment
+    const margin = {
+      top: 5,
+      right: 15,
+      bottom: 15,
+      left: 15
+    };
+    
+    // Calculate available space for chart
+    const availableWidth = width - margin.left - margin.right;
+    const availableHeight = height - margin.top - margin.bottom;
+    
+    // Calculate radius based on available space
+    const effectiveRadius = Math.min(availableWidth / 2, availableHeight / 2);
+    
+    // Center the chart within the available space
+    const chartCenterX = margin.left + availableWidth / 2;
+    const chartCenterY = margin.top + availableHeight / 2 + 25;
+    
+    // Configure SVG
+    svg.attr("width", width)
+       .attr("height", height)
+       .attr("viewBox", `0 0 ${width} ${height}`)
+       .attr("preserveAspectRatio", "xMidYMid meet"); // Use xMidYMid for centered content
+    
+    // Radius calculations
     const outerRadius = effectiveRadius;
-    const innerRadius = outerRadius * (100 / 250);
-    const middleRadius = outerRadius * (170 / 250);
-    const gapSize = Math.max(2, getScaledValue(5));
-
-    // Position the chart on the right side instead of center or left
-    // Calculate right side positioning by subtracting from container width
-    const chartCenterX = width - (outerRadius + margin * 2); // Position from right with margin
-    const chartCenterY = height / 2; // Still center vertically
-
-    // Arc Generators
-    const arcInner = d3
-      .arc<PieArcDatum<InnerDataItem>>()
+    const innerRadius = outerRadius * 0.4;
+    const middleRadius = outerRadius * 0.68;
+    const gapSize = 2;
+    
+    // Create the pie data generators with proper typing
+    const innerPie = d3.pie<InnerDataItem>()
+      .sort(null)
+      .value(d => d.value);
+      
+    const outerPie = d3.pie<DataItem>()
+      .sort(null)
+      .value(d => d.count);
+    
+    // Arc generators with proper typing
+    const innerArc = d3.arc<PieArcDatum<InnerDataItem>>()
       .innerRadius(innerRadius)
       .outerRadius(middleRadius - gapSize / 2);
-
-    const arcOuter = d3
-      .arc<PieArcDatum<DataItem>>()
+      
+    const outerArc = d3.arc<PieArcDatum<DataItem>>()
       .innerRadius(middleRadius + gapSize / 2)
       .outerRadius(outerRadius);
-
-    // Pie Generators
-    const pieInnerGenerator = d3
-      .pie<InnerDataItem>()
-      .sort(null)
-      .value((d) => d.value);
-    const innerData = pieInnerGenerator([
-      { key: "Therapy", value: totals.Therapy },
-      { key: "Diagnosis", value: totals.Diagnosis },
-    ]);
-
-    const therapyOncology = data.find(
-      (d) => d.category === "Therapy" && d.subcategory === "Oncology",
-    );
-    const diagnosisSegments = data
-      .filter((d) => d.category === "Diagnosis")
+    
+    // Prepare data for inner ring
+    const innerRingData: InnerDataItem[] = [
+      { key: "Therapy", value: totals.Therapy, color: colors.Therapy },
+      { key: "Diagnosis", value: totals.Diagnosis, color: colors.Diagnosis }
+    ];
+    
+    const innerData = innerPie(innerRingData);
+    
+    // Prepare data for outer ring
+    const therapySegments = data
+      .filter(d => d.category === "Therapy")
       .sort((a, b) => b.count - a.count);
-    const outerPieDataInput: DataItem[] = therapyOncology
-      ? [therapyOncology, ...diagnosisSegments]
-      : [...diagnosisSegments];
-
-    const pieOuterGenerator = d3
-      .pie<DataItem>()
-      .sort(null)
-      .value((d) => d.count);
-    const outerData = pieOuterGenerator(outerPieDataInput);
-
-    // Helper function to get color for outer segments with proper opacity
-    const getOuterSegmentColor = (d: PieArcDatum<DataItem>): string => {
-      const isTherapy = d.data.category === "Therapy";
-      if (isTherapy) return colorMap.Therapy;
       
-      // For diagnosis segments, find index in sorted diagnosis segments array
-      const diagIndex = diagnosisSegments.findIndex(
-        (seg) => seg.subcategory === d.data.subcategory
-      );
+    const diagnosisSegments = data
+      .filter(d => d.category === "Diagnosis")
+      .sort((a, b) => b.count - a.count);
       
-      return getSubcategoryColor("Diagnosis", d.data.subcategory, diagIndex);
-    };
-
-    const g = svg
-      .append("g")
+    // Combined data for outer ring
+    const outerRingData = [...therapySegments, ...diagnosisSegments];
+    const outerData = outerPie(outerRingData);
+    
+    // Create main chart group with proper positioning
+    const chartGroup = svg.append("g")
       .attr("transform", `translate(${chartCenterX}, ${chartCenterY})`);
-
-    // Draw Inner arcs with animation - only animate if hasAnimated is false
-    g.selectAll(".arc-inner")
+    
+    // Draw inner ring
+    chartGroup.selectAll(".inner-arc")
       .data(innerData)
-      .join("path")
-      .attr("class", "arc-inner")
-      .attr("d", arcInner)
-      .attr("fill", (d) => colorMap[d.data.key])
+      .enter()
+      .append("path")
+      .attr("class", "inner-arc")
+      .attr("d", d => innerArc(d) || "")
+      .attr("fill", d => d.data.color)
       .style("opacity", hasAnimated ? 1 : 0)
       .transition()
       .duration(hasAnimated ? 0 : 800)
       .delay((_, i) => hasAnimated ? 0 : 300 + i * 150)
       .style("opacity", 1);
-
-    // Draw Outer arcs with animation - only animate if hasAnimated is false
-    g.selectAll(".arc-outer")
+    
+    // Draw outer ring
+    chartGroup.selectAll(".outer-arc")
       .data(outerData)
-      .join("path")
-      .attr("class", "arc-outer")
-      .attr("d", arcOuter)
-      .attr("fill", (d) => getOuterSegmentColor(d))
+      .enter()
+      .append("path")
+      .attr("class", "outer-arc")
+      .attr("d", d => outerArc(d) || "")
+      .attr("fill", (d) => {
+        const item = d.data;
+        if (item.category === "Therapy") return colors.Therapy;
+        
+        // For diagnosis segments, apply opacity
+        const diagIndex = diagnosisSegments.findIndex(
+          seg => seg.subcategory === item.subcategory
+        );
+        
+        if (diagIndex === 0) return colors.Diagnosis;
+        
+        // Create color with opacity
+        const color = d3.color(colors.Diagnosis);
+        if (!color) return colors.Diagnosis;
+        
+        const opacityPercent = Math.max(50, 100 - (diagIndex * 10)) / 100;
+        color.opacity = opacityPercent;
+        return color.toString();
+      })
       .style("opacity", hasAnimated ? 1 : 0)
       .transition()
       .duration(hasAnimated ? 0 : 800)
       .delay((_, i) => hasAnimated ? 0 : 600 + i * 100)
       .style("opacity", 1);
-
-    // Labels - Inner Arc Numbers - REDUCED SIZE
-    g.selectAll(".inner-label")
+    
+    // Add inner ring labels (numbers)
+    chartGroup.selectAll(".inner-label")
       .data(innerData)
-      .join("text")
+      .enter()
+      .append("text")
       .attr("class", "inner-label")
-      .attr(
-        "transform",
-        (d) => `translate(${arcInner.centroid(d)})`,
-      )
+      .attr("transform", d => {
+        const centroid = innerArc.centroid(d);
+        return `translate(${centroid[0]}, ${centroid[1]})`;
+      })
       .attr("dy", "0.35em")
-      .text((d) => d.data.value)
-      .attr("fill", "#ffffff") // white
       .attr("text-anchor", "middle")
-      .style("font-size", `${Math.min(24, Math.max(18, getScaledValue(22)))}px`) // REDUCED SIZE
+      .text(d => d.data.value)
+      .attr("fill", "#ffffff")
+      .style("font-size", `${Math.max(16, Math.min(effectiveRadius * 0.12, 32))}px`)
       .style("font-weight", "700")
       .style("font-family", "'Helvetica Now Display', sans-serif")
-      .style("pointer-events", "none")
       .style("opacity", hasAnimated ? 1 : 0)
       .transition()
       .duration(hasAnimated ? 0 : 600)
       .delay((_, i) => hasAnimated ? 0 : 900 + i * 150)
       .style("opacity", 1);
-
-    // Labels - Outer Arc Numbers - REDUCED SIZE
-    g.selectAll(".outer-number-label")
-      .data(outerData.filter((d) => d.data.count > 0))
-      .join("text")
-      .attr("class", "outer-number-label")
-      .attr(
-        "transform",
-        (d) => `translate(${arcOuter.centroid(d)})`,
-      )
+    
+    // Add outer ring labels (numbers)
+    chartGroup.selectAll(".outer-label")
+      .data(outerData)
+      .enter()
+      .append("text")
+      .attr("class", "outer-label")
+      .attr("transform", d => {
+        const centroid = outerArc.centroid(d);
+        return `translate(${centroid[0]}, ${centroid[1]})`;
+      })
       .attr("dy", "0.35em")
-      .text((d) => d.data.count)
-      .attr("fill", "#ffffff") // white
       .attr("text-anchor", "middle")
-      .style("font-size", `${Math.min(20, Math.max(14, getScaledValue(18)))}px`) // REDUCED SIZE
+      .text(d => d.data.count)
+      .attr("fill", "#ffffff")
+      .style("font-size", `${Math.max(14, Math.min(effectiveRadius * 0.09, 28))}px`)
       .style("font-weight", "700")
       .style("font-family", "'Helvetica Now Display', sans-serif")
-      .style("pointer-events", "none")
       .style("opacity", hasAnimated ? 1 : 0)
       .transition()
       .duration(hasAnimated ? 0 : 600)
       .delay((_, i) => hasAnimated ? 0 : 1000 + i * 100)
       .style("opacity", 1);
-
-    // Labels - Outer Arc Subcategories with Polylines
-    // Further improve spacing to prevent bleeding into text
-    const polylineOuterRadius = outerRadius + getScaledValue(45); 
-    const polylineHorizontalLength = getScaledValue(35);
-    const labelPadding = getScaledValue(12); // Padding for individual labels
     
-    // Calculate visible chart area to constrain label placement - adjust for right alignment
-    const maxLabelDistance = chartCenterX - getScaledValue(20);
-
-    // Improved label drawing function with better positioning
-    const drawLabels = () => {
-      // Pre-calculate label widths to adjust positioning
+    // Calculate and draw subcategory labels with better positioning
+    const labelPadding = 10;
+    
+    // Draw subcategory labels with polylines - improved version
+    const drawSubcategoryLabels = () => {
+      // Create a container for labels that's clipped to the SVG bounds
+      const labelGroup = chartGroup.append("g")
+        .attr("class", "label-group");
+      
+      // Pre-measure text widths
       const textWidths = new Map();
-      const tempTexts = outerData.filter(d => d.data.count > 0).map((d, i) => {
-        const tempText = g.append("text")
-          .attr("class", "temp-measure")
+      
+      outerData.forEach((d, i) => {
+        const tempText = labelGroup.append("text")
+          .attr("class", "temp-text")
           .text(d.data.subcategory)
-          .style("font-size", `${Math.min(16, Math.max(12, getScaledValue(14)))}px`); // REDUCED SIZE to match actual labels
-        
-        const width = tempText.node()?.getBBox().width || 0;
-        textWidths.set(i, width);
-        return tempText;
+          .style("font-size", `${Math.max(12, Math.min(effectiveRadius * 0.08, 20))}px`);
+          
+        textWidths.set(i, tempText.node()?.getBBox().width || 0);
+        tempText.remove();
       });
       
-      // Remove temp measurement texts
-      tempTexts.forEach(t => t.remove());
+      // Determine available space on each side from the center
+      const spaceOnEachSide = availableWidth / 2;
       
-      // Now draw the actual labels with improved positioning
-      outerData.filter(d => d.data.count > 0).forEach((d, i) => {
-        if (!svgRef.current) return;
-        
+      // Draw the labels and polylines
+      outerData.forEach((d, i) => {
+        // Calculate position based on arc angle
         const angle = (d.startAngle + d.endAngle) / 2;
         const adjustedAngle = angle - Math.PI / 2;
         const cosAngle = Math.cos(adjustedAngle);
         const sinAngle = Math.sin(adjustedAngle);
-
-        // Improved positioning for better layout
-        const polylineStartPoint = [
+        
+        // Start at outer edge of arc
+        const start = [
           cosAngle * (outerRadius + 2),
           sinAngle * (outerRadius + 2)
         ];
         
-        // Calculate radial endpoint based on text width to avoid overflow
-        const textWidth = textWidths.get(i) || 0;
+        // Determine which side of the chart this label belongs to
         const isRightSide = cosAngle >= 0;
+        const textWidth = textWidths.get(i) || 0;
         
-        // Adjust the radial line length based on available space
-        const adjustedRadius = Math.min(
-          polylineOuterRadius,
-          maxLabelDistance - (isRightSide ? textWidth + labelPadding : 0)
-        );
+        // Calculate outer radius for the polyline, respecting boundaries
+        let polylineOuterRadius;
+        const basePolylineExtension = outerRadius + Math.max(15, effectiveRadius * 0.1); // Smaller min/factor
         
-        const radialEndPoint = [
-          cosAngle * adjustedRadius,
-          sinAngle * adjustedRadius,
+        // Constrain by available space on the relevant side
+        const maxExtentBasedOnSpace = spaceOnEachSide - textWidth - 2 * labelPadding;
+        polylineOuterRadius = Math.min(basePolylineExtension, maxExtentBasedOnSpace);
+
+        // Ensure polylineOuterRadius is not less than the chart's outer radius + a small gap
+        polylineOuterRadius = Math.max(outerRadius + 5, polylineOuterRadius); 
+
+        // Calculate radial endpoint with proper bounds
+        const radialEnd = [
+          cosAngle * polylineOuterRadius,
+          sinAngle * polylineOuterRadius
         ];
         
-        // Improve horizontal positioning based on left/right side
-        const horizontalLength = isRightSide ? polylineHorizontalLength : -polylineHorizontalLength;
+        // Calculate horizontal line length based on side
+        const polylineHorizontalLength = Math.max(15, effectiveRadius * 0.08); // Smaller min/factor
         
-        const horizontalEndPoint = [
-          radialEndPoint[0] + horizontalLength,
-          radialEndPoint[1],
+        const horizontalEnd = [
+          radialEnd[0] + (isRightSide ? polylineHorizontalLength : -polylineHorizontalLength),
+          radialEnd[1]
         ];
         
-        const points = `${polylineStartPoint[0]},${polylineStartPoint[1]} ${radialEndPoint[0]},${radialEndPoint[1]} ${horizontalEndPoint[0]},${horizontalEndPoint[1]}`;
+        // Get fill color with proper opacity
+        const fillColor = d.data.category === "Therapy" ? 
+          colors.Therapy : 
+          (() => {
+            const diagIndex = diagnosisSegments.findIndex(
+              seg => seg.subcategory === d.data.subcategory
+            );
+            
+            if (diagIndex === 0) return colors.Diagnosis;
+            
+            const color = d3.color(colors.Diagnosis);
+            if (!color) return colors.Diagnosis;
+            
+            const opacityPercent = Math.max(50, 100 - (diagIndex * 10)) / 100;
+            color.opacity = opacityPercent;
+            return color.toString();
+          })();
         
-        // Create polyline with or without animation
-        const polyline = g.append("polyline")
-          .attr("class", "outer-label-line")
-          .attr("points", points)
-          .attr("stroke", getOuterSegmentColor(d))
+        // Draw polyline
+        const polyline = labelGroup.append("polyline")
+          .attr("points", `${start[0]},${start[1]} ${radialEnd[0]},${radialEnd[1]} ${horizontalEnd[0]},${horizontalEnd[1]}`)
+          .attr("stroke", fillColor)
           .attr("stroke-width", 1.5)
           .attr("fill", "none");
           
@@ -358,21 +368,19 @@ const DonutChart = () => {
             .delay(1200 + i * 100)
             .style("opacity", 1);
         }
-          
-        // Calculate improved text position
-        const textX = horizontalEndPoint[0] + (isRightSide ? labelPadding : -labelPadding);
         
-        // Create label with or without animation
-        const text = g.append("text")
-          .attr("class", "outer-label-text")
-          .attr("transform", `translate(${textX}, ${horizontalEndPoint[1]})`)
+        // Draw text label with proper text-anchor
+        const textX = horizontalEnd[0] + (isRightSide ? labelPadding : -labelPadding);
+        
+        const text = labelGroup.append("text")
+          .attr("x", textX)
+          .attr("y", horizontalEnd[1])
           .attr("dy", "0.35em")
+          .attr("text-anchor", isRightSide ? "start" : "end")
           .text(d.data.subcategory)
-          .attr("fill", getOuterSegmentColor(d))
-          .style("font-size", `${Math.min(16, Math.max(12, getScaledValue(14)))}px`) // REDUCED SIZE
-          .style("font-family", "'Helvetica Now Display', sans-serif")
-          .style("text-anchor", isRightSide ? "start" : "end")
-          .style("pointer-events", "none");
+          .attr("fill", fillColor)
+          .style("font-size", `${Math.max(12, Math.min(effectiveRadius * 0.08, 20))}px`)
+          .style("font-family", "'Helvetica Now Display', sans-serif");
           
         if (!hasAnimated) {
           text.style("opacity", 0)
@@ -383,43 +391,41 @@ const DonutChart = () => {
         }
       });
     };
-
-    // Execute label drawing immediately if already animated
-    if (hasAnimated) {
-      drawLabels();
-    } else {
-      // Otherwise delay for animation
-      setTimeout(drawLabels, 1200);
-    }
-
-    // Center Labels - REDUCED SIZE
-    g.selectAll(".center-label").remove();
-    const centerLabelFontSize = Math.min(22, Math.max(16, getScaledValue(20))); // REDUCED SIZE
-    const centerVerticalOffset = getScaledValue(30); // Increased offset
     
-    const therapyLabel = g.append("text")
-      .attr("class", "center-label")
+    // Execute label drawing
+    if (hasAnimated) {
+      drawSubcategoryLabels();
+    } else {
+      setTimeout(drawSubcategoryLabels, 1000);
+    }
+    
+    // Add center category labels
+    const centerLabelSize = Math.max(16, Math.min(effectiveRadius * 0.1, 28));
+    const centerVerticalOffset = Math.max(20, effectiveRadius * 0.12);
+    
+    // Therapy label
+    const therapyLabel = chartGroup.append("text")
       .attr("x", 0)
       .attr("y", -centerVerticalOffset)
       .attr("text-anchor", "middle")
-      .style("fill", colorMap.Therapy)
-      .style("font-size", centerLabelFontSize + "px")
+      .attr("fill", colors.Therapy)
+      .style("font-size", `${centerLabelSize}px`)
       .style("font-weight", "700")
       .style("font-family", "'Helvetica Now Display', sans-serif")
       .text("Therapy");
       
-    const diagnosisLabel = g.append("text")
-      .attr("class", "center-label")
+    // Diagnosis label
+    const diagnosisLabel = chartGroup.append("text")
       .attr("x", 0)
       .attr("y", centerVerticalOffset)
       .attr("text-anchor", "middle")
-      .style("fill", colorMap.Diagnosis)
-      .style("font-size", centerLabelFontSize + "px")
+      .attr("fill", colors.Diagnosis)
+      .style("font-size", `${centerLabelSize}px`)
       .style("font-weight", "700")
       .style("font-family", "'Helvetica Now Display', sans-serif")
       .text("Diagnosis");
-    
-    // Only animate if we haven't done it before
+      
+    // Animate center labels if needed
     if (!hasAnimated) {
       therapyLabel.style("opacity", 0)
         .transition()
@@ -433,66 +439,62 @@ const DonutChart = () => {
         .delay(1600)
         .style("opacity", 1);
     }
-
-    // Update SVG viewBox to account for right alignment
-    // Add extra space to the left for labels
-    const extraLeftSpace = getScaledValue(150); // Extra space for labels on the left side
-    svg.attr("viewBox", `0 0 ${width} ${height}`);
-
-  }, [data, totals, colorMap, getSubcategoryColor, dimensions, getScaledValue, hasAnimated]);
+    
+  }, [dimensions, hasAnimated, data, totals, colors]);
 
   return (
     <div ref={containerRef} className="w-full h-full flex flex-col">
-      {/* Main chart SVG - increased height by reducing reserved space to 40px */}
-      <div className="w-full" style={{ height: "calc(100% - 80px)" }}>
+      {/* Main chart area - make it grow */}
+      <div className="w-full relative flex-grow"> {/* Removed fixed height, added flex-grow */}
         <svg
           ref={svgRef}
-          width="100%"
-          height="100%"
-          preserveAspectRatio="xMaxYMid meet" // Changed to align right instead of left
-          className="overflow-visible"
+          className="absolute inset-0 w-full h-full overflow-visible"
+          preserveAspectRatio="xMidYMid meet" // Use xMidYMid for centered content
         ></svg>
       </div>
       
-      {/* Title moved to bottom - RIGHT ALIGNED with black text */}
-      <div className="w-full text-right mt-1 mb-1">
-        <span className="text-body font-helvetica-now text-black">
-          Approved therapeutic and diagnostic agents divided by type of diseases
-        </span>
-        <span 
-          className="text-body-small font-helvetica-now text-primary-blue"
-          style={{ verticalAlign: 'super', marginLeft: '2px' }}
-        >
-          [1]
-        </span>
-      </div>
-      
-      {/* Legend - RIGHT ALIGNED with minimal margin */}
-      <div className="w-full flex justify-end space-x-12 mt-0.5 pr-8">
-        <div className="flex items-center">
-          <div 
-            style={{ 
-              width: '10px', 
-              height: '10px', 
-              backgroundColor: '#0000ff', 
-              marginRight: '4px' 
-            }} 
-          />
-          <span className="text-body-small font-helvetica-now text-black">
-            Therapy
-          </span>
+      {/* Footer with title and legend - aligned right as a block */}
+      <div className="flex flex-col items-end mt-4 px-4"> {/* Align content right, add top margin & padding */}
+        {/* Legend - MOVED UP */}
+        <div className="w-full flex flex-wrap justify-center sm:justify-end space-x-4 sm:space-x-8 md:space-x-12 pt-2"> {/* Removed mt-0.5, Added pt-2 */}
+          <div className="flex items-center mb-1 sm:mb-0"> {/* Add bottom margin for wrapped items */}
+            <div 
+              style={{ 
+                width: '10px', 
+                height: '10px', 
+                backgroundColor: colors.Therapy, 
+                marginRight: '4px' 
+              }} 
+            />
+            <span className="text-body-small font-helvetica-now text-black">
+              Therapy
+            </span>
+          </div>
+          <div className="flex items-center mb-1 sm:mb-0"> {/* Add bottom margin for wrapped items */}
+            <div 
+              style={{ 
+                width: '10px', 
+                height: '10px', 
+                backgroundColor: colors.Diagnosis, 
+                marginRight: '4px' 
+              }} 
+            />
+            <span className="text-body-small font-helvetica-now text-black">
+              Diagnosis
+            </span>
+          </div>
         </div>
-        <div className="flex items-center">
-          <div 
-            style={{ 
-              width: '10px', 
-              height: '10px', 
-              backgroundColor: '#6f608f', 
-              marginRight: '4px' 
-            }} 
-          />
-          <span className="text-body-small font-helvetica-now text-black">
-            Diagnosis
+
+        {/* Title with citation - MOVED DOWN */}
+        <div className="w-full text-right mt-1"> {/* Added mt-1 */}
+          <span className="text-body font-helvetica-now text-black">
+            Approved therapeutic and diagnostic agents divided by type of diseases
+          </span>
+          <span 
+            className="text-body-small font-helvetica-now text-primary-blue"
+            style={{ verticalAlign: 'super', marginLeft: '2px' }}
+          >
+            [1]
           </span>
         </div>
       </div>
