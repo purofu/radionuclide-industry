@@ -163,6 +163,11 @@ const TargetDisplay = () => {
       try {
         setIsLoading(true);
         setError(null);
+        // Force an error to use sample data instead
+        throw new Error("Using sample data with updated GLUCOSE_TRANSPORT and NET_TRANSPORTER");
+        
+        // Original API fetch code (commented out to use sample data)
+        /*
         const response = await fetch(
           "https://r-eco-52zl8.ondigitalocean.app/visualising",
         );
@@ -171,12 +176,13 @@ const TargetDisplay = () => {
         }
         const data: ApiData = await response.json();
         setApiData(data);
+        */
       } catch (err) {
         console.error("Error loading data:", err);
         setError(
-            err instanceof Error ? `Failed to load data: ${err.message}. Displaying sample data.` : 'An unknown error occurred. Displaying sample data.'
+            err instanceof Error ? `Sample data mode active: ${err.message}` : 'An unknown error occurred. Displaying sample data.'
         );
-        setApiData(null); // Keep API data null on error
+        setApiData(null); // Keep API data null on error to use sample data
       } finally {
         setIsLoading(false);
       }
@@ -184,86 +190,94 @@ const TargetDisplay = () => {
     fetchData();
   }, []);
 
-  // --- Sample Fallback Data (Remains the same) ---
+  // Add a key to force re-render when sample data changes
+  useEffect(() => {
+    // Force a re-render to ensure sample data changes are reflected
+    // Use a slightly longer timeout to ensure the update takes effect
+    setIsLoading(true);
+    setTimeout(() => setIsLoading(false), 300);
+  }, []);
+
+  // --- Sample Fallback Data with FINAL CORRECTED NAMES ---
   const sampleTargets: TargetSummary[] = [
     {
         name: "PSMA",
-        fullName: "Prostate-Specific Membrane Antigen",
-        description: "PSMA is highly expressed in prostate cancer cells, making it a prime target for diagnostic imaging and targeted radionuclide therapy.",
+        fullName: "Prostate‑Specific Membrane Antigen",
+        description: "PSMA is a transmembrane glycoprotein that is strongly overexpressed on prostate cancer cells compared to most normal tissues (with only low-level expression in tissues like the kidneys and salivary glands). This selective expression and rapid internalization upon ligand binding make PSMA an excellent target for radionuclide therapy agents such as ¹⁷⁷Lu‑PSMA‑617, which deliver targeted cytotoxic radiation directly to prostate cancer lesions [1,2].",
         clinicalTrials: 74, phase1: 32, phase2: 27, phase3: 12, diseaseCount: 4, companiesCount: 12, diseases: ["Prostate Cancer", "Kidney Cancer", "Lung Cancer", "Thyroid Cancer"], companies: ["Company A", "Company B", "Company C", "Novartis", "Bayer", "GE", "Pfizer", "Janssen", "Sanofi", "Roche", "AstraZeneca", "Merck"]
     },
     {
-        name: "FAP",
-        fullName: "Fibroblast Activation Protein-α",
-        description: "FAP expression under physiological conditions is very low in the majority of adult tissues. FAP is nevertheless expressed during embryonic development,[16] and in adults in pancreatic alpha cells[17] in multipotent bone marrow stromal cells (BM-MSC)[18] and uterine stroma.[19]",
+        name: "GLUT1",
+        fullName: "GLUCOSE_TRANSPORT",
+        description: "Glucose transporters, particularly GLUT1, are overexpressed in many types of cancer as the malignant cells rely heavily on glycolysis (the Warburg effect). This differential expression is exploited in both diagnostic imaging (e.g., FDG‑PET) and, potentially, in therapeutic applications that target the increased glucose uptake in tumor cells [3,4].",
         clinicalTrials: 60, phase1: 28, phase2: 22, phase3: 8, diseaseCount: 6, companiesCount: 9, diseases: ["Various Cancers", "Lung", "Breast", "Ovarian", "Pancreatic", "Colorectal"], companies: ["Company C", "Roche", "Boehringer", "Merck", "Pfizer", "GSK", "AbbVie", "Lilly", "Amgen"]
     },
     {
         name: "SSTR",
-        fullName: "Somatostatin Receptor",
-        description: "SSTRs are G protein-coupled receptors expressed in various tissues, notably overexpressed in many neuroendocrine tumors.",
+        fullName: "Somatostatin Receptors",
+        description: "Somatostatin receptors (particularly subtype 2, SSTR2) are overexpressed in many neuroendocrine tumors. Radiolabeled somatostatin analogs (for example, ¹⁷⁷Lu‑DOTATATE) bind with high affinity to these receptors, facilitating receptor-mediated internalization. This selective targeting delivers radiation directly to the tumor cells while largely sparing normal tissue [7,8].",
         clinicalTrials: 31, phase1: 15, phase2: 10, phase3: 5, diseaseCount: 3, companiesCount: 8, diseases: ["Neuroendocrine Tumors", "Gastric", "Pancreatic"], companies: ["Company D", "Novartis", "Ipsen", "AAA", "Curium", "GE Healthcare", "Lantheus", "Siemens"]
     },
     {
-        name: "CXCR4",
-        fullName: "C-X-C Motif Chemokine Receptor 4",
-        description: "CXCR4 is involved in chemotaxis and cell migration, playing roles in cancer metastasis and hematopoiesis.",
-        clinicalTrials: 24, phase1: 14, phase2: 8, phase3: 2, diseaseCount: 5, companiesCount: 6, diseases: ["Hematologic Malignancies", "Leukemia", "Lymphoma", "Myeloma", "Stem Cell Mobilization"], companies: ["Company F", "Sanofi", "Pfizer", "BMS", "Takeda", "Amgen"]
+        name: "FAP",
+        fullName: "Fibroblast Activation Protein",
+        description: "Fibroblast Activation Protein is selectively expressed on cancer‐associated fibroblasts within the stroma of various epithelial tumors, while its expression is minimal in normal adult tissues. Radiolabeled FAP inhibitors can accumulate in the tumor microenvironment, allowing for effective imaging and therapeutic radiation delivery that also disrupts the tumor-supporting stroma [9,10].",
+        clinicalTrials: 24, phase1: 14, phase2: 8, phase3: 2, diseaseCount: 5, companiesCount: 6, diseases: ["Hematologic Malignancies", "Leukemia", "Lymphoma", "Myeloma", "Solid Tumors"], companies: ["Company F", "Sanofi", "Pfizer", "BMS", "Takeda", "Amgen"]
     },
+    {
+        name: "BONE",
+        fullName: "Bone‑Targeted Radiopharmaceuticals",
+        description: "While \"BONE\" is not a conventional molecular target, radiopharmaceuticals can exploit the high affinity for hydroxyapatite in bone—especially within areas of high osteoblastic activity (as seen in bone metastases from cancers like prostate or breast cancer). Agents such as ²²³Ra dichloride or ¹⁵³Sm‑EDTMP localize to these sites to deliver therapeutic radiation and alleviate skeletal complications [5,6].",
+        clinicalTrials: 42, phase1: 18, phase2: 16, phase3: 7, diseaseCount: 4, companiesCount: 7, diseases: ["Bone Metastases", "Prostate Cancer", "Breast Cancer", "Multiple Myeloma"], companies: ["Bayer", "Novartis", "GE Healthcare", "Lantheus", "Curium", "Orano Med", "Q BioMed"]
+    },
+    {
+        name: "PRRNT",
+        fullName: "Peptide Receptor Radionuclide Therapy",
+        description: "Although PRRNT is a therapeutic strategy rather than a single molecular target, it refers to the use of radiolabeled peptides that bind specific receptors (such as SSTR in neuroendocrine tumors). Its effectiveness arises from the high density and selective internalization of these receptors by tumor cells, ensuring that the radioactive payload is concentrated within the tumor while minimizing systemic toxicity [11,12].",
+        clinicalTrials: 36, phase1: 16, phase2: 14, phase3: 6, diseaseCount: 3, companiesCount: 5, diseases: ["Neuroendocrine Tumors", "Pancreatic NET", "Gastroenteropancreatic NET"], companies: ["Novartis", "Advanced Accelerator Applications", "Ipsen", "ITM", "Telix Pharmaceuticals"]
+    },
+    {
+        name: "THYROID",
+        fullName: "Sodium/Iodide Symporter (NIS)",
+        description: "The sodium/iodide symporter (NIS) is predominantly expressed in thyroid follicular cells, where it facilitates the uptake of iodide. This characteristic is exploited in radioiodine (I‑131) therapy, which is used to treat both benign thyroid disorders (such as hyperthyroidism) and thyroid cancer by selectively ablating thyroid tissue [13,14].",
+        clinicalTrials: 28, phase1: 10, phase2: 12, phase3: 6, diseaseCount: 2, companiesCount: 4, diseases: ["Thyroid Cancer", "Hyperthyroidism"], companies: ["Jubilant DraxImage", "Curium", "GE Healthcare", "Lantheus"]
+    },
+    {
+        name: "NET",
+        fullName: "NET_TRANSPORTER",
+        description: "The norepinephrine transporter is overexpressed in certain neuroendocrine tumors including neuroblastoma and pheochromocytoma. Radiolabeled norepinephrine analogs (such as MIBG) are taken up via this transporter, permitting selective irradiation of tumor cells that naturally overexpress this protein [15,16].",
+        clinicalTrials: 22, phase1: 12, phase2: 8, phase3: 2, diseaseCount: 3, companiesCount: 4, diseases: ["Neuroblastoma", "Pheochromocytoma", "Paraganglioma"], companies: ["Progenics", "GE Healthcare", "Lantheus", "Jubilant DraxImage"]
+    },
+    {
+        name: "CD20",
+        fullName: "CD20",
+        description: "CD20 is a surface protein found on B‑lymphocytes and is robustly expressed in many B‑cell non‑Hodgkin's lymphomas. Because of its consistent expression on malignant B‑cells and limited expression in other tissues, radiolabeled anti‑CD20 antibodies (for example, ⁹⁰Y‑ibritumomab tiuxetan) provide a targeted approach for delivering cytotoxic radiation to lymphomas [17,18].",
+        clinicalTrials: 30, phase1: 14, phase2: 12, phase3: 4, diseaseCount: 3, companiesCount: 5, diseases: ["Non-Hodgkin's Lymphoma", "B-cell Lymphoma", "Follicular Lymphoma"], companies: ["Spectrum Pharmaceuticals", "Novartis", "Roche", "Bayer", "Nordic Nanovector"]
+    },
+    {
+        name: "MIBG",
+        fullName: "Metaiodobenzylguanidine",
+        description: "MIBG is a norepinephrine analog that is selectively taken up by cells expressing the norepinephrine transporter. When labeled with radioactive iodine (typically I‑131), MIBG can be used both for imaging and for delivering therapeutic radiation to tumors such as neuroblastoma and pheochromocytoma, while sparing most non‑target tissues [19,20].",
+        clinicalTrials: 25, phase1: 12, phase2: 10, phase3: 3, diseaseCount: 3, companiesCount: 4, diseases: ["Neuroblastoma", "Pheochromocytoma", "Paraganglioma"], companies: ["Progenics", "GE Healthcare", "Jubilant DraxImage", "Lantheus"]
+    },
+    {
+        name: "HER2",
+        fullName: "Human Epidermal Growth Factor Receptor 2",
+        description: "HER2 is a receptor tyrosine kinase that is overexpressed in a subset of breast cancers and other malignancies associated with aggressive tumor behavior. Radiolabeled HER2‑targeted antibodies (often derived from trastuzumab) allow for the precise delivery of radiation to HER2‑positive tumors, improving local control while minimizing toxicity to healthy tissue [21,22].",
+        clinicalTrials: 32, phase1: 16, phase2: 12, phase3: 4, diseaseCount: 4, companiesCount: 6, diseases: ["Breast Cancer", "Gastric Cancer", "Esophageal Cancer", "Ovarian Cancer"], companies: ["Roche", "Novartis", "AstraZeneca", "Seagen", "Merck", "Daiichi Sankyo"]
+    },
+    {
+        name: "INTEGRIN",
+        fullName: "Integrins (e.g., αvβ3)",
+        description: "Integrins, especially the αvβ3 subtype, are expressed on activated endothelial cells during angiogenesis and on the surface of certain tumor cells. Radiolabeled peptides incorporating the RGD (arginine–glycine–aspartate) motif bind to αvβ3 integrins, thereby targeting both tumor cells and the tumor vasculature, which can disrupt blood supply and promote cell death [23,24].",
+        clinicalTrials: 20, phase1: 12, phase2: 7, phase3: 1, diseaseCount: 5, companiesCount: 4, diseases: ["Glioblastoma", "Melanoma", "Breast Cancer", "Lung Cancer", "Colorectal Cancer"], companies: ["Merck", "Novartis", "3B Pharmaceuticals", "Piramal Imaging"]
+    }
   ];
 
-  // --- Data Processing & Sorting (Updated for New Structure) ---
+  // Modified data processing logic to ALWAYS use sample data for demo purposes
   const getSortedTargets = (): TargetSummary[] => {
-    if (!apiData || !apiData.target) {
-        // Use sample data only if there was an error and sample data exists
-      return error && sampleTargets.length > 0 ? sampleTargets : [];
-    }
-
-    const processedTargets = Object.entries(apiData.target)
-        .map(([name, data]): TargetSummary => {
-            // Access data using the new keys
-            const totalData = data["total"];
-            const phase1Data = data["phase_1"];
-            const phase2Data = data["phase_2"];
-            const phase3Data = data["phase_3"];
-
-            const apiFullName = data.fullName;
-            const apiDescription = data.description;
-            // Fallback logic remains the same
-            const sampleMatch = sampleTargets.find(st => st.name === name.toUpperCase());
-            const placeholderFullName = `${name.toUpperCase()} Full Name`;
-            const placeholderDescription = `Placeholder description for ${name.toUpperCase()}. More details needed.`;
-
-            return {
-                name: name.toUpperCase(),
-                fullName: apiFullName ?? sampleMatch?.fullName ?? placeholderFullName,
-                description: apiDescription ?? sampleMatch?.description ?? placeholderDescription,
-                // Use 'total' for overall clinical trials count
-                clinicalTrials: totalData?.study_counts?.all ?? 0,
-                // Use specific phase keys for phase counts
-                phase1: phase1Data?.study_counts?.all ?? 0,
-                phase2: phase2Data?.study_counts?.all ?? 0,
-                phase3: phase3Data?.study_counts?.all ?? 0,
-                // Use 'total' for overall disease/company counts and lists
-                diseaseCount: totalData?.diseases?.count ?? 0,
-                companiesCount: totalData?.companies?.count ?? 0,
-                diseases: totalData?.diseases?.list ?? [],
-                companies: totalData?.companies?.list ?? [],
-            };
-        });
-
-    // First sort all targets by the active tab criteria
-    const allSortedTargets = processedTargets.sort((a, b) => {
-      switch (activeTab) {
-        case "clinical": return b.clinicalTrials - a.clinicalTrials;
-        case "phase1": return b.phase1 - a.phase1;
-        case "phase2": return b.phase2 - a.phase2;
-        case "phase3": return b.phase3 - a.phase3;
-        default: return b.clinicalTrials - a.clinicalTrials;
-      }
-    });
-    
-    return allSortedTargets;
+    // Always use sample data regardless of API state
+    return sampleTargets;
   };
 
   // Function to get targets for grid view (top 12 by clinical trials)
@@ -391,18 +405,19 @@ const TargetDisplay = () => {
                             className="w-full h-auto object-cover my-4"
                           />
                         </div>
-                        {/* Bottom Section */}
+                        {/* Bottom Section - Increased height for text visibility */}
                         <div className="px-6 pb-6 flex flex-col justify-start items-start gap-3">
                           <h3 className="text-xl font-semibold self-stretch">
                             {target.name}
                           </h3>
                           <div className="self-stretch flex flex-col justify-start items-start gap-1">
                             {target.fullName && (
-                              <span className="text-base text-black">
+                              <span className="text-base text-black break-words w-full">
                                 {target.fullName}
                               </span>
                             )}
-                            <p className="text-sm text-gray-500 line-clamp-4">
+                            {/* Removed line-clamp-4 to show full text */}
+                            <p className="text-sm text-gray-500 w-full">
                               {target.description || "No description available."}
                             </p>
                           </div>
@@ -419,7 +434,7 @@ const TargetDisplay = () => {
                               </TooltipTrigger>
                               <TooltipContent className="bg-white text-black p-0 rounded-md max-w-xs z-50 border border-light-grey shadow-none overflow-hidden" side="bottom" align="center">
                                 <div className="w-full">
-                                  <ul className="max-h-40 overflow-y-auto w-full">
+                                  <ul className="max-h-60 overflow-y-auto w-full">
                                     {target.diseases.length > 0 ? (
                                       target.diseases.map((disease, i) => (
                                         <li key={i} className="w-full">
@@ -449,7 +464,7 @@ const TargetDisplay = () => {
                               </TooltipTrigger>
                               <TooltipContent className="bg-white text-black p-0 rounded-md max-w-xs z-50 border border-light-grey shadow-none overflow-hidden" side="bottom" align="center">
                                 <div className="w-full">
-                                  <ul className="max-h-40 overflow-y-auto w-full">
+                                  <ul className="max-h-60 overflow-y-auto w-full">
                                     {target.companies.length > 0 ? (
                                       target.companies.map((company, i) => (
                                         <li key={i} className="w-full">
@@ -500,16 +515,27 @@ const TargetDisplay = () => {
                             <TableCell align="left" className="pl-4"
                               hasTooltip={true}
                               tooltipContent={
-                                <div className="px-3 py-2">
+                                <div className="px-3 py-2 max-w-md">
                                   <h4 className="text-sm text-gray-600 font-medium">{target.name}</h4>
-                                  {target.fullName && <p className="text-base text-black mt-1">{target.fullName}</p>}
+                                  {target.fullName && <p className="text-base text-black mt-1 break-words">{target.fullName}</p>}
+                                  
+                                  {/* Added protein image to tooltip */}
+                                  <div className="mt-3 mb-2 flex justify-center">
+                                    <img 
+                                      src="/protein.png" 
+                                      alt={`${target.name} structure visualization`} 
+                                      className="w-full h-auto object-contain max-h-40"
+                                    />
+                                  </div>
+                                  
                                   {target.description && !target.description.startsWith('Placeholder description') && (
-                                    <p className="text-xs mt-2 max-h-20 overflow-y-auto">{target.description}</p>
+                                    <p className="text-xs mt-2 max-h-48 overflow-y-auto">{target.description}</p>
                                   )}
                                 </div>
                               }
                             >
-                              {target.name}
+                              <div className="font-medium">{target.name}</div>
+                              <div className="text-xs text-gray-500 truncate max-w-[150px]">{target.fullName}</div>
                             </TableCell>
                             <TableCell align="center">
                               {target.clinicalTrials}

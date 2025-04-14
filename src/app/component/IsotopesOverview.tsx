@@ -29,14 +29,14 @@ const isotopeData: Isotope[] = [
   {
     tag: 'Therapy',
     tagBg: 'bg-light-therapy',
-    dotColor: 'bg-a-colour',
+    dotColor: 'bg-primary-blue',
     title: 'β-emitters',
     description: 'These isotopes have been workhorses for nuclear medicine, offering established production pathways and longer tissue range, often advantageous for medium-to-large tumors. Familiar decay properties, commercial infrastructure and established pathways present lower market entry barriers compared to alpha therapies.',
   },
   {
     tag: 'Diagnosis',
     tagBg: 'bg-light-diagnostic', // Using defined colors from your tailwind.config.js
-    dotColor: 'bg-g-color',       // Using defined colors from your tailwind.config.js
+    dotColor: 'bg-purple',       // Using defined colors from your tailwind.config.js
     title: 'Positron emitters',
     description: 'Positron emitters enable the highest diagnostic imaging quality through PET/CT, offering superior sensitivity and resolution for detecting small lesions. Their typically short half-lives necessitate robust supply chain planning, posing challenges requiring either cyclotron networks or on-site production.',
   },
@@ -61,7 +61,7 @@ interface BarChartData {
 
 const barChartData: BarChartData[] = [
     { 
-      label: 'α-Particle therapy', 
+      label: 'α-Particle', 
       trialValue: 74, 
       companyValue: 13, 
       colorClass: 'bg-a-colour', 
@@ -69,7 +69,7 @@ const barChartData: BarChartData[] = [
       labelColorClass: 'text-a-text-colour'
     },
     { 
-      label: 'β-Particle therapy', 
+      label: 'β-Particle', 
       trialValue: 329, 
       companyValue: 56, 
       colorClass: 'bg-primary-blue', 
@@ -77,7 +77,7 @@ const barChartData: BarChartData[] = [
       labelColorClass: 'text-black' 
     },
     { 
-      label: 'Positron emitters', 
+      label: 'Positron', 
       trialValue: 647, 
       companyValue: 64, 
       colorClass: 'bg-purple', 
@@ -85,7 +85,7 @@ const barChartData: BarChartData[] = [
       labelColorClass: 'text-black' 
     },
     { 
-      label: 'γ-Particle Emitters', 
+      label: 'γ-Particle', 
       trialValue: 89, 
       companyValue: 18,
       colorClass: 'bg-g-color', 

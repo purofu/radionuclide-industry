@@ -6,7 +6,7 @@ import IsotopesOverview from "./component/IsotopesOverview";
 import Companies from "./component/Companies";
 import Manufacturing from "./component/Manufacturing";
 import PatientAccess from "./component/PatientAccess";
-import TabsExample from "./component/TabsExample";
+
 import { Perspective, ProgressNav } from "../components/ui";
 
 export default function Home() {
@@ -37,9 +37,7 @@ export default function Home() {
       <section id="perspective">
         <Perspective />
       </section>
-      <section id="tabs-example" className="py-12 bg-gray-50">
-        <TabsExample />
-      </section>
+
     </div>
   );
 }
