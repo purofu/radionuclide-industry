@@ -25,13 +25,13 @@ const ManufacturingCard: React.FC<ManufacturingCardProps> = ({
   elementBoxes 
 }) => {
   return (
-    <div className="w-full h-full px-6 pt-12 pb-8 bg-white rounded outline outline-1 outline-offset-[-0.98px] outline-[#f0f0f0] flex flex-col justify-between items-start">
+    <div className="w-full h-full px-6 pt-12 pb-8 bg-white rounded outline outline-1 outline-offset-[-1px] outline-[#f0f0f0] flex flex-col justify-between items-start">
       {/* Top section with statistics */}
       <div className="self-stretch inline-flex justify-start items-start gap-8 mb-8">
         {stats.map((stat, index) => (
           <div key={index} className="flex-1 justify-start">
-            <span className="text-[#212121] text-[93.71px] font-medium font-['Helvetica_Now_Display'] leading-none block">{stat.value}<br/></span>
-            <span className="text-[#212121] text-sm font-medium font-['Helvetica_Now_Display'] leading-none">{stat.label}</span>
+            <span className="text-black text-h5 font-medium font-helvetica-now leading-none block">{stat.value}<br/></span>
+            <span className="text-black text-body-small font-medium font-helvetica-now leading-none">{stat.label}</span>
           </div>
         ))}
       </div>
@@ -40,7 +40,7 @@ const ManufacturingCard: React.FC<ManufacturingCardProps> = ({
       <div className="self-stretch flex flex-col justify-start items-start gap-6">
         <div className="self-stretch flex flex-col justify-start items-start gap-3">
           {/* Title */}
-          <div className="self-stretch justify-start text-[#212121] text-[28px] font-bold font-['Helvetica_Now_Display'] leading-[30.80px]">
+          <div className="self-stretch text-black text-h3 font-bold font-helvetica-now leading-tight">
             {title}
           </div>
           
@@ -55,10 +55,10 @@ const ManufacturingCard: React.FC<ManufacturingCardProps> = ({
                 if (parts.length >= 2) {
                   return (
                     <p key={i} className="mb-2">
-                      <span className="text-black text-sm font-bold font-['Helvetica_Now_Display'] leading-none">
+                      <span className="text-black text-body-small font-bold font-helvetica-now leading-snug">
                         {parts[1]}
                       </span>
-                      <span className="text-black text-sm font-medium font-['Helvetica_Now_Display'] leading-none">
+                      <span className="text-black text-body-small font-medium font-helvetica-now leading-snug">
                         {parts.slice(2).join('')}
                       </span>
                     </p>
@@ -72,10 +72,10 @@ const ManufacturingCard: React.FC<ManufacturingCardProps> = ({
                 if (parts.length >= 2) {
                   return (
                     <p key={i} className="mb-2">
-                      <span className="text-black text-sm font-bold font-['Helvetica_Now_Display'] leading-none">
+                      <span className="text-black text-body-small font-bold font-helvetica-now leading-snug">
                         {parts[0]}:
                       </span>
-                      <span className="text-black text-sm font-medium font-['Helvetica_Now_Display'] leading-none">
+                      <span className="text-black text-body-small font-medium font-helvetica-now leading-snug">
                         {parts.slice(1).join(':')}
                       </span>
                     </p>
@@ -85,7 +85,7 @@ const ManufacturingCard: React.FC<ManufacturingCardProps> = ({
               
               // Regular paragraph
               return (
-                <p key={i} className="text-black text-sm font-medium font-['Helvetica_Now_Display'] leading-none mb-2">
+                <p key={i} className="text-black text-body-small font-medium font-helvetica-now leading-snug mb-2">
                   {paragraph}
                 </p>
               );

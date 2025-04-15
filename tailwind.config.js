@@ -100,11 +100,17 @@ module.exports = {
         4: 'var(--spacing-4)',
         6: 'var(--spacing-6)',
         8: 'var(--spacing-8)',
+        10: '40px',
         12: 'var(--spacing-12)',
         16: 'var(--spacing-16)',
         20: 'var(--spacing-20)',
         24: 'var(--spacing-24)',
         32: 'var(--spacing-32)',
+        // Additional spacing values for specific components
+        '[73px]': '73px',
+        '[325px]': '325px',
+        '[50px]': '50px',
+        '[50vw]': '50vw',
       },
       
       backgroundImage: {
@@ -115,11 +121,28 @@ module.exports = {
       gridTemplateColumns: {
         // Standardized grid columns matching the style guide
         // 4-column grid on mobile, 8-column on tablet, 12-column on desktop
+        '1': 'repeat(1, minmax(0, 1fr))',
         '4': 'repeat(4, minmax(0, 1fr))',
         '8': 'repeat(8, minmax(0, 1fr))',
         '12': 'repeat(12, minmax(0, 1fr))',
         // Adding periodic table column support
         '18': 'repeat(18, minmax(0, 1fr))',
+      },
+      
+      // Grid column span values for specific layouts
+      gridColumn: {
+        'span-1': 'span 1 / span 1',
+        'span-2': 'span 2 / span 2',
+        'span-3': 'span 3 / span 3',
+        'span-4': 'span 4 / span 4',
+        'span-5': 'span 5 / span 5',
+        'span-6': 'span 6 / span 6',
+        'span-7': 'span 7 / span 7',
+        'span-8': 'span 8 / span 8',
+        'span-9': 'span 9 / span 9',
+        'span-10': 'span 10 / span 10',
+        'span-11': 'span 11 / span 11',
+        'span-12': 'span 12 / span 12',
       },
       
       // Additional configurations from theme/config.ts
@@ -168,6 +191,15 @@ module.exports = {
       
       maxWidth: {
         'content': 'var(--max-content-width)',
+        '[325px]': '325px',
+      },
+      
+      screens: {
+        'sm': '640px',
+        'md': '768px',
+        'lg': '1024px',
+        'xl': '1280px',
+        '2xl': '1536px',
       },
     },
   },
@@ -185,6 +217,13 @@ module.exports = {
           '&::-webkit-scrollbar': {
             display: 'none',
           },
+        },
+        // Add utilities for grid layouts
+        '.grid-auto-rows-min': {
+          gridAutoRows: 'min-content',
+        },
+        '.grid-auto-cols-min': {
+          gridAutoColumns: 'min-content',
         },
       }
       addUtilities(newUtilities)

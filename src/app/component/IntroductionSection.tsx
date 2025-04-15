@@ -13,7 +13,7 @@ const IntroductionSection = () => {
         <div className="grid grid-cols-4 sm:grid-cols-8 md:grid-cols-12 lg:grid-cols-12 px-8 md:px-16 lg:px-24">
           {/* Title section - span 7 columns on larger screens */}
           <motion.div
-            className="col-span-4 sm:col-span-8 md:col-span-7 lg:col-span-7 my-20 md:my-28"
+            className="col-span-4 sm:col-span-8 md:col-span-7 lg:col-span-7 my-26 md:my-28"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}

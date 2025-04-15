@@ -271,42 +271,66 @@ const HeroSection: React.FC = () => {
   return (
     <section
       id="hero"
-      className="relative h-screen w-full overflow-hidden"
+      className="relative h-screen w-full bg-white overflow-hidden"
     >
-      {/* WebGL visualization that extends completely to the right edge */}
-      <div className="hidden sm:block absolute top-0 right-0 bottom-0 w-1/2 bg-black z-0" style={{ right: "-1px", width: "calc(50% + 1px)" }}>
-        <div className="w-full h-full flex items-center justify-center overflow-hidden">
-          <HydrogenOrbital />
-        </div>
-      </div>
-
-      {/* Main content grid - Using proper grid container with padding */}
-      <div className="grid grid-cols-4 sm:grid-cols-8 md:grid-cols-12 h-full px-8 md:px-16 lg:px-24 relative z-10">
-        {/* Left column - Content - properly spans columns based on screen size */}
-        <div className="col-span-4 sm:col-span-4 md:col-span-6 flex items-center">
+      {/* Responsive two-column layout container */}
+      <div className="h-full w-full flex flex-col md:flex-row">
+        {/* Content column - Full width on mobile, half on tablet/desktop */}
+        <div className="w-full md:w-1/2 px-6 md:px-12 lg:px-24 flex items-center z-10">
           <motion.div 
-            className="w-full md:w-[632px] inline-flex flex-col justify-start items-start gap-[23px]"
+            className="w-full inline-flex flex-col justify-start items-start gap-6"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
           >
-            <div className="rounded flex flex-col justify-start items-start gap-2.5">
-              <div className="inline-flex justify-start items-start gap-[26.35px]">
-                <div className="w-[8.21px] h-[8.21px] bg-[#0764ff]" />
-                <div className="w-[94.15px] h-[33.21px] bg-Black" />
+            <div className="rounded flex flex-col justify-start items-start gap-2">
+              <div className="inline-flex justify-start items-start gap-6">
+                <div className="w-2 h-2 bg-primary-blue" />
+                <div className="w-24 h-8 bg-black" />
               </div>
-              <div className="justify-center"><span className="text-Black text-lg font-bold font-['Helvetica_Now_Display'] leading-tight">Reports </span><span className="text-Grey text-lg font-bold font-['Helvetica_Now_Display'] leading-tight">first chapter</span></div>
+              <div className="text-body font-helvetica-now">
+                <span className="font-bold text-black">Reports </span>
+                <span className="font-bold text-grey">first chapter</span>
+              </div>
             </div>
-            <div className="justify-center"><span className="text-Black text-8xl font-medium font-['Helvetica_Now_Display'] leading-[96px]">Radionuclide    </span><span className="text-[#0000ff] text-8xl font-bold font-['Helvetica_Now_Display'] leading-[96px]">Industry</span><span className="text-Black text-8xl font-bold font-['Helvetica_Now_Display'] leading-[96px]"> <br/></span><span className="text-Black text-8xl font-medium font-['Helvetica_Now_Display'] leading-[96px]">Ecosystem</span></div>
-            <div className="p-2.5 bg-[#ebeef3] rounded inline-flex justify-center items-center gap-2.5">
-              <div className="justify-center"><span className="text-Black text-sm font-bold font-['Helvetica_Now_Display'] leading-none">12th</span><span className="text-Black text-sm font-medium font-['Helvetica_Now_Display'] leading-none"> of </span><span className="text-Black text-sm font-bold font-['Helvetica_Now_Display'] leading-none">April </span><span className="text-Black text-sm font-medium font-['Helvetica_Now_Display'] leading-none">2025</span></div>
+            <div className="text-h1">
+              <span className="text-black font-medium">Radionuclide </span>
+              <span className="text-primary-blue font-bold">Industry</span>
+              <br/>
+              <span className="text-black font-medium">Ecosystem</span>
             </div>
-            <div className="justify-center"><span className="text-Black text-lg font-medium font-['Helvetica_Now_Display'] leading-tight">Contributors: </span><span className="text-Black text-lg font-medium font-['Helvetica_Now_Display'] underline leading-tight">Molly McGaughan</span><span className="text-Black text-lg font-medium font-['Helvetica_Now_Display'] leading-tight">, </span><span className="text-Black text-lg font-medium font-['Helvetica_Now_Display'] underline leading-tight">Kostja Paschalidis</span><span className="text-Black text-lg font-medium font-['Helvetica_Now_Display'] leading-tight">, </span><span className="text-Black text-lg font-medium font-['Helvetica_Now_Display'] underline leading-tight">Estelle Ricoux</span></div>
+            <div className="p-2 bg-light-therapy rounded inline-flex justify-center items-center gap-2">
+              <div className="text-body-small font-helvetica-now">
+                <span className="font-bold text-black">12th</span>
+                <span className="font-medium text-black"> of </span>
+                <span className="font-bold text-black">April </span>
+                <span className="font-medium text-black">2025</span>
+              </div>
+            </div>
+            <div className="text-body font-helvetica-now">
+              <span className="font-medium text-black">Contributors: </span>
+              <span className="font-medium text-black underline">Molly McGaughan</span>
+              <span className="font-medium text-black">, </span>
+              <span className="font-medium text-black underline">Kostja Paschalidis</span>
+              <span className="font-medium text-black">, </span>
+              <span className="font-medium text-black underline">Estelle Ricoux</span>
+            </div>
             <div className="self-stretch flex flex-col justify-start items-start gap-3">
-              <div className="self-stretch justify-center text-Black text-[26px] font-bold font-['Helvetica_Now_Display'] leading-7">An overview of isotope types, ligands, targets, companies in the space, manufacturing methods, global demand, and current access.</div>
-              <div className="w-full sm:w-[572px] justify-center text-Grey text-lg font-medium font-['Helvetica_Now_Display'] leading-tight">Our Radionuclide Ecosystem Overview offers a comprehensive examination of the rapidly evolving landscape of radionuclide therapies and the ecosystem that supports it. We designed this resource to help industry leaders, innovators, and investors understand the complexities and interdependencies that define this growing field.</div>
+              <div className="text-h4 font-bold font-helvetica-now text-black">
+                An overview of isotope types, ligands, targets, companies in the space, manufacturing methods, global demand, and current access.
+              </div>
+              <div className="text-body font-medium font-helvetica-now text-grey">
+                Our Radionuclide Ecosystem Overview offers a comprehensive examination of the rapidly evolving landscape of radionuclide therapies and the ecosystem that supports it. We designed this resource to help industry leaders, innovators, and investors understand the complexities and interdependencies that define this growing field.
+              </div>
             </div>
           </motion.div>
+        </div>
+        
+        {/* WebGL visualization - Hidden on mobile, shown on tablet/desktop */}
+        <div className="hidden md:block md:w-1/2 bg-black">
+          <div className="w-full h-full flex items-center justify-center overflow-hidden">
+            <HydrogenOrbital />
+          </div>
         </div>
       </div>
 

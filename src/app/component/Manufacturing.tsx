@@ -389,7 +389,7 @@ const ManufacturingCard: React.FC<{
         <div className="self-stretch inline-flex justify-start items-start gap-8 mb-8">
           {stats.map((stat, index) => (
             <div key={index} className="flex-1 justify-start">
-              <span className="text-[#212121] text-[93.71px] font-medium font-helvetica-now leading-none block">{stat.value}<br/></span>
+              <span className="text-black text-h1 font-medium font-helvetica-now leading-none block">{stat.value}<br/></span>
               <span className="text-grey text-body-small font-medium font-helvetica-now leading-tight block mt-1">{stat.label}</span>
             </div>
           ))}
@@ -403,7 +403,7 @@ const ManufacturingCard: React.FC<{
         {/* Title and first paragraph inside card */}
         <div className="self-stretch mb-6">
           {/* Title */}
-          <div className="self-stretch justify-start text-[#212121] text-[28px] font-bold font-helvetica-now leading-tight mb-4">
+          <div className="self-stretch text-black text-h4 font-bold font-helvetica-now leading-tight mb-4">
             {title}
           </div>
           
@@ -417,7 +417,7 @@ const ManufacturingCard: React.FC<{
           {id === 3 && (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <h4 className="text-black text-[28px] font-bold font-helvetica-now mb-2">
+                <h4 className="text-black text-h4 font-bold font-helvetica-now mb-2">
                   3. Cyclotron-Based Production
                 </h4>
                 <p className="text-black text-body font-medium font-helvetica-now">
@@ -425,7 +425,7 @@ const ManufacturingCard: React.FC<{
                 </p>
               </div>
               <div>
-                <h4 className="text-black text-[28px] font-bold font-helvetica-now mb-2">
+                <h4 className="text-black text-h4 font-bold font-helvetica-now mb-2">
                   4. Emerging Accelerator-Based Technologies
                 </h4>
                 <p className="text-black text-body font-medium font-helvetica-now">
@@ -440,7 +440,7 @@ const ManufacturingCard: React.FC<{
         <div className="inline-flex flex-wrap justify-start items-start gap-3 mb-6">
           {getProcessTags().map((tag, index) => (
             <div key={index} className="px-3 py-0.5 bg-[#282829] rounded-[90px] flex justify-center items-center gap-2.5">
-              <div className="text-center justify-center text-[#eeeeee] text-sm font-medium font-helvetica-now">{tag}</div>
+              <div className="text-center justify-center text-[#eeeeee] text-body-small font-medium font-helvetica-now">{tag}</div>
             </div>
           ))}
         </div>
