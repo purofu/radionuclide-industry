@@ -6,6 +6,8 @@ import IsotopesOverview from "./component/IsotopesOverview";
 import Companies from "./component/Companies";
 import Manufacturing from "./component/Manufacturing";
 import PatientAccess from "./component/PatientAccess";
+import PreFooter from "./component/PreFooter";
+import Footer from "./component/Footer";
 
 import { Perspective, ProgressNav } from "../components/ui";
 
@@ -37,7 +39,10 @@ export default function Home() {
       <section id="perspective">
         <Perspective />
       </section>
-
+      <section id="pre-footer">
+        <PreFooter />
+      </section>
+      <Footer />
     </div>
   );
 }
