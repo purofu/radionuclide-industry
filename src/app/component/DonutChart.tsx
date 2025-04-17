@@ -39,8 +39,8 @@ const DonutChart = () => {
 
   // Colors
   const colors = {
-    Therapy: "#25332b", // dark green color from design
-    Diagnosis: "#86898e", // gray color from design
+    Therapy: "#EBEEF4", // dark green color from design
+    Diagnosis: "#E2DCDC", // gray color from design
   };
 
   // Sort diagnosis data by count (ascending)
@@ -65,7 +65,7 @@ const DonutChart = () => {
       {/* Graph container */}
       <div className="w-full flex flex-grow">
         {/* Left column - data bars */}
-        <div className="w-[414px] flex flex-col">
+        <div className=" flex flex-col">
           {/* Diagnosis bars */}
           <div className="flex flex-col" style={{ flex: diagnosisSectionProportion }}>
             {diagnosisData.map((item, index) => {
@@ -78,11 +78,11 @@ const DonutChart = () => {
                   key={`diagnosis-${item.subcategory}`}
                   className="w-full px-6 py-2.5 flex items-center"
                   style={{ 
-                    backgroundColor: `rgba(134, 137, 142, ${opacity})`,
+                    backgroundColor: `rgba(216, 206, 206, ${opacity})`,
                     flex: barProportion
                   }}
                 >
-                  <div className="text-white text-[26px] font-bold font-['Helvetica_Now_Display'] leading-7">
+                  <div className="text-per-line text-body-smallleading-7">
                     {item.count} {item.subcategory}
                   </div>
                 </div>
@@ -99,13 +99,13 @@ const DonutChart = () => {
               return (
                 <div 
                   key={`therapy-${item.subcategory}`}
-                  className="w-full px-6 py-2.5 flex items-center"
+                  className=" px-6 py-2.5 flex items-center"
                   style={{ 
                     backgroundColor: colors.Therapy,
                     flex: barProportion
                   }}
                 >
-                  <div className="text-white text-[26px] font-bold font-['Helvetica_Now_Display'] leading-7">
+                  <div className="text-per-line text-body-small font-bold leading-7">
                     {item.count} Treatment {item.subcategory}
                   </div>
                 </div>
@@ -124,7 +124,7 @@ const DonutChart = () => {
               flex: diagnosisSectionProportion
             }}
           >
-            <div className="text-white text-8xl font-medium font-['Helvetica_Now_Display'] leading-[96px]">
+            <div className="text-per-line text-h1">
               {totals.Diagnosis}
             </div>
           </div>
@@ -137,7 +137,7 @@ const DonutChart = () => {
               flex: therapySectionProportion
             }}
           >
-            <div className="text-white text-8xl font-medium font-['Helvetica_Now_Display'] leading-[96px]">
+            <div className="text-per-line text-h1 ">
               {totals.Therapy}
             </div>
           </div>
@@ -148,8 +148,8 @@ const DonutChart = () => {
       <div className="flex flex-col items-end px-4 py-2">
         {/* Title with citation */}
         <div className="w-full text-right">
-          <span className="text-sm font-medium font-['Helvetica_Now_Display'] text-black">
-            Approved therapeutic and diagnostic agents divided by type of diseases
+          <span className="text-body font-medium font-['Helvetica_Now_Display'] text-black">
+           Number of approved radiopharmaceuticals per therapeutic area
           </span>
           <span 
             className="text-xs font-medium font-['Helvetica_Now_Display'] text-[#0000ff]"

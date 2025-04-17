@@ -4,7 +4,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Tabs } from '@/components/ui';
-import SectionTitle from '@/components/SectionTitle';
+
 
 import RadiotherapyChart from './RadiotherapyChart';
 
@@ -19,8 +19,7 @@ const PatientAccess: React.FC = () => {
 
   return (
     <>
-      {/* Add SectionTitle at the top */}
-      <SectionTitle number="05" title="Patient access" />
+   
     
       <section className="relative w-full bg-white py-16 md:py-24 z-10">
         {/* Main grid container */}
@@ -37,7 +36,8 @@ const PatientAccess: React.FC = () => {
               transition={{ duration: 0.8, delay: 0.2 }}
             >
               <p className="text-h3 font-helvetica-now text-black">
-                The radiopharmaceutical landscape is experiencing unprecedented growth, with a diverse array of players—from emerging biotechs to established pharmaceutical giants—actively developing novel therapies across multiple targets and isotopes.
+              The stark gap between eligibility and reach is both a challenge and a market opportunity.
+              Logistical complexities, infrastructure limitations, and reimbursement hurdles continue to restrict patient access
               </p>
             </motion.div>
 
@@ -70,7 +70,7 @@ const PatientAccess: React.FC = () => {
                 transition={{ duration: 0.6, delay: 0.6 }}
               >
                 <p className="text-body font-helvetica-now text-grey">
-                  This ecosystem creates a remarkable level of interdependence. Competitors frequently become collaborators through strategic partnerships and acquisitions that address specialized capabilities gaps—whether in isotope production, targeting technology, manufacturing expertise, or delivery infrastructure.
+                *This access disparity highlights the need for innovative delivery models that can overcome the unique last-mile challenges inherent to these therapies and unlock their full clinical and commercial potential.
                 </p>
               </motion.div>
               {/* --- End Column 2 --- */}

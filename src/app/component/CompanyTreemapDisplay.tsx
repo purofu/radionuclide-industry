@@ -307,7 +307,7 @@ const CompanyTreemapDisplay = () => {
         <TooltipProvider delayDuration={100}>
             <section className="relative w-full bg-white py-12 md:py-16">
                 <div className="px-8 md:px-16 lg:px-24">
-                    <h2 className="text-h3 font-helvetica-now text-black mb-8">Company analysis by clinical trials and study phases</h2>
+                    <h2 className="text-h3 font-helvetica-now text-black mb-8">Market leaders by volume of studies,  clinical stage and diseases</h2>
 
                     <div className="flex flex-col gap-6 mb-8">
                         <div className="flex flex-col sm:flex-row sm:items-center justify-between sm:gap-8 gap-4">
@@ -617,7 +617,17 @@ const CompanyTreemapDisplay = () => {
                          )}
 
                         {/* Footer */}
-                        <div className="mt-8 border-t border-border pt-8 text-muted-foreground text-sm text-center">
+                        <div className=" ">               
+               <div className="text-left text-body-small font-helvetica-now text-grey md:my-8">
+                  <p>Last updated: April, 2025</p>
+                  <p className="mt-1">
+                  Help us keep things accurate. If you notice any outdated or incorrect information, email us at <a href="mailto:info@firm.inc" className="text-primary-blue hover:underline">info@firm.inc</a>
+                  </p>
+               </div>
+               
+           
+             </div>
+                        <div className=" border-t border-borde text-muted-foreground text-sm text-center">
                             {/* Footer logic remains similar, adjust text slightly */}
                              {apiData?.metadata?.total_trials_processed && !isLoading && !error && apiData?.company && (
                                 <p>
@@ -629,9 +639,12 @@ const CompanyTreemapDisplay = () => {
                             )}
                              {!isLoading && !error && apiData && processedData.length === 0 && apiData.company && ( <p>No companies met the criteria for display in the &apos;{getTabDisplayText(activeTab)}&apos; category.</p> )}
                              {!isLoading && !error && apiData && !apiData.company && ( <p>Data loaded, but required &apos;company&apos; information was missing.</p> )}
+                             
                         </div>
                     </div>
                 </div>
+               
+            
             </section>
         </TooltipProvider>
     );
@@ -662,7 +675,17 @@ const CompanyTooltipContent = React.memo(({ data, activeTab, showOnly, getTabDis
                 </ul>
                 {remainingCount > 0 && (
                     <p className="text-muted-foreground/80 text-[10px] mt-0.5 italic">...and {remainingCount} more</p>
-                )}
+                )} <div className="mt-12 md:mt-16 border-ts">               
+               <div className="text-left text-body-small font-helvetica-now text-grey md:my-8">
+                  <p>Last updated: April, 2025</p>
+                  <p className="mt-1">
+                  Help us keep things accurate. If you notice any outdated or incorrect information, email us at <a href="mailto:info@firm.inc" className="text-primary-blue hover:underline">info@firm.inc</a>
+                  </p>
+               </div>
+               
+               {/* Divider before footer text - using config border color */}
+               <hr className="border-t border-light-grey w-full my-12 md:my-16" />
+             </div>
             </div>
         );
     };
@@ -694,7 +717,7 @@ const CompanyTooltipContent = React.memo(({ data, activeTab, showOnly, getTabDis
              )}
 
             {renderList(data.diseases, isOnlyDiseases ? 10 : 5, isOnlyDiseases ? `Top Diseases (${data.diseaseCount} total)` : "Top Diseases (Overall)")}
-        </div>
+        </div> 
     );
 });
 CompanyTooltipContent.displayName = 'CompanyTooltipContent';

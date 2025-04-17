@@ -43,7 +43,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} ${helveticaNow.variable}`}>
-        <div className="mx-auto w-full max-w-[1700px]">
+        <div className="mx-auto w-full ">
           {children}
         </div>
       </body>

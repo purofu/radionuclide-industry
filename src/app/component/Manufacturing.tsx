@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import SectionTitle from '@/components/SectionTitle';
+
 
 // Interface for the Manufacturing Cards
 interface ManufacturingCardProps {
@@ -29,7 +29,7 @@ const manufacturingCardsData: ManufacturingCardProps[] = [
   {
     id: 1,
     title: "Reactor-Based Production",
-    description: "Nuclear reactors remain the backbone of global radioisotope supply, primarily through two mechanisms:\nFission of Uranium Targets - Low-enriched uranium (LEU) is irradiated to produce fission products such as molybdenum-99 (Mo-99), the precursor to technetium-99m (Tc-99m)—the most widely used diagnostic isotope. This process generates high-specific-activity isotopes but also significant radioactive waste (e.g., ~50 Ci waste per 1 Ci Mo-99). Supply is concentrated in 5–10 aging research reactors globally, creating a fragile, centralized network dependent on complex international logistics and a handful of processing facilities(1) (2)\nNeutron Activation - Stable isotopes like Mo-98 are bombarded with neutrons to produce radioactive isotopes. This method avoids uranium use and reduces proliferation risk but produces lower-specific-activity products. As a result, more frequent generator replacements are needed, and chemical separation becomes more complex. Despite lower yields, this method is supported by a broader base of over 50 reactors, offering potential for distributed production. (1) (2)",
+    description: "Nuclear reactors remain the backbone of global radioisotope supply. Although many reactors exist, the production of specific medical isotopes is concentrated in a few facilities:\nFission of Uranium Targets - Low-enriched uranium (LEU) is irradiated to produce fission products such as Molybdenum-99 (Mo-99), the precursor to Technetium-99m (Tc-99m)—the most widely used diagnostic isotope. This process generates high-specific-activity isotopes but also significant radioactive waste (e.g., ~50 Ci waste per 1 Ci Mo-99). Supply is concentrated in 5–10 aging research reactors globally, creating a fragile, centralized network dependent on complex international logistics and a handful of processing facilities(1) (2)\nNeutron Activation - Stable isotopes like Mo-98 are bombarded with neutrons to produce radioactive isotopes. This method avoids uranium use and reduces proliferation risk but produces lower-specific-activity products. As a result, more frequent generator replacements are needed, and chemical separation becomes more complex. Despite lower yields, this method is supported by a broader base of over 50 reactors, offering potential for distributed production. (1) (2)",
     stats: [
       {
         value: "220",
@@ -37,7 +37,7 @@ const manufacturingCardsData: ManufacturingCardProps[] = [
       },
       {
         value: "~10",
-        label: "reactors are heavily involved in the large-scale production of medical isotopes like Mo-99"
+        label: "reactors involved in large-scale production of medical isotopes "
       }
     ],
     elementBoxes: [
@@ -118,15 +118,15 @@ const manufacturingCardsData: ManufacturingCardProps[] = [
   {
     id: 2,
     title: "Generator Systems",
-    description: "Generators are compact devices that provide short-lived radionuclides on-site by separating them from a longer-lived parent isotope through radioactive decay. The replacement cycle for different types of generators depends on the half-life of the parent isotope and operational factors.\n\nThe Mo-99/Tc-99m generator is the most widely used system in nuclear medicine, enabling approximately 30 million diagnostic imaging procedures annually (representing about 80% of all nuclear medicine diagnostics). It functions through the decay of Mo-99 to Tc-99m, which is routinely \"milked\" from generators at hospitals for heart, bone, and kidney scans. Production remains highly centralized and vulnerable to global reactor outages, yet this generator serves as the essential workhorse of diagnostic nuclear medicine. They are often tabletop or cart-sized units with substantial lead shielding (5) (6) (7)\n\n Strontium-90/Yttrium-90 Generator generator supplies 90Y (half-life: 64.0 hours), which is primarily used for radiation immunotherapy applications in oncology. The parent isotope 90Sr has an exceptionally long half-life of 28 years, allowing for extended generator functionality The 90Y radionuclide emits high-energy beta particles (2.3 MeV) that can effectively penetrate biological tissues, making it particularly valuable for treating liver cancer, colorectal cancer, and prostate cancer. (7)",
+    description: "Generators are compact devices that provide short-lived radionuclides on-site by separating them from a longer-lived parent isotope through radioactive decay. \n\nThe Mo-99/Tc-99m generator is the most widely used system in nuclear medicine, enabling approximately 30 million diagnostic imaging procedures annually (representing about 80% of all nuclear medicine diagnostics). It functions through the decay of Mo-99 to Tc-99m, which is routinely \"milked\" from generators at hospitals for heart, bone, and kidney scans. Production remains highly centralized and vulnerable to global reactor outages, yet this generator serves as the essential workhorse of diagnostic nuclear medicine. They are often tabletop or cart-sized units with substantial lead shielding (5) (6) (7)\n\n The Strontium-90/Yttrium-90 generator supplies 90Y (half-life: 64.0 hours), which is primarily used for radiation immunotherapy applications in oncology. The parent isotope 90Sr has an exceptionally long half-life of 28 years, allowing for extended generator functionality The 90Y radionuclide emits high-energy beta particles (2.3 MeV) that can effectively penetrate biological tissues, making it particularly valuable for treating liver cancer, colorectal cancer, and prostate cancer. (7)",
     stats: [
       {
         value: "10k",
-        label: "Tc-99m generators are used annually worldwide, primarily in hospitals and nuclear medicine departments"
+        label: "Tc-99m generators used annually worldwides"
       },
       {
         value: "1-2",
-        label: "Weeks replacement cycle for Technetium-99m (Tc-99m) Generators"
+        label: "Replacement cycle for Tc-99m generators"
       }
     ],
     elementBoxes: [
@@ -187,7 +187,7 @@ const manufacturingCardsData: ManufacturingCardProps[] = [
     stats: [
       {
         value: "1500",
-        label: "cyclotrons are installed globally, mostly for PET/SPECT isotopes"
+        label: "cyclotrons installed globally, for PET/SPECT isotopes"
       },
       {
         value: "<50",
@@ -418,18 +418,18 @@ const ManufacturingCard: React.FC<{
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <h4 className="text-black text-h4 font-bold font-helvetica-now mb-2">
-                  3. Cyclotron-Based Production
+                  Cyclotron-Based Production
                 </h4>
                 <p className="text-black text-body font-medium font-helvetica-now">
-                  Cyclotrons are particle accelerators that produce radionuclides by bombarding targets with charged particles, typically protons. While traditionally used for PET and SPECT isotopes, they are now being adapted for Mo-99 and Tc-99m production.
+                Cyclotrons are particle accelerators that produce radionuclides by bombarding targets with charged particles, typically protons. They are increasingly being adapted for Mo-99 and Tc-99m production.
                 </p>
               </div>
               <div>
                 <h4 className="text-black text-h4 font-bold font-helvetica-now mb-2">
-                  4. Emerging Accelerator-Based Technologies
+                  Emerging Accelerator-Based Technologies
                 </h4>
                 <p className="text-black text-body font-medium font-helvetica-now">
-                  New technologies aim to replicate reactor-grade isotope yields using non-reactor systems, enhancing supply resilience. (8) (10)
+                New technologies aim to match reactor isotope yields without reactors, improving supply resilience. These require significant R&D and regulatory approval before mainstream adoption.(8) (10)
                 </p>
               </div>
             </div>
@@ -545,7 +545,7 @@ const ManufacturingCard: React.FC<{
 const Manufacturing: React.FC = () => {
   return (
     <>
-      <SectionTitle number="04" title="Manufacturing" />
+
     
       <section className="relative w-full bg-white py-16 md:py-24">
         <div className="grid grid-cols-4 sm:grid-cols-8 md:grid-cols-12 lg:grid-cols-12">
@@ -561,6 +561,10 @@ const Manufacturing: React.FC = () => {
             >
               <p className="text-h3 font-helvetica-now text-black">
                 Radionuclide manufacturing represents both a critical enabler and potential bottleneck for the entire ecosystem.
+              </p>
+              <br></br>
+              <p className="text-h3 font-helvetica-now text-black">
+            
                 Organizations face pivotal strategic decisions—whether to build proprietary capabilities, leverage contract manufacturing networks, or create hybrid models that balance control with flexibility as isotope preferences, regulatory requirements, and patient demand patterns evolve.
               </p>
             </motion.div>

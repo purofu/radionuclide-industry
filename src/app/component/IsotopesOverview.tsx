@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
 import RadioisotopePeriodicDisplay from './RadioisotopePeriodicDisplay';
 import { Tabs } from '@/components/ui';
-import SectionTitle from '@/components/SectionTitle';
+
 
 // Interface for Isotope Cards
 interface Isotope {
@@ -23,29 +23,29 @@ const isotopeData: Isotope[] = [
     tag: 'Therapy',
     tagBg: 'bg-light-therapy', // Using defined colors from your tailwind.config.js
     dotColor: 'bg-a-colour',    // Using defined colors from your tailwind.config.js
-    title: 'α emitters',
-    description: 'These radionuclides have the highest potency, delivering high energy while limiting collateral damage to healthy tissue. Their high supply chain challenges, specialised production requirements, long-lived waste considerations and the highest relative cost create significant logistical hurdles for widespread adoption.',
+    title: 'α-emitters',
+    description: 'These radionuclides have the highest potency with ultra-precise targeting, enabling minimal collateral damage to healthy tissue. [2] Their high supply chain complexity, specialized production requirements, long-lived waste management challenges, and highest relative cost create significant logistical hurdles for widespread adoption.(1 &2)',
   },
   {
     tag: 'Therapy',
     tagBg: 'bg-light-therapy',
     dotColor: 'bg-primary-blue',
     title: 'β-emitters',
-    description: 'These isotopes have been workhorses for nuclear medicine, offering established production pathways and longer tissue range, often advantageous for medium-to-large tumors. Familiar decay properties, commercial infrastructure and established pathways present lower market entry barriers compared to alpha therapies.',
+    description: 'Beta-emitters have lower energy but longer tissue range, often advantageous for medium-to-large tumor masses. Their well-known decay properties, established commercial infrastructure and regulatory pathways reduce market entry barriers compared to alpha therapies. (3)',
   },
   {
     tag: 'Diagnosis',
     tagBg: 'bg-light-diagnostic', // Using defined colors from your tailwind.config.js
     dotColor: 'bg-purple',       // Using defined colors from your tailwind.config.js
     title: 'Positron emitters',
-    description: 'Positron emitters enable the highest diagnostic imaging quality through PET/CT, offering superior sensitivity and resolution for detecting small lesions. Their typically short half-lives necessitate robust supply chain planning, posing challenges requiring either cyclotron networks or on-site production.',
+    description: 'Positron emitters deliver the highest diagnostic imaging quality through PET/CT, offering superior sensitivity and resolution for detecting small lesions. Their typically short half-lives (minutes to hours) create distribution challenges requiring either cyclotron networks or on-site production. (4)',
   },
   {
     tag: 'Diagnosis',
     tagBg: 'bg-light-diagnostic',
     dotColor: 'bg-g-color',
     title: 'γ-emitters',
-    description: 'Gamma emitters provide the backbone of conventional nuclear medicine diagnostics with the most mature infrastructure and moderate costs. Established SPECT imaging systems offer accessibility and reliability. Long emission characteristics enable body imaging with well-understood regulatory pathways.',
+    description: 'Gamma emitters provide the backbone of conventional nuclear medicine diagnostics with the most mature infrastructure and moderate costs. (5) Generator-based supply chains offer accessibility and reliability. Long penetration range enables whole-body imaging with well-understood regulatory pathways. (4)',
   },
 ];
 
@@ -61,7 +61,7 @@ interface BarChartData {
 
 const barChartData: BarChartData[] = [
     { 
-      label: 'α-Particle', 
+      label: 'α-emitters', 
       trialValue: 74, 
       companyValue: 13, 
       colorClass: 'bg-a-colour', 
@@ -69,7 +69,7 @@ const barChartData: BarChartData[] = [
       labelColorClass: 'text-a-text-colour'
     },
     { 
-      label: 'β-Particle', 
+      label: 'β-emitters', 
       trialValue: 329, 
       companyValue: 56, 
       colorClass: 'bg-primary-blue', 
@@ -85,7 +85,7 @@ const barChartData: BarChartData[] = [
       labelColorClass: 'text-black' 
     },
     { 
-      label: 'γ-Particle', 
+      label: 'γ-emitters', 
       trialValue: 89, 
       companyValue: 18,
       colorClass: 'bg-g-color', 
@@ -96,8 +96,8 @@ const barChartData: BarChartData[] = [
 
 // Text content for each tab
 const tabText = {
-  trials: "While beta emitters currently dominate the landscape in clinical trials, the growing interest in alpha emitters signals an evolution in therapeutic approach.",
-  companies: "Companies working on positron emitters represent the largest segment, with beta-particle therapy companies forming a substantial portion of the industry."
+  trials: "While positron emitters dominate the landscape in clinical trials (647) due to their long-established role in diagnostic imaging, beta emitters (329) represent the current therapeutic focus. The growing interest in alpha emitters (74), though still the newcomers, signals an important evolution in therapeutic approach with their uniquely ultra-precise targeting properties.",
+  companies: "While positron emitters dominate the landscape in clinical trials (647) due to their long-established role in diagnostic imaging, beta emitters (329) represent the current therapeutic focus. The growing interest in alpha emitters (74), though still the newcomers, signals an important evolution in therapeutic approach with their uniquely ultra-precise targeting properties."
 };
 
 const IsotopesOverview: React.FC = () => {
@@ -132,8 +132,7 @@ const IsotopesOverview: React.FC = () => {
   return (
     <> {/* Use Fragment to group multiple top-level sections */}
 
-      {/* Replace the header section with SectionTitle */}
-      <SectionTitle number="01" title="Radioisotope" />
+     
 
       {/* ===== ISOTOPES OVERVIEW SECTION ===== */}
       <section className="relative w-full bg-white">
@@ -232,7 +231,7 @@ const IsotopesOverview: React.FC = () => {
                viewport={{ once: true }}
                transition={{ duration: 0.8, delay: 0.2 }}
              >
-                 Strategic divergence in radioisotope development
+                 Total clinical trials & companies by radioisotope type
              </motion.h3>
 
              {/* Replace DataTabs with our new Tabs component */}
@@ -334,7 +333,7 @@ const IsotopesOverview: React.FC = () => {
              {/* Footer Text - styled using text-body-small from config */}
              {/* Changed from text-center to text-left */}
              <div className="text-left text-body-small font-helvetica-now text-grey md:my-8">
-                <p>Last updated: {formattedDate}</p>
+                <p>Last updated:  April, 2025</p>
                 <p className="mt-1">
                 Help us keep things accurate. If you notice any outdated or incorrect information, email us at <a href="mailto:info@firm.inc" className="text-primary-blue hover:underline">info@firm.inc</a>
                 </p>

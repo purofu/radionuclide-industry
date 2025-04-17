@@ -29,13 +29,13 @@
   
   /* Secondary Colors */
   --color-light-therapy: #ebeef4;
-  --color-light-diagnostic: #d8cece;
+  --color-light-diagnostic: #E2DCDC;
   --color-light-grey: #e3e3e3;
   
   /* Periodic Table Colors */
-  --color-per-background: #302a38;
-  --color-per-text: #9aa1ba;
-  --color-per-line: #645a71;
+  --color-per-background: #1d1d1d;
+  --color-per-text: #8F929B;
+  --color-per-line: #373539;
   
   /* Data Specific Colors */
   --color-a-colour: #2ffbcf;
@@ -100,7 +100,7 @@
   --spacing-32: 128px;
   
   /* Layout variables */
-  --max-content-width: 1500px;
+
 }
 
 /* Base element styling */

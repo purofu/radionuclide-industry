@@ -4,7 +4,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import CompanyTreemapDisplay from './CompanyTreemapDisplay';
-import SectionTitle from '@/components/SectionTitle';
+
 
 // Interface for the Targeting Method Cards
 interface TargetingMethod {
@@ -18,7 +18,7 @@ interface TargetingMethod {
 // Data for Targeting Method Cards
 const targetingMethodsData: TargetingMethod[] = [
   {
-    count: 671,
+    count: 103,
     countLabel: 'total companies',
     title: 'Pharmaceutical & Biotech',
     description: 'While biotechs typically drive innovation through focused radiotherapeutic platforms and novel targeting approaches, larger pharma companies pursue dual strategies: strategic acquisitions of promising radiopharmaceutical assets and development of internal capabilities. ',
@@ -52,8 +52,7 @@ const targetingMethodsData: TargetingMethod[] = [
 const Companies: React.FC = () => {
   return (
     <>
-      {/* Add SectionTitle at the top */}
-      <SectionTitle number="03" title="Companies" />
+    
     
       <section className="relative w-full bg-white py-16 md:py-24">
         {/* Main grid container - Using defined 16-col grid */}

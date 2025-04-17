@@ -411,7 +411,7 @@ const RadioisotopePeriodicDisplay = () => {
            {!isLoading && !error && apiData && (
              <div className="mt-12 md:mt-16 border-ts">               
                <div className="text-left text-body-small font-helvetica-now text-grey md:my-8">
-                  <p>Last updated: {new Date().toLocaleDateString('en-US', {year: 'numeric', month: 'long', day: 'numeric'})}</p>
+                  <p>Last updated: April, 2025</p>
                   <p className="mt-1">
                   Help us keep things accurate. If you notice any outdated or incorrect information, email us at <a href="mailto:info@firm.inc" className="text-primary-blue hover:underline">info@firm.inc</a>
                   </p>

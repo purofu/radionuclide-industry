@@ -341,10 +341,10 @@ const TargetDisplay = () => {
           <div className="col-span-4 sm:col-span-8 md:col-span-12 lg:col-span-12 px-8 md:px-16 lg:px-24">
             {/* Title */}
             <div className="mb-8 w-full md:w-8/12">
-              <h3 className="text-h4">
-                Tumor targets by volume of studies and clinical stage
+              <h3 className="text-h4 mb-4">
+                Tumor targets by total volume of studies and clinical stage
               </h3>
-              <span className="text-body text-grey">Tumor-targets are emerging as promising clinical approaches that offer noninvasive, real-time diagnosis of tumour lesions and highly effective, safe treatments with strong antitumour efficacy. </span>
+              <span className="text-body text-grey">Tumor targets are emerging as promising clinical approaches that offer noninvasive, real-time diagnosis of tumor lesions and highly effective, safe treatments with strong antitumor efficacy. </span>
             </div>
             
             {/* Controls: Tabs & View Toggle using the new Tabs component with fixed labels */}
@@ -586,23 +586,21 @@ const TargetDisplay = () => {
             )}
 
             {/* Placeholder Summary Text */}
-            <div className="mt-12 md:mt-16 border-t border-gray-200 pt-8 w-full">
-              <div className="max-w-3xl mx-auto text-center">
-                {/* Use dynamic text based on active tab */}
-                <h4 className="text-sm text-gray-600 font-medium mb-2">
-                  {getTabDisplayText()} by Target
-                </h4>
-                <p className="text-sm text-gray-600">
-                  {/* Updated placeholder text to reflect different views */}
-                  [Placeholder: Displaying {viewMode === 'grid' ? 'top 12' : 'all'} targets sorted by {activeTab === 'clinical' ? 'clinical trials' : getTabDisplayText().toLowerCase()}.
-                  {viewMode === 'grid' ? ' Hover over badges for disease/company lists.' : ' Scroll to see all targets and hover over cells for details.'}
-                  {apiData && !error && !isLoading && " Data loaded successfully."}
-                  {error && !isLoading && " Displaying available sample data due to a loading error."} ]
-                </p>
-              </div>
+            
+            <div className="mt-12 md:mt-16 border-ts">               
+               <div className="text-left text-body-small font-helvetica-now text-grey md:my-8">
+                  <p>Last updated: April, 2025</p>
+                  <p className="mt-1">
+                  Help us keep things accurate. If you notice any outdated or incorrect information, email us at <a href="mailto:info@firm.inc" className="text-primary-blue hover:underline">info@firm.inc</a>
+                  </p>
+               </div>
+               
+               {/* Divider before footer text - using config border color */}
+               <hr className="border-t border-light-grey w-full my-12 md:my-16" />
+             </div>
             </div>
           </div>
-        </div>
+        
       </section>
     </TooltipProvider>
   );

@@ -667,7 +667,7 @@ const RadiopharmaceuticalsSection = () => {
           transition={{ duration: 0.8 }}
         >
           <h2 className="text-h4 md:text-h4 font-bold">
-            <span className="text-grey">Approved</span> <span className="text-black">therapeutic</span> <span className="text-grey">and</span> <span className="text-black">diagnostic</span> <span className="text-grey">agents</span>
+            <span className="text-grey">List of approved</span> <span className="text-black">radiopharmaceuticals</span> <span className="text-grey">across</span> <span className="text-black">therapy & diagnosis</span>
           </h2>
         </motion.div>
 
@@ -820,7 +820,7 @@ const RadiopharmaceuticalsSection = () => {
           </div>
         </div>
         <div className="text-left text-body-small font-helvetica-now text-grey md:my-8">
-                <p>Last updated: April 12, Octopber</p>
+                <p>Last updated: April, 2025</p>
                 <p className="mt-1">
                 Help us keep things accurate. If you notice any outdated or incorrect information, email us at <a href="mailto:info@firm.inc" className="text-primary-blue hover:underline">info@firm.inc</a>
                 </p>
