@@ -163,8 +163,8 @@ const HydrogenOrbital = () => {
 
 /* ───────── Hero‑Section ───────── */
 const HeroSection: React.FC = () => (
-  /* Full‑bleed shell so bottom border & background reach 100 vw */
-  <section id="hero" className="relative w-screen left-1/2 -translate-x-1/2 h-screen overflow-hidden">
+  /* Full‑bleed shell with large vertical spacing */
+  <section id="hero" className="relative w-screen left-1/2 -translate-x-1/2 py-32 overflow-hidden">
     {/* BACKGROUND LAYER (half white / half animation) */}
     <div className="absolute inset-0 flex z-0">
       <div className="w-1/2 h-full bg-white" />
@@ -174,10 +174,10 @@ const HeroSection: React.FC = () => (
     </div>
 
     {/* CONTENT LAYER (centred container + grid) */}
-    <div className="relative h-full container mx-auto px-4 md:px-6 lg:px-8 z-10">
-      <div className="h-full grid grid-cols-4 md:grid-cols-8 lg:grid-cols-12 gap-4">
+    <div className="relative container mx-auto px-4 md:px-6 lg:px-8 z-10">
+      <div className="grid grid-cols-4 md:grid-cols-8 lg:grid-cols-12 gap-4">
         {/* LEFT COLUMN content */}
-        <div className="col-span-4 md:col-span-4 lg:col-span-5 flex items-center">
+        <div className="col-span-4 md:col-span-4 lg:col-span-5">
           <motion.div
             className="flex flex-col gap-6 w-full"
             initial={{ opacity: 0, y: 20 }}
@@ -196,18 +196,18 @@ const HeroSection: React.FC = () => (
             {/* Date badge */}
             <div className="p-4 bg-primary-blue rounded">
               <p className="text-light-therapy text-body-small font-helvetica-now">
-                <span className="font-bold">12th</span> of <span className="font-bold">April 2025</span>
+                <span className="font-bold">12th</span> of <span className="font-bold">April 2025</span>
                 <br />
-                <span className="text-h3">Section 1: The industry</span>
+                <span className="text-h3">Section 1: The industry</span>
               </p>
             </div>
 
             {/* Contributors */}
             <p className="text-body font-helvetica-now">
               <span className="font-medium">Contributors:</span> <br />
-              <span className="underline">Molly McGaughan</span>,{" "}
-              <span className="underline">Kostja Paschalidis</span>,{" "}
-              <span className="underline">Estelle Ricoux</span>
+              <span className="underline">Molly McGaughan</span>,{" "}
+              <span className="underline">Kostja Paschalidis</span>,{" "}
+              <span className="underline">Estelle Ricoux</span>
             </p>
 
             {/* Intro paragraph */}
