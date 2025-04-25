@@ -38,9 +38,9 @@ interface DetailEntry {
 }
 
 interface PhaseData {
-  study_counts: StudyCounts;
-  diseases: DetailEntry;
-  companies: DetailEntry;
+  study_counts?: StudyCounts;
+  diseases?: DetailEntry;
+  companies?: DetailEntry;
   nct_ids?: DetailEntry;
 }
 
@@ -51,6 +51,7 @@ interface TargetSpecificData {
   phase_3?: PhaseData;
   phase_4?: PhaseData;
   preclinical?: PhaseData;
+  phase_other?: PhaseData;
 }
 
 interface ApiData {
@@ -196,7 +197,7 @@ const META = [
     fullName: "L‑Type Amino‑Acid Transporter‑1 (LAT1)",
     description:
       "LAT1 imports essential amino acids; radiolabelled tyrosine analogues and LAT1‑binding antibodies convey therapeutic radionuclides to tumours.",
-    image: "./lat1.png",
+    image: "lat1.png",
   },
   {
     abbrev: "pol",
@@ -239,6 +240,7 @@ const ORDER = META.map((m) => m.abbrev);
 // ---------------------------------------------------------------------------
 // 5) Component --------------------------------------------------------------
 // ---------------------------------------------------------------------------
+
 type Tab = "clinical" | "p1" | "p2" | "p3";
 const TAB_KEY: Record<Tab, keyof TargetSummary> = {
   clinical: "clinical",
@@ -288,6 +290,7 @@ const TargetDisplay = () => {
   // Build summaries -------------------------------------------------------
   // -----------------------------------------------------------------------
   const summaries: TargetSummary[] = useMemo(() => {
+    /* create zeroed summary objects for each of our 12 targets */
     const blank: Record<string, TargetSummary> = {};
     ORDER.forEach((ab) => {
       const m = META.find((x) => x.abbrev === ab)!;
@@ -308,8 +311,11 @@ const TargetDisplay = () => {
 
     if (!apiData?.target) return Object.values(blank);
 
+    /* iterate over *all* keys returned by the API, including synonyms */
     for (const [rawKey, t] of Object.entries(apiData.target)) {
       const ck = canon(rawKey);
+
+      // map to one of our canonical 12 abbreviations ------------------
       let ab = LABEL_TO_ABBREV.get(ck);
       if (!ab) {
         outer: for (const [abbr, labels] of Object.entries(ABBREV_TO_LABELS)) {
@@ -321,21 +327,51 @@ const TargetDisplay = () => {
           }
         }
       }
-      if (!ab) continue; // not in our 12
+      if (!ab) continue; // not one of the 12 we visualise
 
       const target = blank[ab];
-      const total = t.total ?? ({} as PhaseData);
-      target.clinical = total.study_counts?.all ?? 0;
-      target.p1 = t.phase_1?.study_counts.all ?? 0;
-      target.p2 = t.phase_2?.study_counts.all ?? 0;
-      target.p3 = t.phase_3?.study_counts.all ?? 0;
-      target.diseases = total.diseases?.list ?? [];
-      target.companies = total.companies?.list ?? [];
+      const total = (t as TargetSpecificData).total;
+
+      // --------------------------------------------------------------
+      // 1️⃣ gather candidate counts from *this* synonym --------------
+      // --------------------------------------------------------------
+      const tc = total?.study_counts?.all ?? 0;
+      const p1c = t.phase_1?.study_counts?.all ?? 0;
+      const p2c = t.phase_2?.study_counts?.all ?? 0;
+      const p3c = t.phase_3?.study_counts?.all ?? 0;
+
+      // --------------------------------------------------------------
+      // 2️⃣ keep the *largest* value seen so far for each metric ------
+      //     (swap Math.max → + if rows never overlap)
+      // --------------------------------------------------------------
+      target.clinical = Math.max(target.clinical, tc);
+      target.p1 = Math.max(target.p1, p1c);
+      target.p2 = Math.max(target.p2, p2c);
+      target.p3 = Math.max(target.p3, p3c);
+
+      // --------------------------------------------------------------
+      // 3️⃣ merge diseases & companies lists -------------------------
+      // --------------------------------------------------------------
+      const merge = (src?: DetailEntry) => {
+        if (!src?.list) return;
+        src.list.forEach((x) => {
+          if (!x) return;
+          if (!target.diseases.includes(x) && (src === total?.diseases || t.phase_1?.diseases?.list?.includes(x) || t.phase_2?.diseases?.list?.includes(x) || t.phase_3?.diseases?.list?.includes(x))) {
+            target.diseases.push(x);
+          }
+          if (!target.companies.includes(x) && (src === total?.companies || t.phase_1?.companies?.list?.includes(x) || t.phase_2?.companies?.list?.includes(x) || t.phase_3?.companies?.list?.includes(x))) {
+            target.companies.push(x);
+          }
+        });
+      };
+      merge(total?.diseases);
+      merge(total?.companies);
     }
 
     return Object.values(blank);
   }, [apiData]);
 
+  /* sort summaries by current tab metric */
   const sorted = [...summaries].sort(
     (a, b) => (b[TAB_KEY[activeTab]] as number) - (a[TAB_KEY[activeTab]] as number)
   );
@@ -382,7 +418,7 @@ const TargetDisplay = () => {
 
           {/* GRID VIEW */}
           {!isLoading && !error && viewMode === "grid" && (
-            <div className="grid gap-6 sm:grid-cols=2 lg:grid-cols-3 xl:grid-cols-4">
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {sorted.map((t) => (
                 <div
                   key={t.abbrev}
