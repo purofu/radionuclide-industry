@@ -75,7 +75,6 @@ const ToggleGroup = ({
 
 const ToggleGroupItem = ({
   children,
-  value,
   className = "",
   "aria-label": ariaLabel,
   isActive,

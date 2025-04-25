@@ -62,7 +62,7 @@ interface BarChartData {
 const barChartData: BarChartData[] = [
     { 
       label: 'α-emitters', 
-      trialValue: 74, 
+      trialValue: 48, 
       companyValue: 13, 
       colorClass: 'bg-a-colour', 
       valueColorClass: 'text-black',
@@ -70,7 +70,7 @@ const barChartData: BarChartData[] = [
     },
     { 
       label: 'β-emitters', 
-      trialValue: 329, 
+      trialValue: 123, 
       companyValue: 56, 
       colorClass: 'bg-primary-blue', 
       valueColorClass: 'text-white',
@@ -78,7 +78,7 @@ const barChartData: BarChartData[] = [
     },
     { 
       label: 'Positron', 
-      trialValue: 647, 
+      trialValue: 277, 
       companyValue: 64, 
       colorClass: 'bg-purple', 
       valueColorClass: 'text-white',
@@ -86,7 +86,7 @@ const barChartData: BarChartData[] = [
     },
     { 
       label: 'γ-emitters', 
-      trialValue: 89, 
+      trialValue: 37, 
       companyValue: 18,
       colorClass: 'bg-g-color', 
       valueColorClass: 'text-black',

@@ -36,7 +36,7 @@ const IntroductionSection = () => {
               <div className="flex flex-col rounded-md border border-light-grey bg-white p-4 md:p-6">
                 <h5 className="text-black text-lg font-bold font-helvetica-now leading-tight mb-4">Clinical trials</h5>
                 <div className="flex flex-col items-center md:items-end w-full">
-                  <span className="text-black text-h1 lg:text-h1 font-medium font-helvetica-now leading-none">1060</span>
+                  <span className="text-black text-h1 lg:text-h1 font-medium font-helvetica-now leading-none">436</span>
                   <span className="text-grey text-xs md:text-sm font-medium font-helvetica-now leading-none mt-1">
                     Total amount of studies
                   </span>
@@ -46,7 +46,7 @@ const IntroductionSection = () => {
               <div className="flex flex-col rounded-md border border-light-grey bg-white p-4 md:p-6">
                 <h5 className="text-black text-lg font-bold font-helvetica-now leading-tight mb-4">Radioisotopes</h5>
                 <div className="flex flex-col items-center md:items-end w-full">
-                  <span className="text-black text-h1 lg:text-h1 font-medium font-helvetica-now leading-none">27</span>
+                  <span className="text-black text-h1 lg:text-h1 font-medium font-helvetica-now leading-none">25</span>
                   <span className="text-grey text-xs md:text-sm font-medium font-helvetica-now leading-none mt-1">
                     Studied radioisotopes
                   </span>
@@ -66,7 +66,7 @@ const IntroductionSection = () => {
               <div className="flex flex-col rounded-md border border-light-grey bg-white p-4 md:p-6">
                 <h5 className="text-black text-lg font-bold font-helvetica-now leading-tight mb-4">Diseases</h5>
                 <div className="flex flex-col items-center md:items-end w-full">
-                  <span className="text-black text-h1 lg:text-h1 font-medium font-helvetica-now leading-none">138</span>
+                  <span className="text-black text-h1 lg:text-h1 font-medium font-helvetica-now leading-none">120</span>
                   <span className="text-grey text-xs md:text-sm font-medium font-helvetica-now leading-none mt-1">
                     Targeted diseases
                   </span>

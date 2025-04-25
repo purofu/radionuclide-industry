@@ -1,7 +1,8 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
+/* globals.css */
+html { position: relative; }
 /* Import Helvetica Now Display font */
 @font-face {
   font-family: 'Helvetica Now Display';

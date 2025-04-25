@@ -30,13 +30,15 @@ const Footer: React.FC = () => {
           {/* Logo and Company Info */}
           <div className="col-span-4 md:col-span-4 lg:col-span-6 flex flex-col items-start md:items-end">
             <div className="mb-4">
-              <Image 
-                src="/logo.svg" 
-                alt="Firm Design LLC Logo" 
-                width={120} 
-                height={40}
-                priority
-              />
+ 
+
+<Image
+  src="/logo.svg"
+  alt="Brand logo"
+  width={120}          // pick whatever width you want
+  height={40}          // correct height for the SVG
+  style={{ height: "auto" }}   // <‑‑ key line
+/>
             </div>
             <p className="text-body-small mb-4">Firm Design LLC</p>
             <p className="text-body-small mb-6">A New Jersey Limited Liability Company</p>

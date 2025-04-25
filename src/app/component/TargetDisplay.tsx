@@ -80,7 +80,7 @@ interface TargetSummary {
 // ---------------------------------------------------------------------------
 const META = [
   {
-    abbrev: "psma",
+    abbrev: "PSMA",
     display: "PSMA",
     labels: ["PSMA", "Prostate‑specific membrane antigen"],
     fullName: "Prostate‑Specific Membrane Antigen (PSMA)",
@@ -89,7 +89,7 @@ const META = [
     image: "psma.png",
   },
   {
-    abbrev: "sstr",
+    abbrev: "SSTR2",
     display: "SSTR2",
     labels: [
       "SSTR2",
@@ -103,7 +103,7 @@ const META = [
     image: "sstr.png",
   },
   {
-    abbrev: "bones",
+    abbrev: "Bone Hydroxyapatite",
     display: "Bones",
     labels: ["Bones", "Bone", "Bone metabolism", "Hydroxyapatite"],
     fullName: "Bone Metabolism / Hydroxyapatite Turnover",
@@ -112,7 +112,7 @@ const META = [
     image: "bones.png",
   },
   {
-    abbrev: "glut1",
+    abbrev: "GLUT1",
     display: "GLUT1",
     labels: [
       "Glucose metabolism",
@@ -135,7 +135,7 @@ const META = [
     image: "dart.png",
   },
   {
-    abbrev: "cd8",
+    abbrev: "CD8A",
     display: "CD8 αβ",
     labels: ["CD8", "CD8 αβ", "CD8 alpha beta"],
     fullName: "CD8 αβ T‑Cell Co‑receptor",
@@ -144,7 +144,7 @@ const META = [
     image: "cd8.png",
   },
   {
-    abbrev: "grpr",
+    abbrev: "GRPR",
     display: "GRPR",
     labels: [
       "GRPR",
@@ -157,7 +157,7 @@ const META = [
     image: "grpr.png",
   },
   {
-    abbrev: "caix",
+    abbrev: "CAIX",
     display: "CAIX",
     labels: [
       "CAIX",
@@ -171,7 +171,7 @@ const META = [
     image: "caix.png",
   },
   {
-    abbrev: "fap",
+    abbrev: "FAP",
     display: "FAP",
     labels: [
       "FAP",
@@ -185,7 +185,7 @@ const META = [
     image: "fap.png",
   },
   {
-    abbrev: "lat1",
+    abbrev: "LAT1",
     display: "LAT1",
     labels: [
       "Amino acid transport",
@@ -208,7 +208,7 @@ const META = [
     image: "pol.png",
   },
   {
-    abbrev: "nis",
+    abbrev: "NIS",
     display: "NIS",
     labels: [
       "Thyroid tissues",

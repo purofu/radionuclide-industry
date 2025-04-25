@@ -225,6 +225,30 @@ module.exports = {
         '.grid-auto-cols-min': {
           gridAutoColumns: 'min-content',
         },
+        // Accordion-specific utilities
+        '.accordion-sticky-header': {
+          position: 'sticky',
+          top: '0',
+          zIndex: '20',
+          backgroundColor: 'white',
+          boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+          transition: 'box-shadow 0.3s ease',
+        },
+        '.accordion-panel-height': {
+          height: '100dvh',
+          '@supports not (height: 100dvh)': {
+            height: '100vh',
+          },
+        },
+        '.will-change-transform': {
+          willChange: 'transform',
+        },
+        '.will-change-height': {
+          willChange: 'height',
+        },
+        '.will-change-height-opacity': {
+          willChange: 'height, opacity',
+        },
       }
       addUtilities(newUtilities)
     },
