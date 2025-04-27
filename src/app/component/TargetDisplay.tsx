@@ -381,8 +381,8 @@ const TargetDisplay = () => {
   // -----------------------------------------------------------------------
   return (
     <TooltipProvider delayDuration={80}>
-      <section className="w-full bg-white py-12 md:py-16">
-        <div className="container mx-auto px-6 md:px-12">
+      <section className="w-full bg-white ">
+        <div className="container mx-auto px-4 md:px-6 lg:px-8">
           {/* Header -----------------------------------------------------*/}
           <div className="mb-8 md:w-3/4">
             <h2 className="text-h4 mb-3">Tumour targets by study volume and stage</h2>
@@ -432,12 +432,11 @@ const TargetDisplay = () => {
                     </span>
                   </div>
                   {/* Image */}
-                  <div className="flex items-center justify-center px-6 flex-grow">
+                  <div className="flex items-center justify-center flex-grow">
                     <img
                       src={`/images/${t.image}`}
                       alt={t.display}
                       className="w-full h-auto object-contain aspect-[4/3]"
-                      loading="lazy"
                     />
                   </div>
                   {/* Text */}

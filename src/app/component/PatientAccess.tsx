@@ -25,7 +25,7 @@ const PatientAccess: React.FC = () => {
         {/* Main grid container */}
         <div className="grid grid-cols-4 sm:grid-cols-8 md:grid-cols-12 lg:grid-cols-12">
           {/* Content container */}
-          <div className="col-span-4 sm:col-span-8 md:col-span-12 lg:col-span-12 px-8 md:px-16 lg:px-24">
+          <div className="col-span-4 sm:col-span-8 md:col-span-12 lg:col-span-12 px-4 md:px-6 lg:px-8">
 
             {/* Introductory Paragraph */}
             <motion.div
@@ -35,24 +35,24 @@ const PatientAccess: React.FC = () => {
               viewport={{ once: true }}
               transition={{ duration: 0.8, delay: 0.2 }}
             >
-              <p className="text-h3 font-helvetica-now text-black">
+              <p className="text-h3 font-helvetica-now text-black py-24">
               The stark gap between eligibility and reach is both a challenge and a market opportunity.
               Logistical complexities, infrastructure limitations, and reimbursement hurdles continue to restrict patient access
               </p>
             </motion.div>
 
             {/* Two-column layout */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 items-start"> 
+            <div className="grid grid-cols-1 md:grid-cols-2 items-start"> 
               {/* --- Column 1: Chart --- */}
               <motion.div
-                className="flex flex-col justify-start p-6 min-h-[380px]"
+                className="flex flex-col justify-start min-h-[380px]"
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.6, delay: 0.5 }}
               >
                 {/* Updated title to H5 and new text */}
-                 <h5 className="text-h5 font-helvetica-now text-black mb-4">
+                 <h5 className="text-h5 font-helvetica-now text-black mb-16">
                     Distribution of high-energy external beam radiotherapy machines across country income groups
                  </h5>
                 <div className="flex-grow">

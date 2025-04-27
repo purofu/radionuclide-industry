@@ -137,9 +137,9 @@ const IsotopesOverview: React.FC = () => {
       {/* ===== ISOTOPES OVERVIEW SECTION ===== */}
       <section className="relative w-full bg-white">
         {/* Main grid container - Using defined 16-col grid */}
-        <div className="grid grid-cols-4 sm:grid-cols-8 md:grid-cols-12 lg:grid-cols-12 py-12 md:py-24">
+        <div className="grid grid-cols-4 sm:grid-cols-8 md:grid-cols-12 lg:grid-cols-12 py-32 md:py-32">
           {/* Content container with padding */}
-          <div className="col-span-4 sm:col-span-8 md:col-span-12 lg:col-span-12 px-8 md:px-16 lg:px-24">
+          <div className="col-span-4 sm:col-span-8 md:col-span-12 lg:col-span-12 px-4 md:px-6 lg:px-8">
 
             {/* Section Title - Changed from text-center to text-left */}
             <motion.div
@@ -221,7 +221,7 @@ const IsotopesOverview: React.FC = () => {
       {/* ===== BOTTOM STRATEGIC DIVERGENCE SECTION ===== */}
       <section className="relative w-full bg-white py-12 md:py-24">
          {/* Content container with padding */}
-         <div className="px-8 md:px-16 lg:px-24">
+         <div className="px-4 md:px-6 lg:px-8">
 
              {/* Section Title - using text-h3 style from config */}
              <motion.h3
@@ -340,7 +340,7 @@ const IsotopesOverview: React.FC = () => {
             </div>
             
                      {/* Divider before footer text - using config border color */}
-              <hr className="border-t border-light-grey w-full my-12 md:my-16" />
+              <hr className="border-t border-light-grey w-full " />
          </div>
          {/* Radiopharmaceuticals Section */}
          <RadioisotopePeriodicDisplay />

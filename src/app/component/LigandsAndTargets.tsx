@@ -55,22 +55,22 @@ const LigandsAndTargets: React.FC = () => {
   
     
     
-      <section className="relative w-full bg-white py-16 md:py-24">
+      <section className="relative w-full bg-white py-32 md:py-32">
         {/* Main grid container - Using defined 16-col grid */}
         <div className="grid grid-cols-4 sm:grid-cols-8 md:grid-cols-12 lg:grid-cols-12">
           {/* Content container with padding */}
-          <div className="col-span-4 mb-32 sm:col-span-8 md:col-span-12 lg:col-span-12 px-8 md:px-16 lg:px-24">
+          <div className="col-span-4 mb-32 sm:col-span-8 md:col-span-12 lg:col-span-12 px-4 md:px-6 lg:px-8">
 
             {/* Introductory Paragraph */}
             <motion.div
-              className="mb-12 md:mb-16 text-left max-w-4xl"
+              className="mb-32 md:mb-32 text-left max-w-4xl"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.8, delay: 0.2 }}
             >
                {/* Using text-body style and font from config */}
-              <p className="text-h3 font-helvetica-now mb-32 text-black">
+              <p className="text-h3 font-helvetica-now mb-64 mt-16 text-black">
                 Radiopharmaceutical targeting has evolved dramatically to address a spectrum of therapeutic needs. This proliferation of ligands and targeting mechanisms illustrates a critical inflection point for the industry where organizations will have to accommodate this growing complexity.
               </p>
             </motion.div>

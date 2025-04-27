@@ -6,10 +6,9 @@ import RadiopharmaceuticalsSection from './RadiopharmaceuticalsSection';
 
 const IntroductionSection = () => {
   return (
-    <>
-      <section className="w-full py-8 md:py-16 lg:py-20 relative min-h-screen">
+      <section className="w-full relative min-h-screen">
         {/* Main grid container - 12-col for large, with smaller spacing on mobile */}
-        <div className="grid grid-cols-4 sm:grid-cols-8 md:grid-cols-12 lg:grid-cols-12 px-8 md:px-16 lg:px-24">
+        <div className="grid grid-cols-4 sm:grid-cols-8 md:grid-cols-12 lg:grid-cols-12 px-4 md:px-6 lg:px-8">
           {/* Title section - 7 cols on md/lg, smaller margin for mobile */}
           <div className="col-span-4 sm:col-span-8 md:col-span-7 lg:col-span-7 my-16 md:my-28">
             <div className="w-full">
@@ -28,9 +27,9 @@ const IntroductionSection = () => {
           </div>
 
           {/* Stats boxes - 2 columns on mobile, 4 on md+ */}
-          <div className="col-span-4 sm:col-span-8 md:col-span-12 lg:col-span-12 mb-8 md:mb-20"><h5 className="text-h5 font-helvetica-now text-black mb-4">
-                 The scope of overall radionuclide clinical studies
-                </h5>
+          <div className="col-span-4 sm:col-span-8 md:col-span-12 lg:col-span-12 mb-8 md:mb-20"><h4 className="text-h4 font-helvetica-now text-black mb-12">
+          <span className="text-grey text-h4 font-helvetica-now">What we looked at:</span> every prospective radionuclide clinical study since 2013
+                </h4>
             <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-2 md:gap-6">
             
               <div className="flex flex-col rounded-md border border-light-grey bg-white p-4 md:p-6">
@@ -135,14 +134,12 @@ const IntroductionSection = () => {
             </div>
           </div>
         </div>
-      </section>
-
-      {/* Light grey divider line with smaller mobile margin */}
-      <div className="w-full border-t border-light-grey my-4 md:my-10"></div>
-
-      {/* Radiopharmaceuticals Section */}
+        {/* Radiopharmaceuticals Section */}
       <RadiopharmaceuticalsSection />
-    </>
+      <div className="h-px w-screen bg-light-grey"></div>
+      </section>
+      
+
   );
 };
 

@@ -54,11 +54,11 @@ const Companies: React.FC = () => {
     <>
     
     
-      <section className="relative w-full bg-white py-16 md:py-24">
+      <section className="relative w-full bg-white py-16 md:zd">
         {/* Main grid container - Using defined 16-col grid */}
         <div className="grid grid-cols-4 sm:grid-cols-8 md:grid-cols-12 lg:grid-cols-12">
           {/* Content container with padding */}
-          <div className="col-span-4 sm:col-span-8 md:col-span-12 lg:col-span-12 px-8 md:px-16 lg:px-24">
+          <div className="col-span-4 sm:col-span-8 md:col-span-12 lg:col-span-12 px-4 md:px-6 lg:px-8">
 
             {/* Introductory Paragraph */}
             <motion.div
@@ -69,7 +69,7 @@ const Companies: React.FC = () => {
               transition={{ duration: 0.8, delay: 0.2 }}
             >
                {/* Using text-body style and font from config */}
-              <p className="text-h3 font-helvetica-now text-black">
+              <p className="text-h3 font-helvetica-now text-black py-32">
               The radiopharmaceutical landscape is experiencing unprecedented growth, with a diverse array of players—from emerging biotechs to established pharmaceutical giants—actively developing novel therapies across multiple targets and isotopes.
               </p>
             </motion.div>

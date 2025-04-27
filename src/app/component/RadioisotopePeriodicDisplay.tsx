@@ -478,7 +478,7 @@ const RadioisotopePeriodicDisplay = () => {
   return (
     <TooltipProvider delayDuration={100}>
       <section className="w-full bg-white py-12 md:py-16">
-        <div className="px-8 md:px-16 lg:px-24">
+        <div className="px-4 md:px-6 lg:px-8">
           <h2 className="text-h3 font-helvetica-now text-black mb-6 md:mb-8">
             Radioisotopes by study volume, clinical stage, diseases and companies
           </h2>
@@ -666,7 +666,7 @@ const RadioisotopePeriodicDisplay = () => {
                   info@firm.inc
                 </a>
               </p>
-              <hr className="border-t border-light-grey w-full my-12 md:my-16" />
+
             </footer>
           )}
         </div>

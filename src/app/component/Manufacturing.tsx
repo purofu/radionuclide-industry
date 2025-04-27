@@ -384,9 +384,9 @@ const ManufacturingCard: React.FC<{
   return (
     <div className="w-full flex flex-col gap-6">
       {/* Card with stats, image, title, tags and radioisotopes */}
-      <div className="w-full px-6 pt-12 pb-8 bg-[#F5F5F5] rounded-lg flex flex-col justify-between items-start">
+      <div className="w-full px-6 pt-12 pb-8 bg-[#F5F5F5] rounded-lg flex flex-col justify-between items-start ">
         {/* Top section with statistics */}
-        <div className="self-stretch inline-flex justify-start items-start gap-8 mb-8">
+        <div className="self-stretch inline-flex justify-start items-start gap-8 mb-8 ">
           {stats.map((stat, index) => (
             <div key={index} className="flex-1 justify-start">
               <span className="text-black text-h1 font-medium font-helvetica-now leading-none block">{stat.value}<br/></span>
@@ -549,11 +549,11 @@ const Manufacturing: React.FC = () => {
     
       <section className="relative w-full bg-white py-16 md:py-24">
         <div className="grid grid-cols-4 sm:grid-cols-8 md:grid-cols-12 lg:grid-cols-12">
-          <div className="col-span-4 sm:col-span-8 md:col-span-12 lg:col-span-12 px-8 md:px-16 lg:px-24">
+          <div className="col-span-4 sm:col-span-8 md:col-span-12 lg:col-span-12 px-4 md:px-6 lg:px-8 ">
 
             {/* Introductory Paragraph */}
             <motion.div
-              className="mb-12 md:mb-16 text-left max-w-4xl"
+              className="mb-12 md:mb-16 text-left max-w-4xl  py-32"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}

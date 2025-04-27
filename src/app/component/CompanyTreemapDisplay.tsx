@@ -306,7 +306,7 @@ const CompanyTreemapDisplay = () => {
     return (
         <TooltipProvider delayDuration={100}>
             <section className="relative w-full bg-white py-12 md:py-16">
-                <div className="px-8 md:px-16 lg:px-24">
+                <div className="px-4 md:px-6 lg:px-8">
                     <h2 className="text-h3 font-helvetica-now text-black mb-8">Market leaders by volume of studies,  clinical stage and diseases</h2>
 
                     <div className="flex flex-col gap-6 mb-8">
@@ -443,89 +443,96 @@ const CompanyTreemapDisplay = () => {
                                                 };
 
                                                 return (
-                                                    // Tooltip wraps the positioned div
-                                                    <Tooltip key={leafData.name} delayDuration={150}>
-                                                        <TooltipTrigger asChild>
-                                                            {/* The Tile Div: Positioned by D3 */}
-                                                            <div
-                                                                className="absolute overflow-hidden rounded-lg cursor-pointer outline outline-1 outline-offset-[-0.98px] outline-white"
-                                                                style={{
-                                                                    left: `${leaf.x0}px`,
-                                                                    top: `${leaf.y0}px`,
-                                                                    width: `${tileWidth}px`,
-                                                                    height: `${tileHeight}px`,
-                                                                    ...backgroundStyle,
-                                                                    color: textColor,
-                                                                }}
-                                                            >
-                                                                {/* Inner structure for card content */}
-                                                                <div className={`w-full h-full ${isVerySmallTile ? 'p-2' : isSmallTile ? 'p-3' : 'p-6'} flex flex-col justify-between items-start`}>
-                                                                    {/* Top Section */}
-                                                                    <div className="w-full flex justify-between items-start gap-1">
-                                                                        {/* Large Number - SHOW ACTIVE TAB VALUE */}
-                                                                        {showLargeNumber ? (
-                                                                            <div className="font-medium font-['Helvetica_Now_Display']" 
-                                                                                 style={{ fontSize: numberFontSize, lineHeight: 1.1 }}>
-                                                                                {getValueForActiveTab(leafData, activeTab)}
-                                                                            </div>
-                                                                        ) : <div />}
+                                                    <div
+                                                        key={leafData.name}
+                                                        className="absolute overflow-hidden rounded-lg cursor-pointer outline outline-1 outline-offset-[-0.98px] outline-white"
+                                                        style={{
+                                                            left: `${leaf.x0}px`,
+                                                            top: `${leaf.y0}px`,
+                                                            width: `${tileWidth}px`,
+                                                            height: `${tileHeight}px`,
+                                                            ...backgroundStyle,
+                                                            color: textColor,
+                                                        }}
+                                                    >
+                                                        {/* Inner structure for card content */}
+                                                        <div className={`w-full h-full ${isVerySmallTile ? 'p-2' : isSmallTile ? 'p-3' : 'p-6'} flex flex-col justify-between items-start`}>
+                                                            {/* Top Section */}
+                                                            <div className="w-full flex justify-between items-start gap-1">
+                                                                {/* Large Number */}
+                                                                {showLargeNumber ? (
+                                                                    <div
+                                                                        className="font-medium font-['Helvetica_Now_Display']"
+                                                                        style={{ fontSize: numberFontSize, lineHeight: 1.1 }}
+                                                                    >
+                                                                        {getValueForActiveTab(leafData, activeTab)}
+                                                                    </div>
+                                                                ) : (
+                                                                    <div />
+                                                                )}
 
-                                                                        {/* Badges - Hide on extremely small tiles */}
-                                                                        {showBadges && (
-                                                                            <div className={`flex ${useBadgesVerticalLayout ? 'flex-col' : 'flex-row'} ${useBadgesVerticalLayout ? 'gap-1' : 'gap-2'} shrink-0 items-end`}>
-                                                                                {/* Disease Badge */}
-                                                                                {leafData.diseaseCount > 0 && (
-                                                                                    <div className={`${badgePadding} rounded-full flex justify-center items-center`} 
-                                                                                        style={{ backgroundColor: COLOR_BLACK }}>
-                                                                                        <div className={`text-center ${badgeFontSize} font-medium font-['Helvetica_Now_Display'] leading-tight`}
-                                                                                            style={{ color: COLOR_BADGE_TEXT }}>
-                                                                                            {leafData.diseaseCount}
-                                                                                        </div>
-                                                                                    </div>
-                                                                                )}
-                                                                                {/* Diagnostic Badge */}
-                                                                                {leafData.diagnosticTrials > 0 && (
-                                                                                    <div className={`${badgePadding} rounded-full flex justify-center items-center`} 
-                                                                                        style={{ backgroundColor: COLOR_PURPLE }}>
-                                                                                        <div className={`text-center ${badgeFontSize} font-medium font-['Helvetica_Now_Display'] leading-tight`}
-                                                                                            style={{ color: COLOR_BADGE_TEXT }}>
-                                                                                            {leafData.diagnosticTrials}
-                                                                                        </div>
-                                                                                    </div>
-                                                                                )}
-                                                                                {/* Therapy Badge */}
-                                                                                {leafData.therapyTrials > 0 && (
-                                                                                    <div className={`${badgePadding} rounded-full flex justify-center items-center`} 
-                                                                                        style={{ backgroundColor: COLOR_PRIMARY_BLUE }}>
-                                                                                        <div className={`text-center ${badgeFontSize} font-medium font-['Helvetica_Now_Display'] leading-tight`}
-                                                                                            style={{ color: COLOR_BADGE_TEXT }}>
-                                                                                            {leafData.therapyTrials}
-                                                                                        </div>
-                                                                                    </div>
-                                                                                )}
+                                                                {/* Badges */}
+                                                                {showBadges && (
+                                                                    <div
+                                                                        className={`flex ${useBadgesVerticalLayout ? 'flex-col' : 'flex-row'} ${
+                                                                            useBadgesVerticalLayout ? 'gap-1' : 'gap-2'
+                                                                        } shrink-0 items-end`}
+                                                                    >
+                                                                        {leafData.diseaseCount > 0 && (
+                                                                            <div
+                                                                                className={`${badgePadding} rounded-full flex justify-center items-center`}
+                                                                                style={{ backgroundColor: COLOR_BLACK }}
+                                                                            >
+                                                                                <div
+                                                                                    className={`text-center ${badgeFontSize} font-medium font-['Helvetica_Now_Display'] leading-tight`}
+                                                                                    style={{ color: COLOR_BADGE_TEXT }}
+                                                                                >
+                                                                                    {leafData.diseaseCount}
+                                                                                </div>
+                                                                            </div>
+                                                                        )}
+                                                                        {leafData.diagnosticTrials > 0 && (
+                                                                            <div
+                                                                                className={`${badgePadding} rounded-full flex justify-center items-center`}
+                                                                                style={{ backgroundColor: COLOR_PURPLE }}
+                                                                            >
+                                                                                <div
+                                                                                    className={`text-center ${badgeFontSize} font-medium font-['Helvetica_Now_Display'] leading-tight`}
+                                                                                    style={{ color: COLOR_BADGE_TEXT }}
+                                                                                >
+                                                                                    {leafData.diagnosticTrials}
+                                                                                </div>
+                                                                            </div>
+                                                                        )}
+                                                                        {leafData.therapyTrials > 0 && (
+                                                                            <div
+                                                                                className={`${badgePadding} rounded-full flex justify-center items-center`}
+                                                                                style={{ backgroundColor: COLOR_PRIMARY_BLUE }}
+                                                                            >
+                                                                                <div
+                                                                                    className={`text-center ${badgeFontSize} font-medium font-['Helvetica_Now_Display'] leading-tight`}
+                                                                                    style={{ color: COLOR_BADGE_TEXT }}
+                                                                                >
+                                                                                    {leafData.therapyTrials}
+                                                                                </div>
                                                                             </div>
                                                                         )}
                                                                     </div>
-
-                                                                    {/* Bottom Section: Company Name - Area-based adaptive sizing */}
-                                                                    {showCompanyName && (
-                                                                        <div className="self-stretch inline-flex justify-between items-center mt-auto">
-                                                                            <div className={`flex-1 justify-start text-Black ${companyNameSize} font-medium font-['Helvetica_Now_Display'] leading-tight ${nameLineClamp()}`}>
-                                                                                {leafData.name}
-                                                                            </div>
-                                                                        </div>
-                                                                    )}
-                                                                </div>
+                                                                )}
                                                             </div>
-                                                        </TooltipTrigger>
-                                                        <TooltipContent
-                                                            side="top"
-                                                            align="center"
-                                                            className="bg-background text-foreground border border-border rounded-md shadow-lg p-3 max-w-xs"
-                                                        >
-                                                            <CompanyTooltipContent data={leafData} activeTab={activeTab} getTabDisplayText={getTabDisplayText} />
-                                                        </TooltipContent>
-                                                    </Tooltip>
+
+                                                            {/* Bottom Section: Company Name */}
+                                                            {showCompanyName && (
+                                                                <div className="self-stretch inline-flex justify-between items-center mt-auto">
+                                                                    <div
+                                                                        className={`flex-1 justify-start text-Black ${companyNameSize} font-medium font-['Helvetica_Now_Display'] leading-tight ${nameLineClamp()}`}
+                                                                    >
+                                                                        {leafData.name}
+                                                                    </div>
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                    </div>
                                                 );
                                             })
                                         ) : (
@@ -684,7 +691,7 @@ const CompanyTooltipContent = React.memo(({ data, activeTab, showOnly, getTabDis
                </div>
                
                {/* Divider before footer text - using config border color */}
-               <hr className="border-t border-light-grey w-full my-12 md:my-16" />
+           
              </div>
             </div>
         );
