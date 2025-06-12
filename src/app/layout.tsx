@@ -1,4 +1,3 @@
-
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import localFont from 'next/font/local';
@@ -34,6 +33,25 @@ const helveticaNow = localFont({
 export const metadata: Metadata = {
   title: "Radionuclide Industry Ecosystem",
   description: "An overview of isotope types, ligands, targets, companies in the space, manufacturing methods, global demand, and current access.",
+  openGraph: {
+    title: "Radionuclide Industry Ecosystem",
+    description: "An overview of isotope types, ligands, targets, companies in the space, manufacturing methods, global demand, and current access.",
+    images: [
+      {
+        url: "/social-preview.png",
+        width: 1200,
+        height: 630,
+        alt: "Radionuclide Industry Ecosystem Preview",
+      },
+    ],
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Radionuclide Industry Ecosystem",
+    description: "An overview of isotope types, ligands, targets, companies in the space, manufacturing methods, global demand, and current access.",
+    images: ["/social-preview.png"],
+  },
 };
 
 export default function RootLayout({

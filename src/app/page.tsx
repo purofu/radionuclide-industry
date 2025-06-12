@@ -70,7 +70,7 @@ export default function Home() {
     {
       id: "companies",
       title: "Companies",
-      subtitle: "Key players shaping the Radionuclide industry",
+      subtitle: "Key players shaping the radionuclide industry",
       content: <Companies />,
     },
     {
