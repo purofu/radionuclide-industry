@@ -6,26 +6,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
 import RadioisotopePeriodicDisplay from './RadioisotopePeriodicDisplay';
 import { Tabs } from '@/components/ui';
-import { Tooltip } from 'react-tooltip';
-
-// Add custom styles for tooltips
-const tooltipStyles = `
-  .tooltip-custom {
-    z-index: 2147483647 !important;
-    position: fixed !important;
-    pointer-events: auto !important;
-  }
-  
-  .tooltip-custom * {
-    pointer-events: auto !important;
-  }
-  
-  /* Ensure tooltip content is clickable */
-  .tooltip-custom a {
-    pointer-events: auto !important;
-    cursor: pointer !important;
-  }
-`;
 
 // Reference data with URLs
 const references = {
@@ -139,6 +119,44 @@ const tabText = {
   companies: "While positron emitters lead in company count [64] due to their established diagnostic role, beta-emitters [56] show strong therapeutic commercial interest. The growing number of companies pursuing alpha-emitters [13], though still emerging, signals an important evolution in therapeutic development with their uniquely ultra-precise targeting properties."
 };
 
+// Function to render description with simple clickable references
+const renderDescriptionWithRefs = (description: string) => {
+  return description.split(/(\[2\]|\[3\]|\[4\]|\[5\])/).map((part, index) => {
+    const refMap: { [key: string]: string } = {
+      '[2]': 'ref2',
+      '[3]': 'ref3',
+      '[4]': 'ref4',
+      '[5]': 'ref5'
+    };
+    
+    if (refMap[part]) {
+      const refKey = refMap[part];
+      const refData = references[refKey as keyof typeof references];
+      return (
+        <a
+          key={index}
+          href={refData.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-blue-600 hover:text-blue-800 hover:underline"
+          title={refData.text}
+        >
+          {part}
+        </a>
+      );
+    }
+    return <span key={index}>{part}</span>;
+  });
+};
+
+// Function to render tab text with simple clickable references  
+const renderTabTextWithRefs = (text: string) => {
+  return text.split(/(\[277\]|\[123\]|\[48\]|\[64\]|\[56\]|\[13\])/).map((part, index) => {
+    // These are just numbers in brackets, not references to citations
+    return <span key={index}>{part}</span>;
+  });
+};
+
 const IsotopesOverview: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'trials' | 'companies'>('trials');
   
@@ -156,218 +174,9 @@ const IsotopesOverview: React.FC = () => {
     return Math.round((heightPercentage / 100) * 250);
   };
 
-  // Function to render description with clickable references
-  const renderDescriptionWithRefs = (description: string) => {
-    return description.split(/(\[2\]|\[3\]|\[4\]|\[5\])/).map((part, index) => {
-      if (part === '[2]') {
-        return (
-          <span key={index}>
-            <span
-              data-tooltip-id="ref2"
-              className="inline-block text-blue-600 hover:text-blue-800 hover:underline font-bold cursor-pointer px-1 py-0.5 rounded hover:bg-blue-50 transition-all duration-200 text-sm align-super"
-              style={{ userSelect: 'none', fontSize: '0.75em', verticalAlign: 'super' }}
-            >
-              ²
-            </span>
-          </span>
-        );
-      } else if (part === '[3]') {
-        return (
-          <span key={index}>
-            <span
-              data-tooltip-id="ref3"
-              className="inline-block text-blue-600 hover:text-blue-800 hover:underline font-bold cursor-pointer px-1 py-0.5 rounded hover:bg-blue-50 transition-all duration-200 text-sm align-super"
-              style={{ userSelect: 'none', fontSize: '0.75em', verticalAlign: 'super' }}
-            >
-              ³
-            </span>
-          </span>
-        );
-      } else if (part === '[4]') {
-        return (
-          <span key={index}>
-            <span
-              data-tooltip-id="ref4"
-              className="inline-block text-blue-600 hover:text-blue-800 hover:underline font-bold cursor-pointer px-1 py-0.5 rounded hover:bg-blue-50 transition-all duration-200 text-sm align-super"
-              style={{ userSelect: 'none', fontSize: '0.75em', verticalAlign: 'super' }}
-            >
-              ⁴
-            </span>
-          </span>
-        );
-      } else if (part === '[5]') {
-        return (
-          <span key={index}>
-            <span
-              data-tooltip-id="ref5"
-              className="inline-block text-blue-600 hover:text-blue-800 hover:underline font-bold cursor-pointer px-1 py-0.5 rounded hover:bg-blue-50 transition-all duration-200 text-sm align-super"
-              style={{ userSelect: 'none', fontSize: '0.75em', verticalAlign: 'super' }}
-            >
-              ⁵
-            </span>
-          </span>
-        );
-      }
-      return <span key={index}>{part}</span>;
-    });
-  };
-
   return (
     <>
-      {/* Inject custom tooltip styles */}
-      <style dangerouslySetInnerHTML={{ __html: tooltipStyles }} />
-      
-      {/* React Tooltip Components */}
-      <Tooltip
-        id="ref2"
-        clickable
-        place="top"
-        events={['click']}
-        globalCloseEvents={{ escape: true, scroll: true, resize: true, clickOutsideAnchor: true }}
-        style={{
-          backgroundColor: 'white',
-          color: 'black',
-          border: '1px solid #e5e7eb',
-          borderRadius: '8px',
-          boxShadow: '0 20px 25px -5px rgb(0 0 0 / 0.1), 0 10px 10px -5px rgb(0 0 0 / 0.04)',
-          maxWidth: '400px',
-          padding: '16px',
-          fontSize: '14px',
-          lineHeight: '1.5',
-          zIndex: '2147483647',
-          position: 'fixed'
-        }}
-        className="tooltip-custom"
-      >
-        <div>
-          <h4 style={{ fontWeight: '600', marginBottom: '8px', color: '#1f2937' }}>Reference</h4>
-          <p style={{ marginBottom: '12px', color: '#374151' }}>{references.ref2.text}</p>
-          <a 
-            href={references.ref2.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{ color: '#2563eb', textDecoration: 'none', fontWeight: '500' }}
-            onMouseOver={(e) => e.currentTarget.style.textDecoration = 'underline'}
-            onMouseOut={(e) => e.currentTarget.style.textDecoration = 'none'}
-          >
-            View Source →
-          </a>
-        </div>
-      </Tooltip>
-
-      <Tooltip
-        id="ref3"
-        clickable
-        place="top"
-        events={['click']}
-        globalCloseEvents={{ escape: true, scroll: true, resize: true, clickOutsideAnchor: true }}
-        style={{
-          backgroundColor: 'white',
-          color: 'black',
-          border: '1px solid #e5e7eb',
-          borderRadius: '8px',
-          boxShadow: '0 20px 25px -5px rgb(0 0 0 / 0.1), 0 10px 10px -5px rgb(0 0 0 / 0.04)',
-          maxWidth: '400px',
-          padding: '16px',
-          fontSize: '14px',
-          lineHeight: '1.5',
-          zIndex: '2147483647',
-          position: 'fixed'
-        }}
-        className="tooltip-custom"
-      >
-        <div>
-          <h4 style={{ fontWeight: '600', marginBottom: '8px', color: '#1f2937' }}>Reference</h4>
-          <p style={{ marginBottom: '12px', color: '#374151' }}>{references.ref3.text}</p>
-          <a 
-            href={references.ref3.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{ color: '#2563eb', textDecoration: 'none', fontWeight: '500' }}
-            onMouseOver={(e) => e.currentTarget.style.textDecoration = 'underline'}
-            onMouseOut={(e) => e.currentTarget.style.textDecoration = 'none'}
-          >
-            View Source →
-          </a>
-        </div>
-      </Tooltip>
-
-      <Tooltip
-        id="ref4"
-        clickable
-        place="top"
-        events={['click']}
-        globalCloseEvents={{ escape: true, scroll: true, resize: true, clickOutsideAnchor: true }}
-        style={{
-          backgroundColor: 'white',
-          color: 'black',
-          border: '1px solid #e5e7eb',
-          borderRadius: '8px',
-          boxShadow: '0 20px 25px -5px rgb(0 0 0 / 0.1), 0 10px 10px -5px rgb(0 0 0 / 0.04)',
-          maxWidth: '400px',
-          padding: '16px',
-          fontSize: '14px',
-          lineHeight: '1.5',
-          zIndex: '2147483647',
-          position: 'fixed'
-        }}
-        className="tooltip-custom"
-      >
-        <div>
-          <h4 style={{ fontWeight: '600', marginBottom: '8px', color: '#1f2937' }}>Reference</h4>
-          <p style={{ marginBottom: '12px', color: '#374151' }}>{references.ref4.text}</p>
-          <a 
-            href={references.ref4.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{ color: '#2563eb', textDecoration: 'none', fontWeight: '500' }}
-            onMouseOver={(e) => e.currentTarget.style.textDecoration = 'underline'}
-            onMouseOut={(e) => e.currentTarget.style.textDecoration = 'none'}
-          >
-            View Source →
-          </a>
-        </div>
-      </Tooltip>
-
-      <Tooltip
-        id="ref5"
-        clickable
-        place="top"
-        events={['click']}
-        globalCloseEvents={{ escape: true, scroll: true, resize: true, clickOutsideAnchor: true }}
-        style={{
-          backgroundColor: 'white',
-          color: 'black',
-          border: '1px solid #e5e7eb',
-          borderRadius: '8px',
-          boxShadow: '0 20px 25px -5px rgb(0 0 0 / 0.1), 0 10px 10px -5px rgb(0 0 0 / 0.04)',
-          maxWidth: '400px',
-          padding: '16px',
-          fontSize: '14px',
-          lineHeight: '1.5',
-          zIndex: '2147483647',
-          position: 'fixed'
-        }}
-        className="tooltip-custom"
-      >
-        <div>
-          <h4 style={{ fontWeight: '600', marginBottom: '8px', color: '#1f2937' }}>Reference</h4>
-          <p style={{ marginBottom: '12px', color: '#374151' }}>{references.ref5.text}</p>
-          <a 
-            href={references.ref5.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{ color: '#2563eb', textDecoration: 'none', fontWeight: '500' }}
-            onMouseOver={(e) => e.currentTarget.style.textDecoration = 'underline'}
-            onMouseOut={(e) => e.currentTarget.style.textDecoration = 'none'}
-          >
-            View Source →
-          </a>
-        </div>
-      </Tooltip>
-
-      {/* ===== ISOTOPES OVERVIEW SECTION ===== */}
-      <section className="relative w-full bg-white">
+      <section className="relative w-full bg-white py-32 md:py-32">
         {/* Main grid container - Using defined 16-col grid */}
         <div className="grid grid-cols-4 sm:grid-cols-8 md:grid-cols-12 lg:grid-cols-12 py-32 md:py-32">
           {/* Content container with padding */}
@@ -554,7 +363,7 @@ const IsotopesOverview: React.FC = () => {
                          exit={{ opacity: 0 }}
                          transition={{ duration: 0.3 }}
                        >
-                         {tabText[activeTab]}
+                         {renderTabTextWithRefs(tabText[activeTab])}
                        </motion.p>
                      </AnimatePresence>
                  </motion.div>

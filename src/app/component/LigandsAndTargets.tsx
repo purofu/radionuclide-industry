@@ -4,29 +4,13 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import TargetDisplay from './TargetDisplay';
-import { Tooltip } from 'react-tooltip';
 
-// Add custom styles for tooltips
-const tooltipStyles = `
-  .tooltip-custom {
-    z-index: 2147483647 !important;
-    position: fixed !important;
-    pointer-events: auto !important;
-  }
-  
-  .tooltip-custom * {
-    pointer-events: auto !important;
-  }
-  
-  /* Ensure tooltip content is clickable */
-  .tooltip-custom a {
-    pointer-events: auto !important;
-    cursor: pointer !important;
-  }
-`;
-
-// Reference data with URLs for references 6-19
+// Reference data with URLs for references 3, 6-19
 const references = {
+  'ref3': {
+    text: 'Referenced in context - needs specific citation',
+    url: '#' // Placeholder - needs actual URL
+  },
   'ref6': {
     text: 'Yan S, Na J, Liu X, Wu P. Different Targeting Ligands-Mediated Drug Delivery Systems for Tumor Therapy. Pharmaceutics. 2024 Feb 7;16(2):248.',
     url: 'https://doi.org/10.3390/pharmaceutics16020248'
@@ -85,7 +69,6 @@ const references = {
   }
 };
 
-
 // Interface for the Targeting Method Cards
 interface TargetingMethod {
   count: number;
@@ -129,38 +112,41 @@ const targetingMethodsData: TargetingMethod[] = [
   },
 ];
 
-// Function to render description with clickable references
+// Function to render description with simple clickable references
 const renderDescriptionWithRefs = (description: string) => {
   return description.split(/(\[6\]|\[7\]|\[8\]|\[9\]|\[10\]|\[11\]|\[12\]|\[13\]|\[14\]|\[15\]|\[16\]|\[17\]|\[18\]|\[19\]|\[3\])/).map((part, index) => {
-    const refMap: { [key: string]: { id: string, display: string } } = {
-      '[6]': { id: 'ref6', display: '⁶' },
-      '[7]': { id: 'ref7', display: '⁷' },
-      '[8]': { id: 'ref8', display: '⁸' },
-      '[9]': { id: 'ref9', display: '⁹' },
-      '[10]': { id: 'ref10', display: '¹⁰' },
-      '[11]': { id: 'ref11', display: '¹¹' },
-      '[12]': { id: 'ref12', display: '¹²' },
-      '[13]': { id: 'ref13', display: '¹³' },
-      '[14]': { id: 'ref14', display: '¹⁴' },
-      '[15]': { id: 'ref15', display: '¹⁵' },
-      '[16]': { id: 'ref16', display: '¹⁶' },
-      '[17]': { id: 'ref17', display: '¹⁷' },
-      '[18]': { id: 'ref18', display: '¹⁸' },
-      '[19]': { id: 'ref19', display: '¹⁹' },
-      '[3]': { id: 'ref3', display: '³' }
+    const refMap: { [key: string]: string } = {
+      '[3]': 'ref3',
+      '[6]': 'ref6',
+      '[7]': 'ref7',
+      '[8]': 'ref8',
+      '[9]': 'ref9',
+      '[10]': 'ref10',
+      '[11]': 'ref11',
+      '[12]': 'ref12',
+      '[13]': 'ref13',
+      '[14]': 'ref14',
+      '[15]': 'ref15',
+      '[16]': 'ref16',
+      '[17]': 'ref17',
+      '[18]': 'ref18',
+      '[19]': 'ref19'
     };
     
     if (refMap[part]) {
+      const refKey = refMap[part];
+      const refData = references[refKey as keyof typeof references];
       return (
-        <span key={index}>
-          <span
-            data-tooltip-id={refMap[part].id}
-            className="inline-block text-blue-600 hover:text-blue-800 hover:underline font-bold cursor-pointer px-1 py-0.5 rounded hover:bg-blue-50 transition-all duration-200 text-sm align-super"
-            style={{ userSelect: 'none', fontSize: '0.75em', verticalAlign: 'super' }}
-          >
-            {refMap[part].display}
-          </span>
-        </span>
+        <a
+          key={index}
+          href={refData.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-blue-600 hover:text-blue-800 hover:underline"
+          title={refData.text}
+        >
+          {part}
+        </a>
       );
     }
     return <span key={index}>{part}</span>;
@@ -170,50 +156,6 @@ const renderDescriptionWithRefs = (description: string) => {
 const LigandsAndTargets: React.FC = () => {
   return (
     <>
-      {/* Inject custom tooltip styles */}
-      <style dangerouslySetInnerHTML={{ __html: tooltipStyles }} />
-      
-      {/* React Tooltip Components for references 6-19 */}
-      {Object.entries(references).map(([refId, refData]) => (
-        <Tooltip
-          key={refId}
-          id={refId}
-          clickable
-          place="top"
-          events={['click']}
-          globalCloseEvents={{ escape: true, scroll: true, resize: true, clickOutsideAnchor: true }}
-          style={{
-            backgroundColor: 'white',
-            color: 'black',
-            border: '1px solid #e5e7eb',
-            borderRadius: '8px',
-            boxShadow: '0 20px 25px -5px rgb(0 0 0 / 0.1), 0 10px 10px -5px rgb(0 0 0 / 0.04)',
-            maxWidth: '400px',
-            padding: '16px',
-            fontSize: '14px',
-            lineHeight: '1.5',
-            zIndex: '2147483647',
-            position: 'fixed'
-          }}
-          className="tooltip-custom"
-        >
-          <div>
-            <h4 style={{ fontWeight: '600', marginBottom: '8px', color: '#1f2937' }}>Reference</h4>
-            <p style={{ marginBottom: '12px', color: '#374151' }}>{refData.text}</p>
-            <a 
-              href={refData.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{ color: '#2563eb', textDecoration: 'none', fontWeight: '500' }}
-              onMouseOver={(e) => e.currentTarget.style.textDecoration = 'underline'}
-              onMouseOut={(e) => e.currentTarget.style.textDecoration = 'none'}
-            >
-              View Source →
-            </a>
-          </div>
-        </Tooltip>
-      ))}
-      
       <section className="relative w-full bg-white py-32 md:py-32">
         {/* Main grid container - Using defined 16-col grid */}
         <div className="grid grid-cols-4 sm:grid-cols-8 md:grid-cols-12 lg:grid-cols-12">
@@ -246,7 +188,7 @@ const LigandsAndTargets: React.FC = () => {
                 <h5 className="text-h5 font-helvetica-now text-black mb-3">Ligands </h5>
                 {/* Using text-body-small style, font, and color from config */}
                 <p className="text-h5 font-helvetica-now text-grey">
-                As the field has matured, developers have refined their approach to ligand selection based not only on target affinity and pharmacokinetic properties, but also on manufacturing complexity, and clinical workflow integration. Each ligand class offers distinct trade-offs between targeting precision, tissue penetration, manufacturing scalability, and delivery logistics.[6]
+                As the field has matured, developers have refined their approach to ligand selection based not only on target affinity and pharmacokinetic properties, but also on manufacturing complexity, and clinical workflow integration. Each ligand class offers distinct trade-offs between targeting precision, tissue penetration, manufacturing scalability, and delivery logistics.<a href={references.ref6.url} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 hover:underline" title={references.ref6.text}>[6]</a>
                 </p>
               </motion.div>
               <motion.div
@@ -259,7 +201,7 @@ const LigandsAndTargets: React.FC = () => {
                 <h5 className="text-h5 font-helvetica-now text-black mb-3">Targets </h5>
                 {/* Using text-body-small style, font, and color from config */}
                 <p className="text-h5 font-helvetica-now text-grey">
-                Target selection represents a consequential strategic decision in radiopharmaceutical development [7]—one that shapes clinical development pathways [8], determines competitive positioning, and defines patient populations [9].
+                Target selection represents a consequential strategic decision in radiopharmaceutical development <a href={references.ref7.url} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 hover:underline" title={references.ref7.text}>[7]</a>—one that shapes clinical development pathways <a href={references.ref8.url} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 hover:underline" title={references.ref8.text}>[8]</a>, determines competitive positioning, and defines patient populations <a href={references.ref9.url} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 hover:underline" title={references.ref9.text}>[9]</a>.
                 </p>
               </motion.div>
               <motion.div
@@ -272,7 +214,7 @@ const LigandsAndTargets: React.FC = () => {
                 <h5 className="text-h5 font-helvetica-now text-black mb-3">Chelators</h5>
                 {/* Using text-body-small style, font, and color from config */}
                 <p className="text-h5 font-helvetica-now text-grey">
-                Chelators play a critical role by ensuring stable binding between radioactive isotopes and targeting molecules, which is essential for both diagnostic and therapeutic applications. [10] They also influence the biodistribution and clearance of the radiopharmaceutical [11].
+                Chelators play a critical role by ensuring stable binding between radioactive isotopes and targeting molecules, which is essential for both diagnostic and therapeutic applications. <a href={references.ref10.url} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 hover:underline" title={references.ref10.text}>[10]</a> They also influence the biodistribution and clearance of the radiopharmaceutical <a href={references.ref11.url} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 hover:underline" title={references.ref11.text}>[11]</a>.
                 </p>
               </motion.div>
             </div>

@@ -2,26 +2,6 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Tooltip } from 'react-tooltip';
-
-// Add custom styles for tooltips
-const tooltipStyles = `
-  .tooltip-custom {
-    z-index: 2147483647 !important;
-    position: fixed !important;
-    pointer-events: auto !important;
-  }
-  
-  .tooltip-custom * {
-    pointer-events: auto !important;
-  }
-  
-  /* Ensure tooltip content is clickable */
-  .tooltip-custom a {
-    pointer-events: auto !important;
-    cursor: pointer !important;
-  }
-`;
 
 // Reference data with URLs for references 20-29
 const references = {
@@ -67,33 +47,36 @@ const references = {
   }
 };
 
-// Function to render description with clickable references
+// Function to render description with simple clickable references
 const renderDescriptionWithRefs = (description: string) => {
   return description.split(/(\[20\]|\[21\]|\[22\]|\[23\]|\[24\]|\[25\]|\[26\]|\[27\]|\[28\]|\[29\])/).map((part, index) => {
-    const refMap: { [key: string]: { id: string, display: string } } = {
-      '[20]': { id: 'ref20', display: '²⁰' },
-      '[21]': { id: 'ref21', display: '²¹' },
-      '[22]': { id: 'ref22', display: '²²' },
-      '[23]': { id: 'ref23', display: '²³' },
-      '[24]': { id: 'ref24', display: '²⁴' },
-      '[25]': { id: 'ref25', display: '²⁵' },
-      '[26]': { id: 'ref26', display: '²⁶' },
-      '[27]': { id: 'ref27', display: '²⁷' },
-      '[28]': { id: 'ref28', display: '²⁸' },
-      '[29]': { id: 'ref29', display: '²⁹' }
+    const refMap: { [key: string]: string } = {
+      '[20]': 'ref20',
+      '[21]': 'ref21',
+      '[22]': 'ref22',
+      '[23]': 'ref23',
+      '[24]': 'ref24',
+      '[25]': 'ref25',
+      '[26]': 'ref26',
+      '[27]': 'ref27',
+      '[28]': 'ref28',
+      '[29]': 'ref29'
     };
     
     if (refMap[part]) {
+      const refKey = refMap[part];
+      const refData = references[refKey as keyof typeof references];
       return (
-        <span key={index}>
-          <span
-            data-tooltip-id={refMap[part].id}
-            className="inline-block text-blue-600 hover:text-blue-800 hover:underline font-bold cursor-pointer px-1 py-0.5 rounded hover:bg-blue-50 transition-all duration-200 text-sm align-super"
-            style={{ userSelect: 'none', fontSize: '0.75em', verticalAlign: 'super' }}
-          >
-            {refMap[part].display}
-          </span>
-        </span>
+        <a
+          key={index}
+          href={refData.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-blue-600 hover:text-blue-800 hover:underline"
+          title={refData.text}
+        >
+          {part}
+        </a>
       );
     }
     return <span key={index}>{part}</span>;
@@ -518,7 +501,7 @@ const ManufacturingCard: React.FC<{
                   Cyclotron-Based Production
                 </h4>
                 <p className="text-black text-body font-medium font-helvetica-now">
-                Cyclotrons are particle accelerators that produce radionuclides by bombarding targets with charged particles, typically protons. They are increasingly being adapted for Mo-99 and Tc-99m production.
+                {renderDescriptionWithRefs("Cyclotrons are particle accelerators that produce radionuclides by bombarding targets with charged particles, typically protons. They are increasingly being adapted for Mo-99 and Tc-99m production.")}
                 </p>
               </div>
               <div>
@@ -526,7 +509,7 @@ const ManufacturingCard: React.FC<{
                   Emerging Accelerator-Based Technologies
                 </h4>
                 <p className="text-black text-body font-medium font-helvetica-now">
-                New technologies aim to match reactor isotope yields without reactors, improving supply resilience. These require significant R&D and regulatory approval before mainstream adoption.[26] [28]
+                {renderDescriptionWithRefs("New technologies aim to match reactor isotope yields without reactors, improving supply resilience. These require significant R&D and regulatory approval before mainstream adoption.[26] [28]")}
                 </p>
               </div>
             </div>
@@ -613,23 +596,23 @@ const ManufacturingCard: React.FC<{
             {/* Column 1: Cyclotron-Based Production */}
             <div className="self-stretch">
               <p className="text-grey text-body-small mb-2">
-                <span className="font-medium font-helvetica-now">Direct Tc-99m Production: Involves proton bombardment of enriched Mo-100, producing Tc-99m directly without requiring fission. This method is decentralized and reactor-independent, but currently 3–10× more expensive and relies on enriched Mo-100 supplies, mostly sourced from Russia. [21]</span>
+                <span className="font-medium font-helvetica-now">{renderDescriptionWithRefs("Direct Tc-99m Production: Involves proton bombardment of enriched Mo-100, producing Tc-99m directly without requiring fission. This method is decentralized and reactor-independent, but currently 3–10× more expensive and relies on enriched Mo-100 supplies, mostly sourced from Russia. [21]")}</span>
               </p>
               <p className="text-grey text-body-small mb-2">
-                <span className="font-medium font-helvetica-now">Proton/Deuteron/Alpha Bombardment: Advanced systems use high-energy particles (e.g., deuterons or alpha particles) to either fission uranium targets or generate neutrons to indirectly produce Mo-99. These emerging systems—like SHINE's accelerator-driven neutron source—aim to replace reactors entirely, though they remain in the early stages of commercial deployment.[22]</span>
+                <span className="font-medium font-helvetica-now">{renderDescriptionWithRefs("Proton/Deuteron/Alpha Bombardment: Advanced systems use high-energy particles (e.g., deuterons or alpha particles) to either fission uranium targets or generate neutrons to indirectly produce Mo-99. These emerging systems—like SHINE's accelerator-driven neutron source—aim to replace reactors entirely, though they remain in the early stages of commercial deployment.[22]")}</span>
               </p>
             </div>
             
             {/* Column 2: Emerging Accelerator-Based Technologies */}
             <div className="self-stretch">
               <p className="text-grey text-body-small mb-2">
-                <span className="font-medium font-helvetica-now">Neutron Generators & Fusion-Based Systems: Emerging platforms like accelerator-driven fusion (utilizing deuterium-tritium or deuterium-deuterium reactions) are being developed specifically for neutron production. These systems could effectively irradiate targets without requiring nuclear reactors or enriched uranium, potentially offering safer, more distributed, and scalable solutions. [26] [27]</span>
+                <span className="font-medium font-helvetica-now">{renderDescriptionWithRefs("Neutron Generators & Fusion-Based Systems: Emerging platforms like accelerator-driven fusion (utilizing deuterium-tritium or deuterium-deuterium reactions) are being developed specifically for neutron production. These systems could effectively irradiate targets without requiring nuclear reactors or enriched uranium, potentially offering safer, more distributed, and scalable solutions. [26] [27]")}</span>
               </p>
               <p className="text-grey text-body-small mb-2">
-                <span className="font-medium font-helvetica-now">Non-Fission Pathways: Experimental deuteron-based accelerator systems may substantially improve neutron flux efficiency while generating significantly less radioactive waste. High-current deuteron accelerators can create neutron fields sufficient for commercial-scale isotope production, though these systems remain under active development and have not yet achieved full commercial scalability. [27] [28]</span>
+                <span className="font-medium font-helvetica-now">{renderDescriptionWithRefs("Non-Fission Pathways: Experimental deuteron-based accelerator systems may substantially improve neutron flux efficiency while generating significantly less radioactive waste. High-current deuteron accelerators can create neutron fields sufficient for commercial-scale isotope production, though these systems remain under active development and have not yet achieved full commercial scalability. [27] [28]")}</span>
               </p>
               <p className="text-grey text-body-small mb-2">
-                <span className="font-medium font-helvetica-now">Linear Accelerator Applications: Advanced electron LINAC systems are being adapted to produce photons that trigger photonuclear reactions capable of creating key medical isotopes. This approach eliminates proliferation concerns associated with uranium targets while potentially creating more flexible production networks.[23] [20] [29]</span>
+                <span className="font-medium font-helvetica-now">{renderDescriptionWithRefs("Linear Accelerator Applications: Advanced electron LINAC systems are being adapted to produce photons that trigger photonuclear reactions capable of creating key medical isotopes. This approach eliminates proliferation concerns associated with uranium targets while potentially creating more flexible production networks.[23] [20] [29]")}</span>
               </p>
             </div>
           </div>
@@ -642,50 +625,6 @@ const ManufacturingCard: React.FC<{
 const Manufacturing: React.FC = () => {
   return (
     <>
-      {/* Inject custom tooltip styles */}
-      <style dangerouslySetInnerHTML={{ __html: tooltipStyles }} />
-      
-      {/* React Tooltip Components for references 20-29 */}
-      {Object.entries(references).map(([refId, refData]) => (
-        <Tooltip
-          key={refId}
-          id={refId}
-          clickable
-          place="top"
-          events={['click']}
-          globalCloseEvents={{ escape: true, scroll: true, resize: true, clickOutsideAnchor: true }}
-          style={{
-            backgroundColor: 'white',
-            color: 'black',
-            border: '1px solid #e5e7eb',
-            borderRadius: '8px',
-            boxShadow: '0 20px 25px -5px rgb(0 0 0 / 0.1), 0 10px 10px -5px rgb(0 0 0 / 0.04)',
-            maxWidth: '400px',
-            padding: '16px',
-            fontSize: '14px',
-            lineHeight: '1.5',
-            zIndex: '2147483647',
-            position: 'fixed'
-          }}
-          className="tooltip-custom"
-        >
-          <div>
-            <h4 style={{ fontWeight: '600', marginBottom: '8px', color: '#1f2937' }}>Reference</h4>
-            <p style={{ marginBottom: '12px', color: '#374151' }}>{refData.text}</p>
-            <a 
-              href={refData.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{ color: '#2563eb', textDecoration: 'none', fontWeight: '500' }}
-              onMouseOver={(e) => e.currentTarget.style.textDecoration = 'underline'}
-              onMouseOut={(e) => e.currentTarget.style.textDecoration = 'none'}
-            >
-              View Source →
-            </a>
-          </div>
-        </Tooltip>
-      ))}
-
       <section className="relative w-full bg-white py-16 md:py-24">
         <div className="grid grid-cols-4 sm:grid-cols-8 md:grid-cols-12 lg:grid-cols-12">
           <div className="col-span-4 sm:col-span-8 md:col-span-12 lg:col-span-12 px-4 md:px-6 lg:px-8 ">
