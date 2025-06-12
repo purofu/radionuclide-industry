@@ -3,7 +3,7 @@ import React from "react";
 const PerspectiveSection = () => (
   <section
     id="perspective"
-    className="relative w-screen left-1/2 right-1/2 -mx-[50vw] bg-per-background text-white overflow-hidden z-0"
+    className="relative w-screen left-1/2 right-1/2 -mx-[50vw] bg-primary-blue text-white overflow-hidden z-0"
   >
     <div className="container mx-auto px-4 md:px-6 lg:px-8 pt-12 md:pt-16 lg:pt-24 pb-8 md:pb-12 lg:pb-16">
       {/* heading */}
@@ -16,24 +16,22 @@ const PerspectiveSection = () => (
       <div className="flex flex-col lg:flex-row gap-8  ">
         <div className="lg:w-1/2">
           <p className="text-h4 font-helvetica-now mb-6">
-            In this complex landscape, sustainable isotope and target decisions
-            are crucial for bench‑to‑bedside progression.
+          As competition intensifies, simplifying and aligning complex systems into dependable services is essential to meet growing patient demand. 
             <br />
             <br />
-            Companies must create pathways connecting all elements—from isotope
-            sourcing to patient administration—to deliver therapies at scale.
+            To scale Radioligand Therapy (RLT), pharmaceutical companies must evolve into full-service providers capable of managing the unique operational demands that come with personalized, made-to-order treatments.
           </p>
         </div>
         <div className="lg:w-1/2">
           <p className="text-h4 font-helvetica-now">
-            As competition intensifies, orchestrating these systems into
-            simplified, reliable services is essential to meet growing patient
-            demand.
+           This requires building new capabilities, establishing new roles, and putting in place the processes needed to sustain a connected service infrastructure.
             <br />
             <br />
-            <span className="text-per-text">
+            <span className="text-a-text">
               Learn more on our website or reach out:{" "}
-              <span className="text-white">info@firm.inc</span>
+              <a href="mailto:info@firm.inc" className="text-white hover:underline">
+                info@firm.inc
+              </a>
             </span>
           </p>
         </div>

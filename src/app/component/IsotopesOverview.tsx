@@ -6,7 +6,46 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
 import RadioisotopePeriodicDisplay from './RadioisotopePeriodicDisplay';
 import { Tabs } from '@/components/ui';
+import { Tooltip } from 'react-tooltip';
 
+// Add custom styles for tooltips
+const tooltipStyles = `
+  .tooltip-custom {
+    z-index: 2147483647 !important;
+    position: fixed !important;
+    pointer-events: auto !important;
+  }
+  
+  .tooltip-custom * {
+    pointer-events: auto !important;
+  }
+  
+  /* Ensure tooltip content is clickable */
+  .tooltip-custom a {
+    pointer-events: auto !important;
+    cursor: pointer !important;
+  }
+`;
+
+// Reference data with URLs
+const references = {
+  'ref2': {
+    text: 'Greg Kaser (2024) The World Nuclear Supply Chain – An Overview',
+    url: 'https://www.oecd-nea.org/upload/docs/application/pdf/2020-07/wpne_workshop_2._1_the_world_nuclear_supply_chain_an_overview.pdf'
+  },
+  'ref3': {
+    text: 'Herrmann, K., et al. (2020). "Radiotheranostics: A roadmap for future development." The Lancet Oncology, 21(3), e146-e156.',
+    url: 'https://doi.org/10.1016/S1470-2045(19)30757-9'
+  },
+  'ref4': {
+    text: 'World Nuclear Association. Radioisotopes in Medicine Report.',
+    url: 'https://world-nuclear.org/information-library/non-power-nuclear-applications/radioisotopes-research/radioisotopes-in-medicine'
+  },
+  'ref5': {
+    text: 'Young JD, Jauregui-Osoro M, Wong WL, Cooper MS, Cook G, Barrington SF, et al. An overview of nuclear medicine research in the UK and the landscape for clinical adoption. Nucl Med Commun',
+    url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC8584216/'
+  }
+};
 
 // Interface for Isotope Cards
 interface Isotope {
@@ -21,31 +60,31 @@ interface Isotope {
 const isotopeData: Isotope[] = [
   {
     tag: 'Therapy',
-    tagBg: 'bg-light-therapy', // Using defined colors from your tailwind.config.js
-    dotColor: 'bg-a-colour',    // Using defined colors from your tailwind.config.js
+    tagBg: 'bg-light-therapy',
+    dotColor: 'bg-a-colour',
     title: 'α-emitters',
-    description: 'These radionuclides have the highest potency with ultra-precise targeting, enabling minimal collateral damage to healthy tissue. [2] Their high supply chain complexity, specialized production requirements, long-lived waste management challenges, and highest relative cost create significant logistical hurdles for widespread adoption.(1 &2)',
+    description: 'These radionuclides have the highest potency with ultra-precise targeting, enabling minimal collateral damage to healthy tissue. Their high supply chain complexity, specialized production requirements, long-lived waste management challenges, and highest relative cost create significant logistical hurdles for widespread adoption.[2]',
   },
   {
     tag: 'Therapy',
     tagBg: 'bg-light-therapy',
     dotColor: 'bg-primary-blue',
     title: 'β-emitters',
-    description: 'Beta-emitters have lower energy but longer tissue range, often advantageous for medium-to-large tumor masses. Their well-known decay properties, established commercial infrastructure and regulatory pathways reduce market entry barriers compared to alpha therapies. (3)',
+    description: 'Beta-emitters have lower energy but longer tissue range, often advantageous for medium-to-large tumor masses. Their well-known decay properties, established commercial infrastructure and regulatory pathways reduce market entry barriers compared to alpha therapies.[3]',
   },
   {
     tag: 'Diagnosis',
-    tagBg: 'bg-light-diagnostic', // Using defined colors from your tailwind.config.js
-    dotColor: 'bg-purple',       // Using defined colors from your tailwind.config.js
+    tagBg: 'bg-light-diagnostic',
+    dotColor: 'bg-purple',
     title: 'Positron emitters',
-    description: 'Positron emitters deliver the highest diagnostic imaging quality through PET/CT, offering superior sensitivity and resolution for detecting small lesions. Their typically short half-lives (minutes to hours) create distribution challenges requiring either cyclotron networks or on-site production. (4)',
+    description: 'Positron emitters deliver the highest diagnostic imaging quality through PET/CT, offering superior sensitivity and resolution for detecting small lesions. Their typically short half-lives (minutes to hours) create distribution challenges requiring either cyclotron networks or on-site production.[4]',
   },
   {
     tag: 'Diagnosis',
     tagBg: 'bg-light-diagnostic',
     dotColor: 'bg-g-color',
     title: 'γ-emitters',
-    description: 'Gamma emitters provide the backbone of conventional nuclear medicine diagnostics with the most mature infrastructure and moderate costs. (5) Generator-based supply chains offer accessibility and reliability. Long penetration range enables whole-body imaging with well-understood regulatory pathways. (4)',
+    description: 'Gamma-emitters provide the backbone of conventional nuclear medicine diagnostics with the most mature infrastructure and moderate costs. Generator-based supply chains offer accessibility and reliability. Long penetration range enables whole-body imaging with well-understood regulatory pathways.[5]',
   },
 ];
 
@@ -54,9 +93,9 @@ interface BarChartData {
     label: string;
     trialValue: number;
     companyValue: number;
-    colorClass: string; // Tailwind background color class e.g., 'bg-a-colour'
-    valueColorClass: string; // Tailwind text color class for the value e.g., 'text-black'
-    labelColorClass: string; // Color for the label text
+    colorClass: string;
+    valueColorClass: string;
+    labelColorClass: string;
 }
 
 const barChartData: BarChartData[] = [
@@ -94,24 +133,15 @@ const barChartData: BarChartData[] = [
     },
 ];
 
-// Text content for each tab
+// Text content for each tab with proper totals and brackets
 const tabText = {
-  trials: "While positron emitters dominate the landscape in clinical trials (647) due to their long-established role in diagnostic imaging, beta emitters (329) represent the current therapeutic focus. The growing interest in alpha emitters (74), though still the newcomers, signals an important evolution in therapeutic approach with their uniquely ultra-precise targeting properties.",
-  companies: "While positron emitters dominate the landscape in clinical trials (647) due to their long-established role in diagnostic imaging, beta emitters (329) represent the current therapeutic focus. The growing interest in alpha emitters (74), though still the newcomers, signals an important evolution in therapeutic approach with their uniquely ultra-precise targeting properties."
+  trials: "While positron emitters dominate the landscape in clinical trials [277] due to their long-established role in diagnostic imaging, beta-emitters [123] represent the current therapeutic focus. The growing interest in alpha-emitters [48], though still the newcomers, signals an important evolution in therapeutic approach with their uniquely ultra-precise targeting properties.",
+  companies: "While positron emitters lead in company count [64] due to their established diagnostic role, beta-emitters [56] show strong therapeutic commercial interest. The growing number of companies pursuing alpha-emitters [13], though still emerging, signals an important evolution in therapeutic development with their uniquely ultra-precise targeting properties."
 };
 
 const IsotopesOverview: React.FC = () => {
-  // Add state for active tab
   const [activeTab, setActiveTab] = useState<'trials' | 'companies'>('trials');
   
-  // Get current date for footer timestamp
-  const currentDate = new Date();
-  const formattedDate = currentDate.toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-  });
-
   // Function to get the max value based on active tab
   const getMaxValue = () => {
     return Math.max(...barChartData.map(item => 
@@ -122,17 +152,219 @@ const IsotopesOverview: React.FC = () => {
   // Calculate height classes dynamically based on max value
   const calculateHeight = (value: number) => {
     const maxValue = getMaxValue();
-    // Use 128 (full height) as the reference to calculate proportions
     const heightPercentage = (value / maxValue) * 100;
-    
-    // Convert to pixel height, max height of 250px (adjusted from 448px)
     return Math.round((heightPercentage / 100) * 250);
   };
 
-  return (
-    <> {/* Use Fragment to group multiple top-level sections */}
+  // Function to render description with clickable references
+  const renderDescriptionWithRefs = (description: string) => {
+    return description.split(/(\[2\]|\[3\]|\[4\]|\[5\])/).map((part, index) => {
+      if (part === '[2]') {
+        return (
+          <span key={index}>
+            <span
+              data-tooltip-id="ref2"
+              className="inline-block text-blue-600 hover:text-blue-800 hover:underline font-bold cursor-pointer px-1 py-0.5 rounded hover:bg-blue-50 transition-all duration-200 text-sm align-super"
+              style={{ userSelect: 'none', fontSize: '0.75em', verticalAlign: 'super' }}
+            >
+              ²
+            </span>
+          </span>
+        );
+      } else if (part === '[3]') {
+        return (
+          <span key={index}>
+            <span
+              data-tooltip-id="ref3"
+              className="inline-block text-blue-600 hover:text-blue-800 hover:underline font-bold cursor-pointer px-1 py-0.5 rounded hover:bg-blue-50 transition-all duration-200 text-sm align-super"
+              style={{ userSelect: 'none', fontSize: '0.75em', verticalAlign: 'super' }}
+            >
+              ³
+            </span>
+          </span>
+        );
+      } else if (part === '[4]') {
+        return (
+          <span key={index}>
+            <span
+              data-tooltip-id="ref4"
+              className="inline-block text-blue-600 hover:text-blue-800 hover:underline font-bold cursor-pointer px-1 py-0.5 rounded hover:bg-blue-50 transition-all duration-200 text-sm align-super"
+              style={{ userSelect: 'none', fontSize: '0.75em', verticalAlign: 'super' }}
+            >
+              ⁴
+            </span>
+          </span>
+        );
+      } else if (part === '[5]') {
+        return (
+          <span key={index}>
+            <span
+              data-tooltip-id="ref5"
+              className="inline-block text-blue-600 hover:text-blue-800 hover:underline font-bold cursor-pointer px-1 py-0.5 rounded hover:bg-blue-50 transition-all duration-200 text-sm align-super"
+              style={{ userSelect: 'none', fontSize: '0.75em', verticalAlign: 'super' }}
+            >
+              ⁵
+            </span>
+          </span>
+        );
+      }
+      return <span key={index}>{part}</span>;
+    });
+  };
 
-     
+  return (
+    <>
+      {/* Inject custom tooltip styles */}
+      <style dangerouslySetInnerHTML={{ __html: tooltipStyles }} />
+      
+      {/* React Tooltip Components */}
+      <Tooltip
+        id="ref2"
+        clickable
+        place="top"
+        events={['click']}
+        globalCloseEvents={{ escape: true, scroll: true, resize: true, clickOutsideAnchor: true }}
+        style={{
+          backgroundColor: 'white',
+          color: 'black',
+          border: '1px solid #e5e7eb',
+          borderRadius: '8px',
+          boxShadow: '0 20px 25px -5px rgb(0 0 0 / 0.1), 0 10px 10px -5px rgb(0 0 0 / 0.04)',
+          maxWidth: '400px',
+          padding: '16px',
+          fontSize: '14px',
+          lineHeight: '1.5',
+          zIndex: '2147483647',
+          position: 'fixed'
+        }}
+        className="tooltip-custom"
+      >
+        <div>
+          <h4 style={{ fontWeight: '600', marginBottom: '8px', color: '#1f2937' }}>Reference</h4>
+          <p style={{ marginBottom: '12px', color: '#374151' }}>{references.ref2.text}</p>
+          <a 
+            href={references.ref2.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ color: '#2563eb', textDecoration: 'none', fontWeight: '500' }}
+            onMouseOver={(e) => e.currentTarget.style.textDecoration = 'underline'}
+            onMouseOut={(e) => e.currentTarget.style.textDecoration = 'none'}
+          >
+            View Source →
+          </a>
+        </div>
+      </Tooltip>
+
+      <Tooltip
+        id="ref3"
+        clickable
+        place="top"
+        events={['click']}
+        globalCloseEvents={{ escape: true, scroll: true, resize: true, clickOutsideAnchor: true }}
+        style={{
+          backgroundColor: 'white',
+          color: 'black',
+          border: '1px solid #e5e7eb',
+          borderRadius: '8px',
+          boxShadow: '0 20px 25px -5px rgb(0 0 0 / 0.1), 0 10px 10px -5px rgb(0 0 0 / 0.04)',
+          maxWidth: '400px',
+          padding: '16px',
+          fontSize: '14px',
+          lineHeight: '1.5',
+          zIndex: '2147483647',
+          position: 'fixed'
+        }}
+        className="tooltip-custom"
+      >
+        <div>
+          <h4 style={{ fontWeight: '600', marginBottom: '8px', color: '#1f2937' }}>Reference</h4>
+          <p style={{ marginBottom: '12px', color: '#374151' }}>{references.ref3.text}</p>
+          <a 
+            href={references.ref3.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ color: '#2563eb', textDecoration: 'none', fontWeight: '500' }}
+            onMouseOver={(e) => e.currentTarget.style.textDecoration = 'underline'}
+            onMouseOut={(e) => e.currentTarget.style.textDecoration = 'none'}
+          >
+            View Source →
+          </a>
+        </div>
+      </Tooltip>
+
+      <Tooltip
+        id="ref4"
+        clickable
+        place="top"
+        events={['click']}
+        globalCloseEvents={{ escape: true, scroll: true, resize: true, clickOutsideAnchor: true }}
+        style={{
+          backgroundColor: 'white',
+          color: 'black',
+          border: '1px solid #e5e7eb',
+          borderRadius: '8px',
+          boxShadow: '0 20px 25px -5px rgb(0 0 0 / 0.1), 0 10px 10px -5px rgb(0 0 0 / 0.04)',
+          maxWidth: '400px',
+          padding: '16px',
+          fontSize: '14px',
+          lineHeight: '1.5',
+          zIndex: '2147483647',
+          position: 'fixed'
+        }}
+        className="tooltip-custom"
+      >
+        <div>
+          <h4 style={{ fontWeight: '600', marginBottom: '8px', color: '#1f2937' }}>Reference</h4>
+          <p style={{ marginBottom: '12px', color: '#374151' }}>{references.ref4.text}</p>
+          <a 
+            href={references.ref4.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ color: '#2563eb', textDecoration: 'none', fontWeight: '500' }}
+            onMouseOver={(e) => e.currentTarget.style.textDecoration = 'underline'}
+            onMouseOut={(e) => e.currentTarget.style.textDecoration = 'none'}
+          >
+            View Source →
+          </a>
+        </div>
+      </Tooltip>
+
+      <Tooltip
+        id="ref5"
+        clickable
+        place="top"
+        events={['click']}
+        globalCloseEvents={{ escape: true, scroll: true, resize: true, clickOutsideAnchor: true }}
+        style={{
+          backgroundColor: 'white',
+          color: 'black',
+          border: '1px solid #e5e7eb',
+          borderRadius: '8px',
+          boxShadow: '0 20px 25px -5px rgb(0 0 0 / 0.1), 0 10px 10px -5px rgb(0 0 0 / 0.04)',
+          maxWidth: '400px',
+          padding: '16px',
+          fontSize: '14px',
+          lineHeight: '1.5',
+          zIndex: '2147483647',
+          position: 'fixed'
+        }}
+        className="tooltip-custom"
+      >
+        <div>
+          <h4 style={{ fontWeight: '600', marginBottom: '8px', color: '#1f2937' }}>Reference</h4>
+          <p style={{ marginBottom: '12px', color: '#374151' }}>{references.ref5.text}</p>
+          <a 
+            href={references.ref5.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ color: '#2563eb', textDecoration: 'none', fontWeight: '500' }}
+            onMouseOver={(e) => e.currentTarget.style.textDecoration = 'underline'}
+            onMouseOut={(e) => e.currentTarget.style.textDecoration = 'none'}
+          >
+            View Source →
+          </a>
+        </div>
+      </Tooltip>
 
       {/* ===== ISOTOPES OVERVIEW SECTION ===== */}
       <section className="relative w-full bg-white">
@@ -206,7 +438,7 @@ const IsotopesOverview: React.FC = () => {
                      </h4>
                      {/* Description - using text-body-small style from config */}
                      <p className="text-body-small font-helvetica-now text-black">
-                       {isotope.description}
+                       {renderDescriptionWithRefs(isotope.description)}
                      </p>
                    </div>
                 </motion.div>
@@ -278,7 +510,7 @@ const IsotopesOverview: React.FC = () => {
                                   ease: "easeInOut"
                                 }}
                               >
-                                 {/* Simpler number transition with text-h2 size */}
+                                 {/* Number with brackets - using text-h2 size */}
                                  <AnimatePresence mode="wait">
                                    <motion.span
                                      key={`${activeTab}-${currentValue}`}
@@ -288,7 +520,7 @@ const IsotopesOverview: React.FC = () => {
                                      exit={{ opacity: 0 }}
                                      transition={{ duration: 0.3 }}
                                    >
-                                     {currentValue}
+                                     [{currentValue}]
                                    </motion.span>
                                  </AnimatePresence>
                              </motion.div>
@@ -333,7 +565,7 @@ const IsotopesOverview: React.FC = () => {
              {/* Footer Text - styled using text-body-small from config */}
              {/* Changed from text-center to text-left */}
              <div className="text-left text-body-small font-helvetica-now text-grey md:my-8">
-                <p>Last updated:  April, 2025</p>
+                <p>Last updated:  June, 2025</p>
                 <p className="mt-1">
                 Help us keep things accurate. If you notice any outdated or incorrect information, email us at <a href="mailto:info@firm.inc" className="text-primary-blue hover:underline">info@firm.inc</a>
                 </p>

@@ -25,8 +25,7 @@ const PreFooter: React.FC = () => {
           {/* Second column - Supporting text */}
           <div>
             <p className="text-body text-[#AAAAAA]">
-            As the first consultancy dedicated to accelerating the delivery of advanced therapies at scale, we take an end-to-end approach—aligning technology and operations to ensure a consistent, reliable experience for everyone involved. We build lasting capabilities across teams, systems, and partnerships to support delivery at scale and sustain long-term success.
-            </p>
+            We combine design thinking and deep technical  expertise to partner with orgs to launch innovative products and services and develop the capabilities to deliver them. </p>
           </div>
         </div>
       </div>

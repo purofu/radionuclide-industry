@@ -70,7 +70,7 @@ const Companies: React.FC = () => {
             >
                {/* Using text-body style and font from config */}
               <p className="text-h3 font-helvetica-now text-black py-32">
-              The radiopharmaceutical landscape is experiencing unprecedented growth, with a diverse array of players—from emerging biotechs to established pharmaceutical giants—actively developing novel therapies across multiple targets and isotopes.
+              The radiopharmaceutical landscape is experiencing unprecedented growth, with a diverse array of players. From emerging biotechs to established pharmaceutical giants, companies are actively developing novel therapies across multiple targets and isotopes.
               </p>
             </motion.div>
 
@@ -122,7 +122,7 @@ const Companies: React.FC = () => {
                 transition={{ duration: 0.6, delay: 0.6 }}
               >
                 <p className="text-body font-helvetica-now text-grey">
-                  This ecosystem creates a remarkable level of interdependence. Competitors frequently become collaborators through strategic partnerships and acquisitions that address specialized capabilities gaps—whether in isotope production, targeting technology, manufacturing expertise, or delivery infrastructure.
+                  This ecosystem creates a remarkable level of interdependence. Competitors frequently become collaborators through strategic partnerships and acquisitions that address specialized capabilities gaps, whether in isotope production, targeting technology, manufacturing expertise, or delivery infrastructure.
                 </p>
               </motion.div>
             </div>

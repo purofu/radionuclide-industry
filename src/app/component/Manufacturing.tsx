@@ -2,7 +2,103 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
+import { Tooltip } from 'react-tooltip';
 
+// Add custom styles for tooltips
+const tooltipStyles = `
+  .tooltip-custom {
+    z-index: 2147483647 !important;
+    position: fixed !important;
+    pointer-events: auto !important;
+  }
+  
+  .tooltip-custom * {
+    pointer-events: auto !important;
+  }
+  
+  /* Ensure tooltip content is clickable */
+  .tooltip-custom a {
+    pointer-events: auto !important;
+    cursor: pointer !important;
+  }
+`;
+
+// Reference data with URLs for references 20-29
+const references = {
+  'ref20': {
+    text: 'National Academies of Sciences, Engineering, and Medicine. (2016). Molybdenum-99 for Medical Imaging. The National Academies Press.',
+    url: 'https://doi.org/10.17226/23563'
+  },
+  'ref21': {
+    text: 'World Nuclear Association. (2023, August). Research Reactors. Retrieved June 10, 2025',
+    url: 'https://world-nuclear.org/information-library/non-power-nuclear-applications/radioisotopes-research/research-reactors'
+  },
+  'ref22': {
+    text: 'Wang Y, Chen D, Augusto RDS, Liang J, Qin Z, Liu J, Liu Z. Production Review of Accelerator-Based Medical Isotopes. Molecules. 2022 Aug 19;27(16):5294.',
+    url: 'https://doi.org/10.3390/molecules27165294'
+  },
+  'ref23': {
+    text: 'World Nuclear Association. (2024, May). Radioisotopes in Medicine. Retrieved June 10, 2025',
+    url: 'https://world-nuclear.org/information-library/non-power-nuclear-applications/radioisotopes-research/radioisotopes-in-medicine'
+  },
+  'ref24': {
+    text: 'Knapp FF Jr, Mirzadeh S. The continuing important role of radionuclide generator systems for nuclear medicine. Eur J Nucl Med. 1994 Oct;21(10):1151-65.',
+    url: 'https://doi.org/10.1007/BF00181073'
+  },
+  'ref25': {
+    text: 'Feng, Y.; Shao, Y.; Li, Z.; Luo, M.; Xu, D.; Ma, L. Research Progress on Major Medical Radionuclide Generators. Processes 2025, 13, 521.',
+    url: 'https://doi.org/10.3390/pr13020521'
+  },
+  'ref26': {
+    text: 'Casey, B. (2023, July 18). How nuclear fusion is revolutionizing medical isotope production. ITN Online.',
+    url: 'https://www.itnonline.com/article/how-nuclear-fusion-revolutionizing-medical-isotope-production'
+  },
+  'ref27': {
+    text: 'Clery, D. (2023, June 28). This CEO aims to revolutionize cancer-killing isotope production with fusion power. Science.',
+    url: 'https://www.science.org/content/article/ceo-aims-revolutionize-cancer-killing-isotope-production-fusion-power'
+  },
+  'ref28': {
+    text: 'Henderson, S. (2023, December 11). Viewpoint: reactors and accelerators join forces. CERN Courier.',
+    url: 'https://cerncourier.com/a/viewpoint-reactors-and-accelerators-join-forces/'
+  },
+  'ref29': {
+    text: 'Using Linear Accelerators to Produce Medical Isotopes without Highly Enriched Uranium.',
+    url: 'https://www.belfercenter.org/sites/default/files/pantheon_files/files/publication/smashingatomsforpeace.pdf'
+  }
+};
+
+// Function to render description with clickable references
+const renderDescriptionWithRefs = (description: string) => {
+  return description.split(/(\[20\]|\[21\]|\[22\]|\[23\]|\[24\]|\[25\]|\[26\]|\[27\]|\[28\]|\[29\])/).map((part, index) => {
+    const refMap: { [key: string]: { id: string, display: string } } = {
+      '[20]': { id: 'ref20', display: '²⁰' },
+      '[21]': { id: 'ref21', display: '²¹' },
+      '[22]': { id: 'ref22', display: '²²' },
+      '[23]': { id: 'ref23', display: '²³' },
+      '[24]': { id: 'ref24', display: '²⁴' },
+      '[25]': { id: 'ref25', display: '²⁵' },
+      '[26]': { id: 'ref26', display: '²⁶' },
+      '[27]': { id: 'ref27', display: '²⁷' },
+      '[28]': { id: 'ref28', display: '²⁸' },
+      '[29]': { id: 'ref29', display: '²⁹' }
+    };
+    
+    if (refMap[part]) {
+      return (
+        <span key={index}>
+          <span
+            data-tooltip-id={refMap[part].id}
+            className="inline-block text-blue-600 hover:text-blue-800 hover:underline font-bold cursor-pointer px-1 py-0.5 rounded hover:bg-blue-50 transition-all duration-200 text-sm align-super"
+            style={{ userSelect: 'none', fontSize: '0.75em', verticalAlign: 'super' }}
+          >
+            {refMap[part].display}
+          </span>
+        </span>
+      );
+    }
+    return <span key={index}>{part}</span>;
+  });
+};
 
 // Interface for the Manufacturing Cards
 interface ManufacturingCardProps {
@@ -24,19 +120,19 @@ interface ManufacturingCardProps {
   fullWidth?: boolean;
 }
 
-// Data for Manufacturing Cards
+// Data for Manufacturing Cards - Updated with reference numbers in brackets
 const manufacturingCardsData: ManufacturingCardProps[] = [
   {
     id: 1,
     title: "Reactor-Based Production",
-    description: "Nuclear reactors remain the backbone of global radioisotope supply. Although many reactors exist, the production of specific medical isotopes is concentrated in a few facilities:\nFission of Uranium Targets - Low-enriched uranium (LEU) is irradiated to produce fission products such as Molybdenum-99 (Mo-99), the precursor to Technetium-99m (Tc-99m)—the most widely used diagnostic isotope. This process generates high-specific-activity isotopes but also significant radioactive waste (e.g., ~50 Ci waste per 1 Ci Mo-99). Supply is concentrated in 5–10 aging research reactors globally, creating a fragile, centralized network dependent on complex international logistics and a handful of processing facilities(1) (2)\nNeutron Activation - Stable isotopes like Mo-98 are bombarded with neutrons to produce radioactive isotopes. This method avoids uranium use and reduces proliferation risk but produces lower-specific-activity products. As a result, more frequent generator replacements are needed, and chemical separation becomes more complex. Despite lower yields, this method is supported by a broader base of over 50 reactors, offering potential for distributed production. (1) (2)",
+    description: "Nuclear reactors remain the backbone of global radioisotope supply. Although many reactors exist, the production of specific medical isotopes is concentrated in a few facilities.\nFission of Uranium Targets - Low-enriched uranium (LEU) is irradiated to produce fission products such as Molybdenum-99 (Mo-99), the precursor to Technetium-99m (Tc-99m)—the most widely used diagnostic isotope. This process generates high-specific-activity isotopes but also significant radioactive waste (e.g., ~50 Ci waste per 1 Ci Mo-99). Supply is concentrated in 5–10 aging research reactors globally, creating a fragile, centralized network dependent on complex international logistics and a handful of processing facilities[20] [21]\nNeutron Activation - Stable isotopes like Mo-98 are bombarded with neutrons to produce radioactive isotopes. This method avoids uranium use and reduces proliferation risk but produces lower-specific-activity products. As a result, more frequent generator replacements are needed, and chemical separation becomes more complex. Despite lower yields, this method is supported by a broader base of over 50 reactors, offering potential for distributed production. [20] [21]",
     stats: [
       {
-        value: "220",
+        value: "[220]",
         label: "operational research reactors worldwide across 53 countries"
       },
       {
-        value: "~10",
+        value: "[~10]",
         label: "reactors involved in large-scale production of medical isotopes "
       }
     ],
@@ -118,14 +214,14 @@ const manufacturingCardsData: ManufacturingCardProps[] = [
   {
     id: 2,
     title: "Generator Systems",
-    description: "Generators are compact devices that provide short-lived radionuclides on-site by separating them from a longer-lived parent isotope through radioactive decay. \n\nThe Mo-99/Tc-99m generator is the most widely used system in nuclear medicine, enabling approximately 30 million diagnostic imaging procedures annually (representing about 80% of all nuclear medicine diagnostics). It functions through the decay of Mo-99 to Tc-99m, which is routinely \"milked\" from generators at hospitals for heart, bone, and kidney scans. Production remains highly centralized and vulnerable to global reactor outages, yet this generator serves as the essential workhorse of diagnostic nuclear medicine. They are often tabletop or cart-sized units with substantial lead shielding (5) (6) (7)\n\n The Strontium-90/Yttrium-90 generator supplies 90Y (half-life: 64.0 hours), which is primarily used for radiation immunotherapy applications in oncology. The parent isotope 90Sr has an exceptionally long half-life of 28 years, allowing for extended generator functionality The 90Y radionuclide emits high-energy beta particles (2.3 MeV) that can effectively penetrate biological tissues, making it particularly valuable for treating liver cancer, colorectal cancer, and prostate cancer. (7)",
+    description: "Generators are compact devices that provide short-lived radionuclides on-site by separating them from a longer-lived parent isotope through radioactive decay. \n\nThe Mo-99/Tc-99m generator is the most widely used system in nuclear medicine, enabling approximately 30 million diagnostic imaging procedures annually (representing about 80% of all nuclear medicine diagnostics). It functions through the decay of Mo-99 to Tc-99m, which is routinely \"milked\" from generators at hospitals for heart, bone, and kidney scans. Production remains highly centralized and vulnerable to global reactor outages, yet this generator serves as the essential workhorse of diagnostic nuclear medicine. They are often tabletop or cart-sized units with substantial lead shielding [23] [24] [25]\n\n The Strontium-90/Yttrium-90 generator supplies 90Y (half-life: 64.0 hours), which is primarily used for radiation immunotherapy applications in oncology. The parent isotope 90Sr has an exceptionally long half-life of 28 years, allowing for extended generator functionality The 90Y radionuclide emits high-energy beta particles (2.3 MeV) that can effectively penetrate biological tissues, making it particularly valuable for treating liver cancer, colorectal cancer, and prostate cancer. [25]",
     stats: [
       {
-        value: "10k",
-        label: "Tc-99m generators used annually worldwides"
+        value: "[10k]",
+        label: "Tc-99m generators used annually worldwide"
       },
       {
-        value: "1-2",
+        value: "[1-2]",
         label: "Replacement cycle for Tc-99m generators"
       }
     ],
@@ -139,6 +235,7 @@ const manufacturingCardsData: ManufacturingCardProps[] = [
         textColor: "white"
       },
       {
+
         symbol: "Rb",
         name: "Rubidium", 
         number: "37",
@@ -186,11 +283,11 @@ const manufacturingCardsData: ManufacturingCardProps[] = [
     description: "",
     stats: [
       {
-        value: "1500",
+        value: "[1500]",
         label: "cyclotrons installed globally, for PET/SPECT isotopes"
       },
       {
-        value: "<50",
+        value: "[<50]",
         label: "cyclotrons are configured for alpha or heavy-particle production"
       }
     ],
@@ -384,7 +481,7 @@ const ManufacturingCard: React.FC<{
   return (
     <div className="w-full flex flex-col gap-6">
       {/* Card with stats, image, title, tags and radioisotopes */}
-      <div className="w-full px-6 pt-12 pb-8 bg-[#F5F5F5] rounded-lg flex flex-col justify-between items-start ">
+      <div className="w-full px-6 pt-12 pb-8 bg-[#Fff] rounded-lg flex flex-col justify-between items-start ">
         {/* Top section with statistics */}
         <div className="self-stretch inline-flex justify-start items-start gap-8 mb-8 ">
           {stats.map((stat, index) => (
@@ -410,7 +507,7 @@ const ManufacturingCard: React.FC<{
           {/* Only first paragraph inside card */}
           {id !== 3 && description.split('\n').length > 0 && (
             <p className="text-black text-body font-medium font-helvetica-now">
-              {description.split('\n')[0]}
+              {renderDescriptionWithRefs(description.split('\n')[0])}
             </p>
           )}
           
@@ -429,7 +526,7 @@ const ManufacturingCard: React.FC<{
                   Emerging Accelerator-Based Technologies
                 </h4>
                 <p className="text-black text-body font-medium font-helvetica-now">
-                New technologies aim to match reactor isotope yields without reactors, improving supply resilience. These require significant R&D and regulatory approval before mainstream adoption.(8) (10)
+                New technologies aim to match reactor isotope yields without reactors, improving supply resilience. These require significant R&D and regulatory approval before mainstream adoption.[26] [28]
                 </p>
               </div>
             </div>
@@ -483,7 +580,7 @@ const ManufacturingCard: React.FC<{
                         {parts[1]}
                       </span>
                       <span>
-                        {parts.slice(2).join('')}
+                        {renderDescriptionWithRefs(parts.slice(2).join(''))}
                       </span>
                     </p>
                   );
@@ -496,7 +593,7 @@ const ManufacturingCard: React.FC<{
                 if (parts.length >= 2) {
                   return (
                     <p key={i} className="text-grey text-body-small font-medium font-helvetica-now mb-2">
-                      {paragraph}
+                      {renderDescriptionWithRefs(paragraph)}
                     </p>
                   );
                 }
@@ -505,7 +602,7 @@ const ManufacturingCard: React.FC<{
               // Regular paragraph
               return (
                 <p key={i} className="text-grey text-body-small font-medium font-helvetica-now mb-2">
-                  {paragraph}
+                  {renderDescriptionWithRefs(paragraph)}
                 </p>
               );
             })}
@@ -516,23 +613,23 @@ const ManufacturingCard: React.FC<{
             {/* Column 1: Cyclotron-Based Production */}
             <div className="self-stretch">
               <p className="text-grey text-body-small mb-2">
-                <span className="font-medium font-helvetica-now">Direct Tc-99m Production: Involves proton bombardment of enriched Mo-100, producing Tc-99m directly without requiring fission. This method is decentralized and reactor-independent, but currently 3–10× more expensive and relies on enriched Mo-100 supplies, mostly sourced from Russia. (3)</span>
+                <span className="font-medium font-helvetica-now">Direct Tc-99m Production: Involves proton bombardment of enriched Mo-100, producing Tc-99m directly without requiring fission. This method is decentralized and reactor-independent, but currently 3–10× more expensive and relies on enriched Mo-100 supplies, mostly sourced from Russia. [21]</span>
               </p>
               <p className="text-grey text-body-small mb-2">
-                <span className="font-medium font-helvetica-now">Proton/Deuteron/Alpha Bombardment: Advanced systems use high-energy particles (e.g., deuterons or alpha particles) to either fission uranium targets or generate neutrons to indirectly produce Mo-99. These emerging systems—like SHINE's accelerator-driven neutron source—aim to replace reactors entirely, though they remain in the early stages of commercial deployment.(4)</span>
+                <span className="font-medium font-helvetica-now">Proton/Deuteron/Alpha Bombardment: Advanced systems use high-energy particles (e.g., deuterons or alpha particles) to either fission uranium targets or generate neutrons to indirectly produce Mo-99. These emerging systems—like SHINE's accelerator-driven neutron source—aim to replace reactors entirely, though they remain in the early stages of commercial deployment.[22]</span>
               </p>
             </div>
             
             {/* Column 2: Emerging Accelerator-Based Technologies */}
             <div className="self-stretch">
               <p className="text-grey text-body-small mb-2">
-                <span className="font-medium font-helvetica-now">Neutron Generators & Fusion-Based Systems: Emerging platforms like accelerator-driven fusion (utilizing deuterium-tritium or deuterium-deuterium reactions) are being developed specifically for neutron production. These systems could effectively irradiate targets without requiring nuclear reactors or enriched uranium, potentially offering safer, more distributed, and scalable solutions. (8) (9)</span>
+                <span className="font-medium font-helvetica-now">Neutron Generators & Fusion-Based Systems: Emerging platforms like accelerator-driven fusion (utilizing deuterium-tritium or deuterium-deuterium reactions) are being developed specifically for neutron production. These systems could effectively irradiate targets without requiring nuclear reactors or enriched uranium, potentially offering safer, more distributed, and scalable solutions. [26] [27]</span>
               </p>
               <p className="text-grey text-body-small mb-2">
-                <span className="font-medium font-helvetica-now">Non-Fission Pathways: Experimental deuteron-based accelerator systems may substantially improve neutron flux efficiency while generating significantly less radioactive waste. High-current deuteron accelerators can create neutron fields sufficient for commercial-scale isotope production, though these systems remain under active development and have not yet achieved full commercial scalability. (9) (10)</span>
+                <span className="font-medium font-helvetica-now">Non-Fission Pathways: Experimental deuteron-based accelerator systems may substantially improve neutron flux efficiency while generating significantly less radioactive waste. High-current deuteron accelerators can create neutron fields sufficient for commercial-scale isotope production, though these systems remain under active development and have not yet achieved full commercial scalability. [27] [28]</span>
               </p>
               <p className="text-grey text-body-small mb-2">
-                <span className="font-medium font-helvetica-now">Linear Accelerator Applications: Advanced electron LINAC systems are being adapted to produce photons that trigger photonuclear reactions capable of creating key medical isotopes. This approach eliminates proliferation concerns associated with uranium targets while potentially creating more flexible production networks.(5) (2) (11)</span>
+                <span className="font-medium font-helvetica-now">Linear Accelerator Applications: Advanced electron LINAC systems are being adapted to produce photons that trigger photonuclear reactions capable of creating key medical isotopes. This approach eliminates proliferation concerns associated with uranium targets while potentially creating more flexible production networks.[23] [20] [29]</span>
               </p>
             </div>
           </div>
@@ -545,8 +642,50 @@ const ManufacturingCard: React.FC<{
 const Manufacturing: React.FC = () => {
   return (
     <>
+      {/* Inject custom tooltip styles */}
+      <style dangerouslySetInnerHTML={{ __html: tooltipStyles }} />
+      
+      {/* React Tooltip Components for references 20-29 */}
+      {Object.entries(references).map(([refId, refData]) => (
+        <Tooltip
+          key={refId}
+          id={refId}
+          clickable
+          place="top"
+          events={['click']}
+          globalCloseEvents={{ escape: true, scroll: true, resize: true, clickOutsideAnchor: true }}
+          style={{
+            backgroundColor: 'white',
+            color: 'black',
+            border: '1px solid #e5e7eb',
+            borderRadius: '8px',
+            boxShadow: '0 20px 25px -5px rgb(0 0 0 / 0.1), 0 10px 10px -5px rgb(0 0 0 / 0.04)',
+            maxWidth: '400px',
+            padding: '16px',
+            fontSize: '14px',
+            lineHeight: '1.5',
+            zIndex: '2147483647',
+            position: 'fixed'
+          }}
+          className="tooltip-custom"
+        >
+          <div>
+            <h4 style={{ fontWeight: '600', marginBottom: '8px', color: '#1f2937' }}>Reference</h4>
+            <p style={{ marginBottom: '12px', color: '#374151' }}>{refData.text}</p>
+            <a 
+              href={refData.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ color: '#2563eb', textDecoration: 'none', fontWeight: '500' }}
+              onMouseOver={(e) => e.currentTarget.style.textDecoration = 'underline'}
+              onMouseOut={(e) => e.currentTarget.style.textDecoration = 'none'}
+            >
+              View Source →
+            </a>
+          </div>
+        </Tooltip>
+      ))}
 
-    
       <section className="relative w-full bg-white py-16 md:py-24">
         <div className="grid grid-cols-4 sm:grid-cols-8 md:grid-cols-12 lg:grid-cols-12">
           <div className="col-span-4 sm:col-span-8 md:col-span-12 lg:col-span-12 px-4 md:px-6 lg:px-8 ">

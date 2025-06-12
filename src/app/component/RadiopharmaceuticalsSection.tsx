@@ -136,7 +136,7 @@ const allCategoriesData: Category[] = [
   // ───────────────────────────────────────────────────────────
   {
     field: "Oncology",
-    type: "Diagnostics",
+    type: "Oncology - Diagnostics",
     items: [
       {
         isotope: "[18F]",
@@ -505,7 +505,7 @@ const allCategoriesData: Category[] = [
   // ───────────────────────────────────────────────────────────
   {
     field: "Oncology",
-    type: "Therapy",
+    type: "Oncology - Therapy",
     items: [
       {
         isotope: "[223Ra]",
@@ -855,7 +855,7 @@ const RadiopharmaceuticalsSection: React.FC = () => {
 
         {/* Footnote */}
         <div className="text-left text-body-small text-grey md:my-8">
-          <p>Last updated: April 2025</p>
+          <p>Last updated: June 2025</p>
           <p className="mt-1">
             Help us keep things accurate. If you notice any outdated or incorrect information,
             email us at <a href="mailto:info@firm.inc" className="text-primary-blue hover:underline">info@firm.inc</a>

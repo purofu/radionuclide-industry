@@ -16,34 +16,10 @@ const UpdatesSection = () => (
         </div>
 
         {/* numbered list */}
-        <div className="lg:col-span-3">
-          <div className="max-w-[325px] text-h5 font-helvetica-now text-grey space-y-1">
-            <p>
-              <sup className="text-black">1&nbsp;</sup><span className="text-black">Industry</span>
-            </p>
-            <p>
-              <sup className="text-grey">2&nbsp;</sup>
-              <span className="text-grey">Regulation</span>{" "}
-              <sup className="font-bold">COMING SOON</sup>
-            </p>
-            <p>
-              <sup className="text-grey">3&nbsp;</sup>Technology &amp;
-              Systems
-            </p>
-            <p>
-              <sup className="text-grey">4&nbsp;</sup>CDMOs
-            </p>
-            <p>
-              <sup className="text-grey">5&nbsp;</sup>Market
-            </p>
-            <p>
-              <sup className="text-grey">6&nbsp;</sup>Distribution
-            </p>
-          </div>
-        </div>
-
+        <div className="lg:col-span-1 flex flex-col gap-6">
+</div>
         {/* subscribe */}
-        <div className="lg:col-span-3 flex flex-col gap-6">
+        <div className="lg:col-span-4 flex flex-col gap-6">
           <p className="text-h4 font-helvetica-now">
             Sign up to be notified of future updates.
           </p>

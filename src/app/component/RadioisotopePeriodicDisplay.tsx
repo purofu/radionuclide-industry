@@ -326,7 +326,7 @@ const RadioisotopePeriodicDisplay = () => {
         // Check if the data has a nested 'isotope' property
         if (rawData.isotope && typeof rawData.isotope === 'object') {
           isotopeData = rawData.isotope;
-          setDebugInfo("Using nested isotope data");
+          setDebugInfo(" ");
         } else {
           // Otherwise, treat the entire response as the isotope data
           isotopeData = rawData;
@@ -655,10 +655,10 @@ const RadioisotopePeriodicDisplay = () => {
           {!isLoading && !error && (
             <footer className="mt-12 md:mt-16">
               <p className="text-left text-body-small font-helvetica-now text-grey">
-                Last updated: April 2025
+                Last updated: June 2025
               </p>
               <p className="text-left text-body-small font-helvetica-now text-grey mt-1">
-                Spot an error? Email{" "}
+              Help us keep things accurate. If you notice any outdated or incorrect information, email us at {" "}
                 <a
                   href="mailto:info@firm.inc"
                   className="text-primary-blue hover:underline"

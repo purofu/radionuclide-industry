@@ -220,7 +220,7 @@ const HeroSection: React.FC = () => (
         >
           {/* date */}
           <p className="text-grey text-body font-helvetica-now font-medium">
-            12<sup>th</sup> of&nbsp;April&nbsp;2025
+          June&nbsp;2025
           </p>
 
           {/* page title */}
@@ -235,13 +235,13 @@ const HeroSection: React.FC = () => (
 
           {/* section label */}
           <h2 className="font-medium">
-            <span className="text-grey text-h2 font-helvetica-now">Section&nbsp;1&nbsp;</span>
-            <span className="text-black text-h2 font-helvetica-now">Industry</span>
+            <span className="text-grey text-h2 font-helvetica-now">Section&nbsp;1:&nbsp;</span>
+            <span className="text-black text-h2 font-helvetica-now">The industry</span>
           </h2>
 
           {/* authors */}
           <p className="text-grey text-body font-helvetica-now font-medium">
-            Molly&nbsp;McGaughan,&nbsp;Jean-Francois&nbsp;Gestin,
+            <b>Contibutors:</b><br></br>Jean-François&nbsp;Gestin,&nbsp;Molly&nbsp;McGaughan,&nbsp;
             Kostja&nbsp;Paschalidis,&nbsp;Estelle&nbsp;Ricoux
           </p>
         </motion.div>

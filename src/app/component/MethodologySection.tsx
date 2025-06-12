@@ -21,8 +21,7 @@ const MethodologySection = () => (
         <div className="flex flex-col lg:flex-row gap-8 lg:gap-16">
           <div className="lg:w-1/2 space-y-4 text-body font-medium">
             <p>
-              The dataset was sourced from ClinicalTrials.gov and processed to
-              filter only interventional studies with industry sponsorship…
+            The dataset was sourced from ClinicalTrials.gov and processed to filter only interventional studies with industry sponsorship, ensuring the inclusion of trials with a clearly defined therapeutic focus. In the preprocessing stage, text normalization and regex-based extraction were employed specifically on intervention names, rather than titles, to capture radioisotope mentions accurately using a robust synonym mapping. This mapping standardizes various forms of isotope nomenclature, and each isotope is then evaluated based on its established therapeutic or diagnostic classification.
             </p>
             <p>
               Verification combines random sampling for manual review with

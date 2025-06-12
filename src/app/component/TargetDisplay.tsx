@@ -76,7 +76,7 @@ interface TargetSummary {
 }
 
 // ---------------------------------------------------------------------------
-// 3)   *** MASTER LIST OF 12 TARGETS *** ------------------------------------
+// 3)   *** MASTER LIST OF 9 TARGETS *** ------------------------------------
 //      Edit fullName / description / image as desired.
 // ---------------------------------------------------------------------------
 const META = [
@@ -100,7 +100,7 @@ const META = [
     ],
     fullName: "Somatostatin Receptor 2 (SSTR2)",
     description:
-      "Neuroendocrine tumours over‑express SSTR2; DOTATATE/DOTATOC peptides deliver β‑emitters for PRRT.",
+      "Neuroendocrine tumors over‑express SSTR2; DOTATATE/DOTATOC peptides deliver β‑emitters for PRRT.",
     image: "sstr.png",
   },
   {
@@ -132,7 +132,7 @@ const META = [
     labels: ["DART", "Dual‑Affinty Re‑Targeting", "Dual Affinity Retargeting"],
     fullName: "Dual‑Affinity Re‑Targeting (DART) Bispecifics",
     description:
-      "DARTs are engineered bispecific antibodies whose two Fv arms engage tumour and effector antigens; DOTA‑conjugated DARTs can carry therapeutic radionuclides.",
+      "DARTs are engineered bispecific antibodies whose two Fv arms engage tumor and effector antigens; DOTA‑conjugated DARTs can carry therapeutic radionuclides.",
     image: "dart.png",
   },
   {
@@ -141,7 +141,7 @@ const META = [
     labels: ["CD8", "CD8 αβ", "CD8 alpha beta"],
     fullName: "CD8 αβ T‑Cell Co‑receptor",
     description:
-      "CD8 αβ marks cytotoxic T‑cells; radiolabelling CD8‑binding antibodies enables imaging/therapy of tumour‑infiltrating lymphocytes.",
+      "CD8 αβ marks cytotoxic T‑cells; radiolabelling CD8‑binding antibodies enables imaging/therapy of tumor‑infiltrating lymphocytes.",
     image: "cd8.png",
   },
   {
@@ -168,7 +168,7 @@ const META = [
     ],
     fullName: "Carbonic‑Anhydrase IX (CAIX)",
     description:
-      "Hypoxia‑inducible membrane enzyme; sulfonamide radioconjugates irradiate hypoxic tumour regions.",
+      "Hypoxia‑inducible membrane enzyme; sulfonamide radioconjugates irradiate hypoxic tumor regions.",
     image: "caix.png",
   },
   {
@@ -182,45 +182,8 @@ const META = [
     ],
     fullName: "Fibroblast‑Activation Protein α (FAP)",
     description:
-      "Radiolabelled FAP inhibitors target cancer‑associated fibroblasts and irradiate adjacent tumour cells.",
+      "Radiolabelled FAP inhibitors target cancer‑associated fibroblasts and irradiate adjacent tumor cells.",
     image: "fap.png",
-  },
-  {
-    abbrev: "LAT1",
-    display: "LAT1",
-    labels: [
-      "Amino acid transport",
-      "Amino‑acid transport",
-      "LAT1",
-      "SLC7A5",
-    ],
-    fullName: "L‑Type Amino‑Acid Transporter‑1 (LAT1)",
-    description:
-      "LAT1 imports essential amino acids; radiolabelled tyrosine analogues and LAT1‑binding antibodies convey therapeutic radionuclides to tumours.",
-    image: "lat1.png",
-  },
-  {
-    abbrev: "pol",
-    display: "DNA Pol",
-    labels: ["DNA polymerase", "DNA Pol", "DNA‑polymerase"],
-    fullName: "DNA Polymerase",
-    description:
-      "Radiolabelled inhibitors targeting tumour‑specific DNA polymerase activity represent an emerging therapeutic avenue.",
-    image: "pol.png",
-  },
-  {
-    abbrev: "NIS",
-    display: "NIS",
-    labels: [
-      "Thyroid tissues",
-      "Thyroid",
-      "NIS",
-      "Sodium‑iodide symporter",
-    ],
-    fullName: "Sodium‑Iodide Symporter (NIS)",
-    description:
-      "Thyroid follicular cells actively transport iodide via NIS, enabling 131I radio‑ablation of differentiated thyroid cancer.",
-    image: "nis.png",
   },
 ] as const;
 
@@ -385,9 +348,9 @@ const TargetDisplay = () => {
         <div className="container mx-auto px-4 md:px-6 lg:px-8">
           {/* Header -----------------------------------------------------*/}
           <div className="mb-8 md:w-3/4">
-            <h2 className="text-h4 mb-3">Tumour targets by study volume and stage</h2>
+            <h2 className="text-h4 mb-3">Tumor targets by study volume and stage</h2>
             <p className="text-body text-grey">
-              Live snapshot of clinical and preclinical activity across 12 key tumour targets.
+              Live snapshot of clinical and preclinical activity across 9 key tumor targets.
             </p>
           </div>
 
@@ -418,7 +381,7 @@ const TargetDisplay = () => {
 
           {/* GRID VIEW */}
           {!isLoading && !error && viewMode === "grid" && (
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {sorted.map((t) => (
                 <div
                   key={t.abbrev}
@@ -551,7 +514,7 @@ const TargetDisplay = () => {
 
           {/* Footer */}
           <div className="mt-12 text-xs text-gray-500">
-            Data source: latest fetch from API • Updated April 2025
+            Data source: latest fetch from API • Updated June 2025
           </div>
         </div>
       </section>

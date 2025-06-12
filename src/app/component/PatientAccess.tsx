@@ -8,6 +8,34 @@ import { Tabs } from '@/components/ui';
 
 import RadiotherapyChart from './RadiotherapyChart';
 
+// Legend component for the maps
+interface LegendItem {
+  color: string;
+  label: string;
+}
+
+interface MapLegendProps {
+  items: LegendItem[];
+}
+
+const MapLegend: React.FC<MapLegendProps> = ({ items }) => {
+  return (
+    <div className="mt-6 flex flex-wrap gap-4 justify-center md:justify-start">
+      {items.map((item, index) => (
+        <div key={index} className="flex items-center gap-2">
+          <div 
+            className="w-4 h-4 border border-gray-300"
+            style={{ backgroundColor: `#${item.color}` }}
+          />
+          <span className="text-sm font-helvetica-now text-grey">
+            {item.label}
+          </span>
+        </div>
+      ))}
+    </div>
+  );
+};
+
 const PatientAccess: React.FC = () => {
   const [activeTab, setActiveTab] = useState<number>(0);
 
@@ -15,6 +43,26 @@ const PatientAccess: React.FC = () => {
   const tabs = [
     'Global distribution of eligible patients',
     'Current reach of radiopharmaceuticals'
+  ];
+
+  // Legend data for each tab
+  const legendData = [
+    // First tab legend
+    [
+      { color: 'D9D9D9', label: 'No nuclear medicine physicians' },
+      { color: 'ECEEF4', label: 'No data available' },
+      { color: 'B8BCCA', label: '0.1-5.0' },
+      { color: '6D7186', label: '5.1-10.0' },
+      { color: '404451', label: '>10.0' }
+    ],
+    // Second tab legend
+    [
+      { color: 'D9D9D9', label: 'No nuclear medicine physicians' },
+      { color: 'E2C0C0', label: 'No data available' },
+      { color: 'B8BCCA', label: '0.1-5.0' },
+      { color: '6D7186', label: '5.1-10.0' },
+      { color: '404451', label: '>10.0' }
+    ]
   ];
 
   return (
@@ -37,7 +85,7 @@ const PatientAccess: React.FC = () => {
             >
               <p className="text-h3 font-helvetica-now text-black py-24">
               The stark gap between eligibility and reach is both a challenge and a market opportunity.
-              Logistical complexities, infrastructure limitations, and reimbursement hurdles continue to restrict patient access
+              Logistical complexities, infrastructure limitations, and reimbursement hurdles continue to restrict patient access.
               </p>
             </motion.div>
 
@@ -106,20 +154,26 @@ const PatientAccess: React.FC = () => {
               <div className="w-full relative">
                 {/* Map 1 */}
                 {activeTab === 0 && (
-                  <img 
-                    src="/world1.svg" 
-                    alt="Global distribution of eligible patients"
-                    className="w-full h-auto" 
-                  />
+                  <div>
+                    <MapLegend items={legendData[0]} />
+                    <img 
+                      src="/world1.svg" 
+                      alt="Global distribution of eligible patients"
+                      className="w-full h-auto" 
+                    />
+                  </div>
                 )}
                 
                 {/* Map 2 */}
                 {activeTab === 1 && (
-                  <img 
-                    src="/world2.svg" 
-                    alt="Current reach of radiopharmaceuticals"
-                    className="w-full h-auto" 
-                  />
+                  <div>
+                    <MapLegend items={legendData[1]} />
+                    <img 
+                      src="/world2.svg" 
+                      alt="Current reach of radiopharmaceuticals"
+                      className="w-full h-auto" 
+                    />
+                  </div>
                 )}
               </div>
             </motion.div>

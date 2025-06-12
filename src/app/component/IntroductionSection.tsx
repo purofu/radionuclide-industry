@@ -19,7 +19,7 @@ const IntroductionSection = () => {
               <p className="text-h5 font-helvetica-now text-grey">
                 
                 Delivering on this promise is challenging. Every isotope and target selection dramatically impacts the
-                entire delivery ecosystem – determining production requirements, supply chain complexity, and the ability
+                entire delivery ecosystem, determining production requirements, supply chain complexity, and the ability
                 to scale treatments to patients. In today’s fast-moving targeted Radionuclide therapies and diagnostics landscape, understanding these connections is
                 essential for success.
               </p>
@@ -28,7 +28,7 @@ const IntroductionSection = () => {
 
           {/* Stats boxes - 2 columns on mobile, 4 on md+ */}
           <div className="col-span-4 sm:col-span-8 md:col-span-12 lg:col-span-12 mb-8 md:mb-20"><h4 className="text-h4 font-helvetica-now text-black mb-12">
-          <span className="text-grey text-h4 font-helvetica-now">What we looked at:</span> every prospective radionuclide clinical study since 2013
+          <span className="text-grey text-h4 font-helvetica-now">Data examined: </span> every prospective radionuclide clinical study since 2013
                 </h4>
             <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-2 md:gap-6">
             
@@ -105,9 +105,9 @@ const IntroductionSection = () => {
                   to active treatment modalities.
                 </p>
                 <p className="text-body font-helvetica-now text-grey">
-                  The expansion beyond oncology into multiple disease areas—neurodegenerative disorders (11 agents),
+                  The expansion beyond oncology into multiple disease areas — neurodegenerative disorders (11 agents),
                   cardiovascular diseases (8 agents), and emerging applications in conditions like hepatopulmonary
-                  syndrome and nephrotic syndrome represents both scientific progress and strategic opportunity for
+                  syndrome and nephrotic syndrome — represents both scientific progress and strategic opportunity for
                   organizations positioned to address these broader clinical needs.
                 </p>
               </div>
