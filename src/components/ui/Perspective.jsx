@@ -199,7 +199,7 @@ const Perspective = () => {
 		<div className="mb-8 md:mb-12 lg:mb-[73px]">
 		  <p className="text-h4 font-helvetica-now">
 			<span className="text-white">For access to the raw data, including APIs, please contact</span>
-			<span className="text-per-text"> info@firm.inc</span>
+			<a href="mailto:info@firm.inc" className="text-per-text hover:underline"> info@firm.inc</a>
 		  </p>
 		</div>
 
