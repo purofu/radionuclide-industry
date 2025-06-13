@@ -15,7 +15,7 @@ const PerspectiveSection = () => (
       {/* two‑column story */}
       <div className="flex flex-col lg:flex-row gap-8  ">
         <div className="lg:w-1/2">
-          <p className="text-h4 font-helvetica-now mb-6">
+          <p className="text-h5 font-helvetica-now mb-6">
           As competition intensifies, simplifying and aligning complex systems into dependable services is essential to meet growing patient demand. 
             <br />
             <br />
@@ -23,12 +23,14 @@ const PerspectiveSection = () => (
           </p>
         </div>
         <div className="lg:w-1/2">
-          <p className="text-h4 font-helvetica-now">
+          <p className="text-h5 font-helvetica-now">
            This requires building new capabilities, establishing new roles, and putting in place the processes needed to sustain a connected service infrastructure.
             <br />
             <br />
             <span className="text-a-text">
-              Learn more on our website or reach out:{" "}
+              Learn more on our  <a href="www.firm.inc" className="text-white hover:underline">
+                website
+              </a> or reach out:{" "}
               <a href="mailto:info@firm.inc" className="text-white hover:underline">
                 info@firm.inc
               </a>

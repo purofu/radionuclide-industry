@@ -189,7 +189,7 @@ const Perspective = () => {
 				Therapeutic intent is further verified by cross-referencing recognized clinical trial phases, scanning for an extensive list of therapeutic-related keywords in both titles and intervention details, and subsequently flagging studies that fulfill any of these criteria. The pipeline also aggregates statistical summaries (such as the distribution of trial phases, isotope frequency, and sponsor counts), and visualization data is built to stratify the results by phase, company, and clinical application.
 			  </p>
 			  <p className="text-body font-medium font-helvetica-now">
-				Although potential challenges remain, such as deviations in input formatting, ambiguous sponsor identifiers, or limitations in the static keyword and synonym liststhe comprehensive verification steps embedded in the pipeline offer a robust mechanism for validating data extraction and categorization.
+				Although potential challenges remain, such as deviations in input formatting, ambiguous sponsor identifiers, or limitations in the static keyword and synonym lists the comprehensive verification steps embedded in the pipeline offer a robust mechanism for validating data extraction and categorization.
 			  </p>
 			</div>
 		  </div>

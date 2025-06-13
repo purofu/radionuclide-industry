@@ -241,41 +241,41 @@ const HeroSection: React.FC = () => (
 
           {/* authors */}
           <p className="text-grey text-body font-helvetica-now font-medium">
-            <b>Contributors:</b><br></br>
+            <b>Contributors:</b><br />
             <a 
               href="https://www.linkedin.com/in/jean-francois-gestin-63370037/" 
               target="_blank" 
               rel="noopener noreferrer"
               className="hover:text-primary-blue transition-colors"
             >
-              Jean-François&nbsp;Gestin
+              Jean-François Gestin
             </a>
-            ,&nbsp;
+            ,{" "}
             <a 
               href="https://www.linkedin.com/in/molly-mcgaughan/" 
               target="_blank" 
               rel="noopener noreferrer"
               className="hover:text-primary-blue transition-colors"
             >
-              Molly&nbsp;McGaughan
+              Molly McGaughan
             </a>
-            ,&nbsp;
+            ,{" "}
             <a 
               href="https://www.linkedin.com/in/kostja-paschalidis-b8975b75/" 
               target="_blank" 
               rel="noopener noreferrer"
               className="hover:text-primary-blue transition-colors"
             >
-              Kostja&nbsp;Paschalidis
+              Kostja Paschalidis
             </a>
-            ,&nbsp;
+            ,{" "}
             <a 
               href="https://www.linkedin.com/in/estellericoux/" 
               target="_blank" 
               rel="noopener noreferrer"
               className="hover:text-primary-blue transition-colors"
             >
-              Estelle&nbsp;Ricoux
+              Estelle Ricoux
             </a>
           </p>
         </motion.div>

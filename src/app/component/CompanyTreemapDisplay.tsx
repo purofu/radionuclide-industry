@@ -309,6 +309,24 @@ const CompanyTreemapDisplay = () => {
                 <div className="px-4 md:px-6 lg:px-8">
                     <h2 className="text-h3 font-helvetica-now text-black mb-8">Market leaders by volume of studies,  clinical stage and diseases</h2>
 
+                    {/* Legend Section */}
+                    <div className="mb-6 px-4 md:px-6 lg:px-8">
+                        <div className="flex flex-wrap gap-3 items-center justify-center">
+                            <div className="flex items-center gap-1.5">
+                                <div className="w-3 h-3 rounded-full" style={{ backgroundColor: COLOR_BLACK }}></div>
+                                <span className="text-xs font-helvetica-now">Number of Diseases</span>
+                            </div>
+                            <div className="flex items-center gap-1.5">
+                                <div className="w-3 h-3 rounded-full" style={{ backgroundColor: COLOR_PURPLE }}></div>
+                                <span className="text-xs font-helvetica-now">Diagnostic Trials</span>
+                            </div>
+                            <div className="flex items-center gap-1.5">
+                                <div className="w-3 h-3 rounded-full" style={{ backgroundColor: COLOR_PRIMARY_BLUE }}></div>
+                                <span className="text-xs font-helvetica-now">Therapy Trials</span>
+                            </div>
+                        </div>
+                    </div>
+
                     <div className="flex flex-col gap-6 mb-8">
                         <div className="flex flex-col sm:flex-row sm:items-center justify-between sm:gap-8 gap-4">
                             {/* Replace tab buttons and toggle with our new Tabs component */}
@@ -624,19 +642,15 @@ const CompanyTreemapDisplay = () => {
                          )}
 
                         {/* Footer */}
-                        <div className=" ">               
-               <div className="text-left text-body-small font-helvetica-now text-grey md:my-8">
-                  <p>Last updated: June, 2025</p>
-                  <p className="mt-1">
-                  Help us keep things accurate. If you notice any outdated or incorrect information, email us at <a href="mailto:info@firm.inc" className="text-primary-blue hover:underline">info@firm.inc</a>
-                  </p>
-               </div>
-               
-           
-             </div>
-                        <div className=" border-t border-borde text-muted-foreground text-sm text-center">
-                            {/* Footer logic remains similar, adjust text slightly */}
-                             {apiData?.metadata?.total_trials_processed && !isLoading && !error && apiData?.company && (
+                        <div className="text-left text-body-small font-helvetica-now text-grey md:my-8">
+                            <p>Last updated: June, 2025</p>
+                            <p className="mt-1">
+                                Help us keep things accurate. If you notice any outdated or incorrect information, email us at <a href="mailto:info@firm.inc" className="text-primary-blue hover:underline">info@firm.inc</a>
+                            </p>
+                        </div>
+
+                        <div className="border-t border-borde text-muted-foreground text-sm text-center">
+                            {apiData?.metadata?.total_trials_processed && !isLoading && !error && apiData?.company && (
                                 <p>
                                     Analysis based on {apiData.metadata.total_trials_processed.toLocaleString()} processed trials.
                                     {viewMode === 'treemap' && top15Companies.length > 0 && ` Displaying top ${top15Companies.length} companies via treemap for '${getTabDisplayText(activeTab)}'.`}
@@ -644,14 +658,15 @@ const CompanyTreemapDisplay = () => {
                                     {((viewMode === 'treemap' && top15Companies.length === 0) || (viewMode === 'table' && processedData.length === 0)) && ` No companies found matching the criteria for '${getTabDisplayText(activeTab)}'.`}
                                 </p>
                             )}
-                             {!isLoading && !error && apiData && processedData.length === 0 && apiData.company && ( <p>No companies met the criteria for display in the &apos;{getTabDisplayText(activeTab)}&apos; category.</p> )}
-                             {!isLoading && !error && apiData && !apiData.company && ( <p>Data loaded, but required &apos;company&apos; information was missing.</p> )}
-                             
+                            {!isLoading && !error && apiData && processedData.length === 0 && apiData.company && (
+                                <p>No companies met the criteria for display in the &apos;{getTabDisplayText(activeTab)}&apos; category.</p>
+                            )}
+                            {!isLoading && !error && apiData && !apiData.company && (
+                                <p>Data loaded, but required &apos;company&apos; information was missing.</p>
+                            )}
                         </div>
                     </div>
                 </div>
-               
-            
             </section>
         </TooltipProvider>
     );
@@ -682,17 +697,7 @@ const CompanyTooltipContent = React.memo(({ data, activeTab, showOnly, getTabDis
                 </ul>
                 {remainingCount > 0 && (
                     <p className="text-muted-foreground/80 text-[10px] mt-0.5 italic">...and {remainingCount} more</p>
-                )} <div className="mt-12 md:mt-16 border-ts">               
-               <div className="text-left text-body-small font-helvetica-now text-grey md:my-8">
-                  <p>Last updated: April, 2025</p>
-                  <p className="mt-1">
-                  Help us keep things accurate. If you notice any outdated or incorrect information, email us at <a href="mailto:info@firm.inc" className="text-primary-blue hover:underline">info@firm.inc</a>
-                  </p>
-               </div>
-               
-               {/* Divider before footer text - using config border color */}
-           
-             </div>
+                )}
             </div>
         );
     };
